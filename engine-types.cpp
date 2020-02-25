@@ -51,7 +51,7 @@ bool operator==(const Ability& left, const Ability& right) {
     return left.kind_ == right.kind_;
 }
 
-std::ostream& operator<< (std::ostream& stream, Ability ability) {
+std::ostream& operator<<(std::ostream& stream, Ability ability) {
     stream << ability.kind_ << ": ";
 
     for (const auto& s : ability.state_)
