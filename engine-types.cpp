@@ -25,17 +25,10 @@ Ability::Ability(AbilityKind kind, std::map<AbilityState, int> init_state) {
 }
 
 int Ability::GetStateValue(AbilityState name) {
-    std::cout << "get " << name << std::endl;
-
-    for (auto& key : state_)
-        std::cout << key.second << std::endl;
-
     return state_[name];
 }
 
 void Ability::SetStateValue(AbilityState name, int new_value) {
-    std::cout << "set " << name << " to " << new_value << std::endl;
-    
     state_[name] = new_value;
 
     return;
@@ -76,10 +69,16 @@ void Entity::Apply(AbilityKind kind, Entity& target) {
 }
 
 int Entity::InventoryGetSize() {
-    return subentities_.size();
+    if (abilities_.count(CanContain) == 0)
+        return 0;
+    else 
+        return subentities_.size();
 }
 
 void Entity::InventoryAdd(std::vector<Entity> items) {
+    if (abilities_.count(CanContain) == 0)
+        return;
+
     for (const Entity& item : items) {
         bool can_fit       = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
         int  can_be_picked = item.abilities_.count(CanBePicked);
@@ -94,6 +93,9 @@ void Entity::InventoryAdd(std::vector<Entity> items) {
 }
 
 void Entity::InventoryRemove(size_t index) {
+    if (abilities_.count(CanContain) == 0)
+        return;
+
     if (index < subentities_.size())
         subentities_.erase(subentities_.begin() + index);
     
@@ -127,13 +129,13 @@ Ability AbilityFactory::CreateAbilityKick(size_t damage) {
 }
 
 Ability AbilityFactory::CreateAbilityPick() {
-    Ability ability_pick = Ability(CanPick, {{/*FIXME what to put here*/}});
+    Ability ability_pick = Ability(CanPick, {});
 
     return ability_pick;
 }
 
 Ability AbilityFactory::CreateAbilityLoot() {
-    Ability ability_pick = Ability(CanLoot, {{SpotToLoot, -1}});
+    Ability ability_pick = Ability(CanLoot, {{SpotToLoot, 0}});
 
     return ability_pick;
 }
@@ -156,13 +158,13 @@ Ability AbilityFactory::CreateAbilityMove() {
     return ability_move;
 }
 
-Ability CreateAbilityHack(size_t hack_level) {
+Ability AbilityFactory::CreateAbilityHack(size_t hack_level) {
     Ability ability_hack = Ability(CanHack, {{HackLevel, hack_level}});
 
     return ability_hack;
 }
 
-Ability CreateAbilityBeLocked(size_t lock_level) {
+Ability AbilityFactory::CreateAbilityBeLocked(size_t lock_level) {
     Ability ability_be_locked = Ability(CanBeLocked, {{LockLevel, lock_level}});
 
     return ability_be_locked;
@@ -198,8 +200,8 @@ Entity EntityFactory::CreateCustom() {
 }
 */
 
-Entity EntityFactory::CreateChest(size_t init_lock_lvl) {
-    Ability ability_conntain  = AbilityFactory::CreateAbilityContain(20);
+Entity EntityFactory::CreateChest(size_t capacity, size_t init_lock_lvl) {
+    Ability ability_conntain  = AbilityFactory::CreateAbilityContain(capacity);
     Ability ability_die       = AbilityFactory::CreateAbilityDie(100, 100);
     Ability ability_be_locked = AbilityFactory::CreateAbilityBeLocked(init_lock_lvl);
 
@@ -210,12 +212,10 @@ Entity EntityFactory::CreateChest(size_t init_lock_lvl) {
 Entity EntityFactory::CreateMimic() {
 
 }
-
-Ability EntityFactory::GetHealthAbility(size_t hp_max, size_t hp_current) {
-
-}
-
-Ability EntityFactory::GetKickAbility(size_t damage) {
-
-}
 */
+
+Entity EntityFactory::CreateFood() {
+    Ability ability_be_picked = AbilityFactory::CreateAbilityBePicked();
+    
+    return Entity({ability_be_picked});
+}

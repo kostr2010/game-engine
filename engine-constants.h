@@ -80,6 +80,14 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
     },
 
     {CanHack, [](Entity& origin, Entity& target) -> void {
+            if (target.abilities_.count(CanBeLocked) != 0) {
+                int lock_level = target.abilities_[CanBeLocked].GetStateValue(LockLevel);
+                int hack_level  = origin.abilities_[CanHack].GetStateValue(HackLevel);
+
+                if (hack_level >= lock_level)
+                    target.abilities_[CanBeLocked].SetStateValue(LockLevel, 0);
+            }
+
             return;
         }
     },

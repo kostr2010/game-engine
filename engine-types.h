@@ -6,6 +6,9 @@
 #include <iostream>
 #include <map>
 
+// to print enums
+#define EnumToString(var) #var
+
 //===================
 // ENUMS
 
@@ -66,20 +69,38 @@ public:
     friend std::ostream& operator<<(std::ostream& stream, Entity entity);
 
     std::map<AbilityKind, Ability> abilities_;
-    //std::vector<Entity> subentities_;
 private:
     std::vector<Entity> subentities_;
 protected:
 };
 
+class WorldMap {
+public:
+private:
+protected:
+};
+
+class Tile {
+public:
+private:
+protected:
+};
+
 class EntityFactory {
 public:
+    // playable characters
     static Entity CreateWarrior();
     static Entity CreateMage();
     static Entity CreateCustom();
 
-    static Entity CreateChest(size_t lock_lvl);
+    // objects
+    static Entity CreateChest(size_t capacity, size_t lock_lvl);
+
+    // enemies
     static Entity CreateMimic();
+
+    // items
+    static Entity CreateFood();
 private:
 protected:
 };
