@@ -17,14 +17,14 @@ Ability::Ability() {
     return;
 }
 
-Ability::Ability(AbilityKind kind, std::map<AbilityState, double> init_state) {
+Ability::Ability(AbilityKind kind, std::map<AbilityState, int> init_state) {
     state_ = init_state;
-    kind_ = kind;
+    kind_  = kind;
 
     return;
 }
 
-double Ability::GetStateValue(AbilityState name) {
+int Ability::GetStateValue(AbilityState name) {
     std::cout << "get " << name << std::endl;
 
     for (auto& key : state_)
@@ -33,8 +33,9 @@ double Ability::GetStateValue(AbilityState name) {
     return state_[name];
 }
 
-void Ability::SetStateValue(AbilityState name, double new_value) {
+void Ability::SetStateValue(AbilityState name, int new_value) {
     std::cout << "set " << name << " to " << new_value << std::endl;
+    
     state_[name] = new_value;
 
     return;
@@ -104,6 +105,12 @@ Ability AbilityFactory::CreateAbilityLoot() {
     return ability_pick;
 }
 
+Ability AbilityFactory::CreateAbilityBePicked() {
+    Ability ability_be_picked = Ability(CanBePicked, {});
+
+    return ability_be_picked;
+}
+
 Ability AbilityFactory::CreateAbilityContain(size_t capacity) {
     Ability ability_contain = Ability(CanContain, {{ContainCapacity, capacity}});
 
@@ -116,17 +123,37 @@ Ability AbilityFactory::CreateAbilityMove() {
     return ability_move;
 }
 
+Ability CreateAbilityHack(size_t hack_level) {
+    Ability ability_hack = Ability(CanHack, {{HackLevel, hack_level}});
+
+    return ability_hack;
+}
+
+Ability CreateAbilityBeLocked(size_t lock_level) {
+    Ability ability_be_locked = Ability(CanBeLocked, {{LockLevel, lock_level}});
+
+    return ability_be_locked;
+}
+
 //====================
 // character factory
 
 Entity EntityFactory::CreateWarrior() {
-    Ability ability_die = AbilityFactory::CreateAbilityDie(10, 10);
-    Ability ability_kick = AbilityFactory::CreateAbilityKick(4);
-    Ability ability_pick = AbilityFactory::CreateAbilityPick();
-    Ability ability_loot = AbilityFactory::CreateAbilityLoot();
+    Ability ability_die     = AbilityFactory::CreateAbilityDie(10, 10);
+    Ability ability_kick    = AbilityFactory::CreateAbilityKick(4);
+    Ability ability_pick    = AbilityFactory::CreateAbilityPick();
+    Ability ability_loot    = AbilityFactory::CreateAbilityLoot();
     Ability ability_contain = AbilityFactory::CreateAbilityContain(10);
+    Ability ability_hack    = AbilityFactory::CreateAbilityHack(1);
+    Ability ability_move    = AbilityFactory::CreateAbilityMove();
 
-    return Entity({ability_die, ability_kick, ability_pick, ability_loot, ability_contain});
+    return Entity({ability_die, 
+                   ability_kick, 
+                   ability_pick, 
+                   ability_loot, 
+                   ability_contain,
+                   ability_hack,
+                   ability_move});
 }
 /*
 Entity EntityFactory::CreateMage() {
@@ -138,9 +165,10 @@ Entity EntityFactory::CreateCustom() {
 }
 */
 
-Entity EntityFactory::CreateChest() {
-    Ability ability_conntain = AbilityFactory::CreateAbilityContain(20);
-    Ability ability_die = AbilityFactory::CreateAbilityDie(100, 100);
+Entity EntityFactory::CreateChest(size_t init_lock_lvl) {
+    Ability ability_conntain  = AbilityFactory::CreateAbilityContain(20);
+    Ability ability_die       = AbilityFactory::CreateAbilityDie(100, 100);
+    Ability ability_be_locked = AbilityFactory::CreateAbilityBeLocked(init_lock_lvl);
 
     return Entity({ability_die, ability_conntain});
 }

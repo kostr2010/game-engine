@@ -45,8 +45,8 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
 
     {CanLoot, [](Entity& origin, Entity& target) -> void {
             bool target_can_be_looted = target.abilities_.count(CanContain) != 0;
-            double state_locked = origin.abilities_[CanBeLocked].GetStateValue(Locked);
-            double spot_to_loot = origin.abilities_[CanLoot].GetStateValue(SpotToLoot);
+            int state_locked = origin.abilities_[CanBeLocked].GetStateValue(Locked);
+            int spot_to_loot = origin.abilities_[CanLoot].GetStateValue(SpotToLoot);
 
             if (target_can_be_looted && state_locked == 0 && spot_to_loot < target.subentities_.size()) {
                 // origin.Apply(CanPick, target.subentities_[spot_to_loot]); won't do because Pick deletes object from map, not from conatiner
@@ -64,9 +64,9 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
             if (target.abilities_.count(CanDie) != 0) {
                 Ability target_ability = target.abilities_[CanDie];                         
 
-                double damage_amount = origin.abilities_[CanKick].GetStateValue(DamageAmount); 
-                double hp_was = target_ability.GetStateValue(HpCurrent);
-                double hp_now = hp_was - damage_amount;
+                int damage_amount = origin.abilities_[CanKick].GetStateValue(DamageAmount); 
+                int hp_was = target_ability.GetStateValue(HpCurrent);
+                int hp_now = hp_was - damage_amount;
 
                 target_ability.SetStateValue(HpCurrent, hp_now);
 
