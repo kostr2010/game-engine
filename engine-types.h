@@ -40,8 +40,8 @@ public:
     Ability();
     Ability(AbilityKind kind, std::map<AbilityState, int> init_state);
 
-    int GetStateValue(AbilityState name);
-    void   SetStateValue(AbilityState name, int new_value);
+    int  GetStateValue(AbilityState name);
+    void SetStateValue(AbilityState name, int new_value);
 
     friend bool          operator==(const Ability& left, const Ability& right);
     friend std::ostream& operator<<(std::ostream& stream, Ability ability);
@@ -54,15 +54,21 @@ protected:
 
 class Entity {
 public:
+    Entity();
     Entity(std::vector<Ability> abilities);
 
-    void Apply(AbilityKind kind, Entity& target);
+    void   Apply(AbilityKind kind, Entity& target);
+    int    InventoryGetSize();
+    void   InventoryAdd(std::vector<Entity> items);
+    void   InventoryRemove(size_t index);
+    Entity InventoryGetSubentity(size_t index);
 
     friend std::ostream& operator<<(std::ostream& stream, Entity entity);
 
     std::map<AbilityKind, Ability> abilities_;
-    std::vector<Entity> subentities_;
+    //std::vector<Entity> subentities_;
 private:
+    std::vector<Entity> subentities_;
 protected:
 };
 
@@ -72,7 +78,7 @@ public:
     static Entity CreateMage();
     static Entity CreateCustom();
 
-    static Entity CreateChest(size_t init_lock_lvl);
+    static Entity CreateChest(size_t lock_lvl);
     static Entity CreateMimic();
 private:
 protected:

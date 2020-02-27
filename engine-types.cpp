@@ -57,6 +57,10 @@ std::ostream& operator<<(std::ostream& stream, Ability ability) {
 //====================
 // entity
 
+Entity::Entity() {
+    return;
+}
+
 Entity::Entity(std::vector<Ability> abilities) {    
     for (const auto& ability : abilities)
         abilities_[ability.kind_] = ability;
@@ -69,6 +73,35 @@ void Entity::Apply(AbilityKind kind, Entity& target) {
         dict_ability_dispatcher[kind](*this, target);
 
     return;
+}
+
+int Entity::InventoryGetSize() {
+    return subentities_.size();
+}
+
+void Entity::InventoryAdd(std::vector<Entity> items) {
+    for (const Entity& item : items) {
+        bool can_fit       = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
+        int  can_be_picked = item.abilities_.count(CanBePicked);
+
+        if (can_fit && can_be_picked != 0)
+            subentities_.push_back(item);
+        else if (!can_fit)
+            break;
+    }
+
+    return;
+}
+
+void Entity::InventoryRemove(size_t index) {
+    if (index < subentities_.size())
+        subentities_.erase(subentities_.begin() + index);
+    
+    return;
+}
+
+Entity Entity::InventoryGetSubentity(size_t index) {
+    return (index < InventoryGetSize()) ? (subentities_[index]) : (Entity());
 }
     
 std::ostream& operator<< (std::ostream& stream, Entity entity) {
@@ -173,11 +206,11 @@ Entity EntityFactory::CreateChest(size_t init_lock_lvl) {
     return Entity({ability_die, ability_conntain});
 }
 
+/*
 Entity EntityFactory::CreateMimic() {
 
 }
 
-/*
 Ability EntityFactory::GetHealthAbility(size_t hp_max, size_t hp_current) {
 
 }
