@@ -4,5 +4,7 @@ AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
 AlignConsecutiveAssignments: true
-ColumnLimit: 100
+ColumnLimit: 150
 AlignConsecutiveDeclarations: true
+DerivePointerAlignment: false
+PointerAlignment: Left
