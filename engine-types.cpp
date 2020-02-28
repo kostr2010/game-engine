@@ -46,11 +46,20 @@ std::ostream &operator<<(std::ostream &stream, Ability ability) {
 
 Entity::Entity() { return; }
 
-Entity::Entity(std::vector<Ability> abilities) {
+void Entity::SetSubentities(std::vector<Entity> subentities) { subentities_ = subentities; }
+
+void Entity::SetAbilities(std::vector<Ability> abilities) {
     for (const auto &ability : abilities)
         abilities_[ability.kind_] = ability;
+}
 
-    return;
+Entity::Entity(std::vector<Entity> subentities) { SetSubentities(subentities); }
+
+Entity::Entity(std::vector<Ability> abilities) { SetAbilities(abilities); }
+
+Entity::Entity(std::vector<Entity> subentities, std::vector<Ability> abilities) {
+    SetSubentities(subentities);
+    SetAbilities(abilities);
 }
 
 void Entity::Apply(AbilityKind kind, Entity &target) {
@@ -193,11 +202,11 @@ Entity EntityFactory::CreateCustom() {
 */
 
 Entity EntityFactory::CreateChest(size_t capacity, size_t init_lock_lvl) {
-    Ability ability_conntain  = AbilityFactory::CreateAbilityContain(capacity);
+    Ability ability_contain   = AbilityFactory::CreateAbilityContain(capacity);
     Ability ability_die       = AbilityFactory::CreateAbilityDie(100, 100);
     Ability ability_be_locked = AbilityFactory::CreateAbilityBeLocked(init_lock_lvl);
 
-    return Entity({ability_die, ability_conntain});
+    return Entity({ability_die, ability_contain});
 }
 
 /*
@@ -210,4 +219,24 @@ Entity EntityFactory::CreateFood() {
     Ability ability_be_picked = AbilityFactory::CreateAbilityBePicked();
 
     return Entity({ability_be_picked});
+}
+
+Entity EntityFactory::CreateTile() {
+    // for now tile can contain up to 1 entity (may be changed)
+    Ability ability_contain = AbilityFactory::CreateAbilityContain(1);
+
+    return Entity({ability_contain});
+}
+
+Entity EntityFactory::CreateMap(size_t width, size_t height) {
+    std::vector<Entity> tiles;
+    tiles.reserve(height * width);
+
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            tiles[y * width + x] = CreateTile();
+
+    tiles.shrink_to_fit();
+
+    return Entity(tiles);
 }
