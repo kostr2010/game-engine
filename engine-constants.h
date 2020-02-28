@@ -69,7 +69,6 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
              int hp_now        = hp_was - damage_amount;
 
              target_ability.SetStateValue(HpCurrent, hp_now);
-
              target.abilities_[CanDie] = target_ability;
          } else {
              std::cout << "it's invincible!" << std::endl;
