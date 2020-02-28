@@ -1,6 +1,9 @@
 #pragma once
 
-#include "engine-types.h"
+#include <functional>
+
+#include "../ability/ability.hpp"
+#include "../entity/entity.hpp"
 
 //====================
 // CONSTANTS
@@ -30,11 +33,11 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
      [](Entity& origin, Entity& target) -> void {
          bool origin_can_contain   = origin.abilities_.count(CanContain) != 0;
          bool target_can_be_picked = origin_can_contain && target.abilities_.count(CanBePicked) != 0;
-         bool origin_can_fit       = target_can_be_picked && origin.InventoryGetSize() < origin.abilities_[CanContain].GetStateValue(ContainCapacity);
+         bool origin_can_fit = target_can_be_picked && origin.GetSubEntitiesCount() < origin.abilities_[CanContain].GetStateValue(ContainCapacity);
 
          if (origin_can_contain && target_can_be_picked && origin_can_fit) {
-             // #TODO delete picked item from the map
-             origin.InventoryAdd({target});
+             // TODO delete picked item from the map
+             origin.AddSubentity({target});
          }
 
          return;
@@ -46,14 +49,14 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
          int  state_locked         = origin.abilities_[CanBeLocked].GetStateValue(LockLevel);
          int  spot_to_loot         = origin.abilities_[CanLoot].GetStateValue(SpotToLoot);
 
-         if (target_can_be_looted && state_locked == 0 && spot_to_loot < target.InventoryGetSize()) {
+         if (target_can_be_looted && state_locked == 0 && spot_to_loot < target.GetSubEntitiesCount()) {
              // origin.Apply(CanPick, target.subentities_[spot_to_loot]);
              // won't do because Pick deletes object from map, not from
              // conatiner
-             Entity loot = target.InventoryGetSubentity(spot_to_loot);
+             Entity loot = target.GetSubentity(spot_to_loot);
 
-             origin.InventoryAdd({loot});
-             target.InventoryRemove(spot_to_loot);
+             origin.AddSubentity({loot});
+             target.RemoveSubentity(spot_to_loot);
          }
 
          return;

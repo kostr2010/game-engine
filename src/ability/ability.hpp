@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-// to print enums
-#define EnumToString(var) #var
+//#include "../constants/engine-constants.h"
+//#include "../entity/entity.hpp"
 
 //===================
 // ENUMS
@@ -56,70 +56,6 @@ class Ability {
   private:
     std::map<AbilityState, int> state_;
 
-  protected:
-};
-
-class Entity {
-  public:
-    Entity();
-    Entity(std::vector<Entity> subentities);
-    Entity(std::vector<Ability> abilities);
-    Entity(std::vector<Entity> subentities, std::vector<Ability> abilities);
-
-    void SetSubentities(std::vector<Entity>);
-    void SetAbilities(std::vector<Ability>);
-
-    void   Apply(AbilityKind kind, Entity& target);
-    int    InventoryGetSize();
-    void   InventoryAdd(std::vector<Entity> items);
-    void   InventoryRemove(size_t index);
-    Entity InventoryGetSubentity(size_t index);
-
-    friend std::ostream& operator<<(std::ostream& stream, Entity entity);
-
-    std::map<AbilityKind, Ability> abilities_;
-
-  private:
-    std::vector<Entity> subentities_;
-
-  protected:
-};
-
-// class WorldMap {
-//   public:
-//   private:
-//   protected:
-// };
-
-// class Tile {
-//   public:
-//   private:
-//   protected:
-// };
-
-class EntityFactory {
-  public:
-    // just a map (main parent entity)
-    static Entity CreateMap(size_t width, size_t height);
-
-    // tile (only tile may be a subentity of a map)
-    static Entity CreateTile();
-
-    // playable characters
-    static Entity CreateWarrior();
-    static Entity CreateMage();
-    static Entity CreateCustom();
-
-    // objects
-    static Entity CreateChest(size_t capacity, size_t lock_lvl);
-
-    // enemies
-    static Entity CreateMimic();
-
-    // items
-    static Entity CreateFood();
-
-  private:
   protected:
 };
 

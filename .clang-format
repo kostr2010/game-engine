@@ -8,3 +8,4 @@ ColumnLimit: 150
 AlignConsecutiveDeclarations: true
 DerivePointerAlignment: false
 PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: None
