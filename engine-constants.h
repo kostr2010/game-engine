@@ -70,8 +70,9 @@ std::map<AbilityKind, std::function<void(Entity &origin, Entity &target)>> dict_
                  Ability target_ability = target.abilities_[CanDie];
 
                  int damage_amount = origin.abilities_[CanKick].GetStateValue(DamageAmount);
-                 int hp_was        = target_ability.GetStateValue(HpCurrent);
-                 int hp_now        = hp_was - damage_amount;
+
+                 int hp_was = target_ability.GetStateValue(HpCurrent);
+                 int hp_now = hp_was - damage_amount;
 
                  target_ability.SetStateValue(HpCurrent, hp_now);
 

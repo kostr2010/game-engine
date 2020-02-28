@@ -63,7 +63,12 @@ class Ability {
 class Entity {
   public:
     Entity();
+    Entity(std::vector<Entity> subentities);
     Entity(std::vector<Ability> abilities);
+    Entity(std::vector<Entity> subentities, std::vector<Ability> abilities);
+
+    void SetSubentities(std::vector<Entity>);
+    void SetAbilities(std::vector<Ability>);
 
     void   Apply(AbilityKind kind, Entity &target);
     int    InventoryGetSize();
@@ -81,20 +86,26 @@ class Entity {
   protected:
 };
 
-class WorldMap {
-  public:
-  private:
-  protected:
-};
+// class WorldMap {
+//   public:
+//   private:
+//   protected:
+// };
 
-class Tile {
-  public:
-  private:
-  protected:
-};
+// class Tile {
+//   public:
+//   private:
+//   protected:
+// };
 
 class EntityFactory {
   public:
+    // just a map (main parent entity)
+    static Entity CreateMap(size_t width, size_t height);
+
+    // tile (only tile may be a subentity of a map)
+    static Entity CreateTile();
+
     // playable characters
     static Entity CreateWarrior();
     static Entity CreateMage();
