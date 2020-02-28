@@ -14,7 +14,7 @@ int main() {
     Entity chest = EntityFactory::CreateChest(10, 1);
     Entity food  = EntityFactory::CreateFood();
 
-    chest.InventoryAdd({food});
+    chest.InventoryAdd({food, food});
     cout << "chest with food:\n" << chest << endl;
     cout << "chest size:" << chest.InventoryGetSize() << endl; 
 
