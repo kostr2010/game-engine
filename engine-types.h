@@ -25,8 +25,7 @@ enum AbilityKind {
 };
 
 enum AbilityState {
-    DamageAmount,    // amount of damage dealt per kick | FIXME separate damage
-                     // types / sources
+    DamageAmount,    // amount of damage dealt per kick | FIXME separate damage types / sources
     HpMax,           // max amount of hp entity has
     HpCurrent,       // current amount of hp entity has
     ContainCapacity, // max capacity of the subentities_ vector
@@ -49,8 +48,8 @@ class Ability {
     int  GetStateValue(AbilityState name);
     void SetStateValue(AbilityState name, int new_value);
 
-    friend bool          operator==(const Ability &left, const Ability &right);
-    friend std::ostream &operator<<(std::ostream &stream, Ability ability);
+    friend bool          operator==(const Ability& left, const Ability& right);
+    friend std::ostream& operator<<(std::ostream& stream, Ability ability);
 
     AbilityKind kind_;
 
@@ -65,13 +64,13 @@ class Entity {
     Entity();
     Entity(std::vector<Ability> abilities);
 
-    void   Apply(AbilityKind kind, Entity &target);
+    void   Apply(AbilityKind kind, Entity& target);
     int    InventoryGetSize();
     void   InventoryAdd(std::vector<Entity> items);
     void   InventoryRemove(size_t index);
     Entity InventoryGetSubentity(size_t index);
 
-    friend std::ostream &operator<<(std::ostream &stream, Entity entity);
+    friend std::ostream& operator<<(std::ostream& stream, Entity entity);
 
     std::map<AbilityKind, Ability> abilities_;
 
