@@ -49,8 +49,8 @@ class Ability {
     int  GetStateValue(AbilityState name);
     void SetStateValue(AbilityState name, int new_value);
 
-    friend bool          operator==(const Ability &left, const Ability &right);
-    friend std::ostream &operator<<(std::ostream &stream, Ability ability);
+    friend bool          operator==(const Ability& left, const Ability& right);
+    friend std::ostream& operator<<(std::ostream& stream, Ability ability);
 
     AbilityKind kind_;
 
@@ -70,13 +70,13 @@ class Entity {
     void SetSubentities(std::vector<Entity>);
     void SetAbilities(std::vector<Ability>);
 
-    void   Apply(AbilityKind kind, Entity &target);
+    void   Apply(AbilityKind kind, Entity& target);
     int    InventoryGetSize();
     void   InventoryAdd(std::vector<Entity> items);
     void   InventoryRemove(size_t index);
     Entity InventoryGetSubentity(size_t index);
 
-    friend std::ostream &operator<<(std::ostream &stream, Entity entity);
+    friend std::ostream& operator<<(std::ostream& stream, Entity entity);
 
     std::map<AbilityKind, Ability> abilities_;
 

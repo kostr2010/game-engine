@@ -30,12 +30,12 @@ void Ability::SetStateValue(AbilityState name, int new_value) {
     return;
 }
 
-bool operator==(const Ability &left, const Ability &right) { return left.state_ == right.state_; }
+bool operator==(const Ability& left, const Ability& right) { return left.state_ == right.state_; }
 
-std::ostream &operator<<(std::ostream &stream, Ability ability) {
+std::ostream& operator<<(std::ostream& stream, Ability ability) {
     stream << ability.kind_ << ": ";
 
-    for (const auto &s : ability.state_)
+    for (const auto& s : ability.state_)
         stream << s.second << " ";
 
     return stream;
@@ -49,7 +49,7 @@ Entity::Entity() { return; }
 void Entity::SetSubentities(std::vector<Entity> subentities) { subentities_ = subentities; }
 
 void Entity::SetAbilities(std::vector<Ability> abilities) {
-    for (const auto &ability : abilities)
+    for (const auto& ability : abilities)
         abilities_[ability.kind_] = ability;
 }
 
@@ -62,7 +62,7 @@ Entity::Entity(std::vector<Entity> subentities, std::vector<Ability> abilities) 
     SetAbilities(abilities);
 }
 
-void Entity::Apply(AbilityKind kind, Entity &target) {
+void Entity::Apply(AbilityKind kind, Entity& target) {
     if (abilities_.count(kind) != 0)
         dict_ability_dispatcher[kind](*this, target);
 
@@ -80,8 +80,8 @@ void Entity::InventoryAdd(std::vector<Entity> items) {
     if (abilities_.count(CanContain) == 0)
         return;
 
-    for (const Entity &item : items) {
-        bool can_fit = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
+    for (const Entity& item : items) {
+        bool can_fit       = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
         int  can_be_picked = item.abilities_.count(CanBePicked);
 
         if (can_fit && can_be_picked != 0)
@@ -103,12 +103,10 @@ void Entity::InventoryRemove(size_t index) {
     return;
 }
 
-Entity Entity::InventoryGetSubentity(size_t index) {
-    return (index < InventoryGetSize()) ? (subentities_[index]) : (Entity());
-}
+Entity Entity::InventoryGetSubentity(size_t index) { return (index < InventoryGetSize()) ? (subentities_[index]) : (Entity()); }
 
-std::ostream &operator<<(std::ostream &stream, Entity entity) {
-    for (const auto &ability : entity.abilities_)
+std::ostream& operator<<(std::ostream& stream, Entity entity) {
+    for (const auto& ability : entity.abilities_)
         stream << "AbilityKind - " << ability.first << ", Ability:" << ability.second << std::endl;
 
     return stream;
@@ -183,13 +181,7 @@ Entity EntityFactory::CreateWarrior() {
     Ability ability_hack    = AbilityFactory::CreateAbilityHack(1);
     Ability ability_move    = AbilityFactory::CreateAbilityMove();
 
-    return Entity({ability_die,
-                   ability_kick,
-                   ability_pick,
-                   ability_loot,
-                   ability_contain,
-                   ability_hack,
-                   ability_move});
+    return Entity({ability_die, ability_kick, ability_pick, ability_loot, ability_contain, ability_hack, ability_move});
 }
 /*
 Entity EntityFactory::CreateMage() {
