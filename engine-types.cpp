@@ -1,11 +1,11 @@
+#include <algorithm>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <vector>
-#include <functional>
-#include <algorithm>
 
-#include "engine-types.h"
 #include "engine-constants.h"
+#include "engine-types.h"
 
 //====================
 // METHODS IMPLEMENTATION
@@ -13,9 +13,7 @@
 //====================
 // ability
 
-Ability::Ability() {
-    return;
-}
+Ability::Ability() { return; }
 
 Ability::Ability(AbilityKind kind, std::map<AbilityState, int> init_state) {
     state_ = init_state;
@@ -24,9 +22,7 @@ Ability::Ability(AbilityKind kind, std::map<AbilityState, int> init_state) {
     return;
 }
 
-int Ability::GetStateValue(AbilityState name) {
-    return state_[name];
-}
+int Ability::GetStateValue(AbilityState name) { return state_[name]; }
 
 void Ability::SetStateValue(AbilityState name, int new_value) {
     state_[name] = new_value;
@@ -34,34 +30,30 @@ void Ability::SetStateValue(AbilityState name, int new_value) {
     return;
 }
 
-bool operator==(const Ability& left, const Ability& right) {
-    return left.state_ == right.state_;
-}
+bool operator==(const Ability &left, const Ability &right) { return left.state_ == right.state_; }
 
-std::ostream& operator<<(std::ostream& stream, Ability ability) {
+std::ostream &operator<<(std::ostream &stream, Ability ability) {
     stream << ability.kind_ << ": ";
 
-    for (const auto& s : ability.state_)
+    for (const auto &s : ability.state_)
         stream << s.second << " ";
-        
+
     return stream;
 }
 
 //====================
 // entity
 
-Entity::Entity() {
-    return;
-}
+Entity::Entity() { return; }
 
-Entity::Entity(std::vector<Ability> abilities) {    
-    for (const auto& ability : abilities)
+Entity::Entity(std::vector<Ability> abilities) {
+    for (const auto &ability : abilities)
         abilities_[ability.kind_] = ability;
 
     return;
 }
 
-void Entity::Apply(AbilityKind kind, Entity& target) {
+void Entity::Apply(AbilityKind kind, Entity &target) {
     if (abilities_.count(kind) != 0)
         dict_ability_dispatcher[kind](*this, target);
 
@@ -71,7 +63,7 @@ void Entity::Apply(AbilityKind kind, Entity& target) {
 int Entity::InventoryGetSize() {
     if (abilities_.count(CanContain) == 0)
         return 0;
-    else 
+    else
         return subentities_.size();
 }
 
@@ -79,8 +71,8 @@ void Entity::InventoryAdd(std::vector<Entity> items) {
     if (abilities_.count(CanContain) == 0)
         return;
 
-    for (const Entity& item : items) {
-        bool can_fit       = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
+    for (const Entity &item : items) {
+        bool can_fit = subentities_.size() < abilities_[CanContain].GetStateValue(ContainCapacity);
         int  can_be_picked = item.abilities_.count(CanBePicked);
 
         if (can_fit && can_be_picked != 0)
@@ -98,17 +90,17 @@ void Entity::InventoryRemove(size_t index) {
 
     if (index < subentities_.size())
         subentities_.erase(subentities_.begin() + index);
-    
+
     return;
 }
 
 Entity Entity::InventoryGetSubentity(size_t index) {
     return (index < InventoryGetSize()) ? (subentities_[index]) : (Entity());
 }
-    
-std::ostream& operator<< (std::ostream& stream, Entity entity) {
-    for (const auto& ability : entity.abilities_)
-        stream << "AbilityKind - " << ability.first << ", Ability:" << ability.second << std::endl; 
+
+std::ostream &operator<<(std::ostream &stream, Entity entity) {
+    for (const auto &ability : entity.abilities_)
+        stream << "AbilityKind - " << ability.first << ", Ability:" << ability.second << std::endl;
 
     return stream;
 }
@@ -117,7 +109,7 @@ std::ostream& operator<< (std::ostream& stream, Entity entity) {
 // ability factory
 
 Ability AbilityFactory::CreateAbilityDie(size_t hp_max, size_t hp_current) {
-    Ability ability_die = Ability(CanDie, {{HpMax, hp_max}, {HpCurrent, hp_current}});    
+    Ability ability_die = Ability(CanDie, {{HpMax, hp_max}, {HpCurrent, hp_current}});
 
     return ability_die;
 }
@@ -182,10 +174,10 @@ Entity EntityFactory::CreateWarrior() {
     Ability ability_hack    = AbilityFactory::CreateAbilityHack(1);
     Ability ability_move    = AbilityFactory::CreateAbilityMove();
 
-    return Entity({ability_die, 
-                   ability_kick, 
-                   ability_pick, 
-                   ability_loot, 
+    return Entity({ability_die,
+                   ability_kick,
+                   ability_pick,
+                   ability_loot,
                    ability_contain,
                    ability_hack,
                    ability_move});
@@ -216,6 +208,6 @@ Entity EntityFactory::CreateMimic() {
 
 Entity EntityFactory::CreateFood() {
     Ability ability_be_picked = AbilityFactory::CreateAbilityBePicked();
-    
+
     return Entity({ability_be_picked});
 }
