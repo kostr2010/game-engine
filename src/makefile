@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -I. -Wall
+CFLAGS = -I. -I../libs -L../libs/sole -Wall
 
 all: main clear
 

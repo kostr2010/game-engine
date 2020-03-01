@@ -7,32 +7,55 @@
 #include <string>
 #include <vector>
 
+#include "../libs/sole/sole.hpp"
+
 //===================
 // ENUMS
 
 enum AbilityKind {
-    CanDie,      // is tough. can be damaged or healed
-    CanContain,  // may contain something pickable
-    CanBePicked, // may be picked up
-    CanMove,     // ability to move to another tile
-    CanPick,     // can pick pickable                    | FIXME
-    CanLoot,     // can pick subEntities of CanContain   |
-    CanKick,     // ability to impact physical damage to another person
-    CanHack,     // can unlock CanBeLocked instance
-    CanBeLocked, // can be locked
+    CanDie,        // is tough. can be damaged or healed
+    CanContain,    // may contain something pickable
+    CanBePicked,   // may be picked up
+    CanMove,       // ability to move to another tile
+    CanPick,       // can pick pickable                    | FIXME
+    CanLoot,       // can pick subEntities of CanContain   |
+    CanKick,       // ability to impact physical damage to another person
+    CanHack,       // can unlock CanBeLocked instance
+    CanBeLocked,   // can be locked
+    IsMap,         // map special ability
+    IsTransparent, //
+    IsWalkable,    //
 };
 
 enum AbilityState {
-    DamageAmount,    // amount of damage dealt per kick | FIXME separate damage types / sources
-    HpMax,           // max amount of hp entity has
-    HpCurrent,       // current amount of hp entity has
-    ContainCapacity, // max capacity of the subentities_ vector
-    SpotToLoot,      // index of target.subentities_ vector to loot
-    LockLevel,       // lock level [0; n]
-                     // warrior uses his weapon to open locked chests at the price of
-                     // their durability, rogue uses lockpicks, wizzard uses magic at
-                     // the cost of the chance that some loot might be destroyed
-    HackLevel,       // if HackLevel >= LockLevel, then can hack
+    DamageAmount,      // amount of damage dealt per kick | FIXME separate damage types / sources
+    HpMax,             // max amount of hp entity has
+    HpCurrent,         // current amount of hp entity has
+    ContainCapacity,   // max capacity of the subentities_ vector
+    SpotToLoot,        // index of target.subentities_ vector to loot
+    LockLevel,         // lock level [0; n]
+                       // warrior uses his weapon to open locked chests at the price of
+                       // their durability, rogue uses lockpicks, wizzard uses magic at
+                       // the cost of the chance that some loot might be destroyed
+    HackLevel,         // if HackLevel >= LockLevel, then can hack
+    MapWidth,          //
+    MapHeight,         //
+    TransparencyLevel, //
+    WalkabilityLevel,  //
+};
+
+enum EntityKind {
+    // heroes
+    Warrior,
+    // enemies
+    Mimic,
+    // containers
+    Chest,
+    // items
+    Food,
+    // misc
+    Map,
+    Tile,
 };
 
 //====================
@@ -74,6 +97,7 @@ class AbilityFactory {
     static Ability CreateAbilityMove();
     static Ability CreateAbilityHack(size_t hack_level);
     static Ability CreateAbilityBeLocked(size_t lock_level);
+    static Ability CreateAbilityBeMap(size_t width, size_t height);
 
   private:
   protected:
@@ -101,22 +125,30 @@ class Coordinates {
 
 class Entity {
   public:
-    Entity(Entity* parent, std::vector<Ability> abilities = {}, std::vector<Entity> subentities = {}, Coordinates coordinates = {});
+    Entity(EntityKind kind, Entity* parent, std::vector<Ability> abilities = {}, std::vector<Entity> subentities = {}, Coordinates coordinates = {});
 
-    void   Apply(AbilityKind kind, Entity& target);
-    int    GetSubEntitiesCount();
-    void   AddSubentity(std::vector<Entity> items);
-    void   RemoveSubentity(size_t index);
-    Entity GetSubentity(size_t index);
+    void        Apply(AbilityKind kind, Entity& target);
+    int         GetSubEntitiesCount();
+    void        AddSubentity(std::vector<Entity> items);
+    void        RemoveSubentity(size_t index);
+    Entity*     GetSubentity(size_t index);
+    Coordinates GetCoordinates();
+    void        SetCoordinates(const Coordinates& new_pos);
+    Entity*     GetParentTile();
+    bool        CheckIfInRange(const Entity& target) const;
 
-    friend std::ostream& operator<<(std::ostream& stream, Entity entity);
+    friend std::ostream& operator<<(std::ostream& stream, Entity& entity);
+    friend bool          operator==(Entity& entity1, Entity& entity2);
+
+    sole::uuid id_;
 
     std::map<AbilityKind, Ability> abilities_;
-    Coordinates                    coordinates_;
+    std::vector<Entity>            subentities_;
     Entity*                        parent_;
+    EntityKind                     kind_;
 
   private:
-    std::vector<Entity> subentities_;
+    Coordinates coordinates_;
 
   protected:
 };
@@ -128,16 +160,17 @@ class EntityFactory {
     // entity inherits parent's coordinateson every level below tile
     // (tiles being the first layer to have individual coordinates)
   public:
-    // just a map (main parent entity)
-    static Entity CreateMap(size_t width, size_t height);
+    // map shell
+    static Entity CreateMapShell();
 
-    // tile (only tile may be a subentity of a map)
-    static Entity CreateTile(Entity* parent);
+    // just a map (main parent entity)
+    static Entity InitMap(Entity* map, size_t width, size_t height);
+
+    // tile (only tile may be a subentity of a map) <- how to check?
+    static Entity CreateTile(Entity* parent, Coordinates pos, int WalkableLevel);
 
     // playable characters
     static Entity CreateWarrior(Entity* parent);
-    static Entity CreateMage(Entity* parent);
-    static Entity CreateCustom(Entity* parent);
 
     // objects
     static Entity CreateChest(Entity* parent, size_t capacity, size_t lock_lvl);
@@ -154,8 +187,3 @@ class EntityFactory {
 
 //====================
 // entity controller
-
-class EntityController {
-  public:
-    static Entity GetSubentityMap(Entity world_map, size_t x, size_t y);
-};

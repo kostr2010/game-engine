@@ -100,6 +100,11 @@ Ability AbilityFactory::CreateAbilityBeLocked(size_t lock_level) {
     return ability_be_locked;
 }
 
+Ability AbilityFactory::CreateAbilityBeMap(size_t width, size_t height) {
+    Ability ability_be_map = Ability(IsMap, {{MapWidth, width}, {MapHeight, height}});
+    return ability_be_map;
+}
+
 //===================
 // coordinates
 
@@ -124,10 +129,16 @@ void Coordinates::SetCoordinates(int x_new, int y_new) {
 //====================
 // entity
 
-Entity::Entity(Entity* parent, std::vector<Ability> abilities, std::vector<Entity> subentities, Coordinates coordinates) {
+Entity::Entity(EntityKind kind, Entity* parent, std::vector<Ability> abilities, std::vector<Entity> subentities, Coordinates coordinates) {
     subentities_ = subentities;
     coordinates_ = coordinates_;
     parent_      = parent;
+    kind_        = kind;
+
+    id_ = sole::uuid1();
+
+    if (parent != nullptr)
+        parent->subentities_.push_back(*this); // Check if works
 
     for (const auto& ability : abilities)
         abilities_[ability.kind_] = ability;
@@ -140,11 +151,26 @@ void Entity::Apply(AbilityKind kind, Entity& target) {
     return;
 }
 
-int Entity::GetSubEntitiesCount() {
-    if (abilities_.count(CanContain) == 0)
-        return 0;
+Entity* Entity::GetParentTile() {
+    if (parent_ == nullptr)
+        throw std::string("no appropriate parent");
+
+    if (parent_->kind_ == Tile)
+        return parent_;
     else
-        return subentities_.size();
+        return parent_->GetParentTile();
+}
+
+int Entity::GetSubEntitiesCount() {
+    return subentities_.size();
+    // std::cout << "**" << std::endl;
+    // if (abilities_.count(CanContain) == 0) {
+    //     std::cout << "**_1" << std::endl;
+    //     return 0;
+    // } else {
+    //     std::cout << "**_2" << std::endl;
+    //     return subentities_.size();
+    // }
 }
 
 void Entity::AddSubentity(std::vector<Entity> items) {
@@ -174,15 +200,35 @@ void Entity::RemoveSubentity(size_t index) {
     return;
 }
 
-Entity Entity::GetSubentity(size_t index) {
-    return (index < GetSubEntitiesCount()) ? (subentities_[index]) : throw std::string("hell yeah (20)");
+Entity* Entity::GetSubentity(size_t index) {
+    int subentities_count = GetSubEntitiesCount();
+
+    if (index < subentities_count)
+        return &(subentities_[index]);
+    else
+        return nullptr;
 }
 
-std::ostream& operator<<(std::ostream& stream, Entity entity) {
+Coordinates Entity::GetCoordinates() {
+    return coordinates_;
+}
+
+void Entity::SetCoordinates(const Coordinates& new_pos) {
+    coordinates_ = new_pos;
+}
+
+std::ostream& operator<<(std::ostream& stream, Entity& entity) {
     for (const auto& ability : entity.abilities_)
         stream << "AbilityKind - " << ability.first << ", Ability:" << ability.second << std::endl;
 
     return stream;
+}
+
+bool operator==(Entity& entity1, Entity& entity2) {
+    return entity1.id_ == entity2.id_;
+}
+
+bool Entity::CheckIfInRange(const Entity& target) const {
 }
 
 //====================
@@ -197,7 +243,11 @@ Entity EntityFactory::CreateWarrior(Entity* parent) {
     Ability ability_hack    = AbilityFactory::CreateAbilityHack(1);
     Ability ability_move    = AbilityFactory::CreateAbilityMove();
 
-    return Entity(parent, {ability_die, ability_kick, ability_pick, ability_loot, ability_contain, ability_hack, ability_move});
+    return Entity(Warrior,
+                  parent,
+                  {ability_die, ability_kick, ability_pick, ability_loot, ability_contain, ability_hack, ability_move},
+                  {},
+                  parent->GetCoordinates());
 }
 /*
 Entity EntityFactory::CreateMage() {
@@ -214,7 +264,7 @@ Entity EntityFactory::CreateChest(Entity* parent, size_t capacity, size_t init_l
     Ability ability_die       = AbilityFactory::CreateAbilityDie(100, 100);
     Ability ability_be_locked = AbilityFactory::CreateAbilityBeLocked(init_lock_lvl);
 
-    return Entity(parent, {ability_die, ability_contain});
+    return Entity(Chest, parent, {ability_die, ability_contain}, {}, parent->GetCoordinates());
 }
 
 /*
@@ -226,34 +276,38 @@ Entity EntityFactory::CreateMimic() {
 Entity EntityFactory::CreateFood(Entity* parent) {
     Ability ability_be_picked = AbilityFactory::CreateAbilityBePicked();
 
-    return Entity(parent, {ability_be_picked});
+    return Entity(Food, parent, {ability_be_picked}, {}, parent->GetCoordinates());
 }
 
-Entity EntityFactory::CreateTile(Entity* parent) {
+Entity EntityFactory::CreateTile(Entity* parent, Coordinates pos, int walkable_level) {
     // for now tile can contain up to 1 entity (may be changed)
     Ability ability_contain = AbilityFactory::CreateAbilityContain(1);
 
-    return Entity(parent, {ability_contain});
+    return Entity(Tile, parent, {ability_contain}, {}, pos);
 }
 
-Entity EntityFactory::CreateMap(size_t width, size_t height) {
-    std::vector<Entity> tiles;
-    tiles.reserve(height * width);
-
-    Entity world_map(nullptr, {}, tiles);
-
-    for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-            tiles[y * width + x] = CreateTile(&world_map);
-
-    tiles.shrink_to_fit();
+Entity EntityFactory::CreateMapShell() {
+    Entity world_map(Map, nullptr);
 
     return world_map;
 }
 
+Entity EntityFactory::InitMap(Entity* mapShell, size_t width, size_t height) {
+    std::vector<Entity> tiles;
+    tiles.reserve(height * width);
+
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            // tiles[y * width + x] = CreateTile(mapShell, {x, y}); // ???????????????
+            tiles.push_back(CreateTile(mapShell, {x, y}, 0));
+
+    tiles.shrink_to_fit();
+
+    std::cout << "tiles.size(): " << tiles.size() << std::endl;
+    mapShell->subentities_ = tiles;
+
+    return *mapShell;
+}
+
 //====================
 // entity controller
-
-// Entity EntityController::GetSubentityMap(Entity world_map, size_t x, size_t y) {
-//     return world_map.GetSubentity()
-// }

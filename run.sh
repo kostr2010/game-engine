@@ -1,2 +1,1 @@
-cd src && make && cd ../
-./main
+cd src && make && ./main -s && cd ../

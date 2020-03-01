@@ -1,8 +1,4 @@
-#pragma once
-
-#include <functional>
-
-#include "engine-types.hpp"
+#include "constants.hpp"
 
 //====================
 // CONSTANTS
