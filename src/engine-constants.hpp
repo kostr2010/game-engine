@@ -2,8 +2,7 @@
 
 #include <functional>
 
-#include "../ability/ability.hpp"
-#include "../entity/entity.hpp"
+#include "engine-types.hpp"
 
 //====================
 // CONSTANTS

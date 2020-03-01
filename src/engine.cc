@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "ability/ability.hpp"
-#include "constants/engine-constants.hpp"
-#include "entity/entity.hpp"
+// #include "engine-constants.hpp"
+#include "engine-types.hpp"
 
 using namespace std;
 
