@@ -125,6 +125,8 @@ class Entity {
 // entity factory
 
 class EntityFactory {
+    // entity inherits parent's coordinateson every level below tile
+    // (tiles being the first layer to have individual coordinates)
   public:
     // just a map (main parent entity)
     static Entity CreateMap(size_t width, size_t height);
