@@ -1,6 +1,9 @@
 #define CATCH_CONFIG_MAIN
+
 #include "../../libs/catch2/catch2.hpp"
-#include "../engine-types.hpp"
+#include "../factories/ability-factory.hpp"
+#include "../factories/entity-factory.hpp"
+#include "../main-classes/main-classes.hpp"
 
 #include <tuple>
 
