@@ -1,6 +1,8 @@
 #include "entity-factory.hpp"
 #include "ability-factory.hpp"
 
+#include "../main-classes/main-classes.hpp"
+
 //====================
 // METHODS IMPLEMENTATION
 

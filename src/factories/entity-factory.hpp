@@ -1,21 +1,10 @@
 #pragma once
+#include <cstdio>
 
-//===================
-// ENUMS
+#include "../main-classes/main-classes.hpp"
 
-enum EntityKind {
-    // heroes
-    Warrior,
-    // enemies
-    Mimic,
-    // containers
-    Chest,
-    // items
-    Food,
-    // misc
-    Map,
-    Tile,
-};
+// class Entity;
+// class Coordinates;
 
 //===================
 // CLASSES DECLARATION

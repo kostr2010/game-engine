@@ -9,8 +9,7 @@
 
 #include "../../libs/sole/sole.hpp"
 #include "../constants/constants.hpp"
-#include "../factories/ability-factory.hpp"
-#include "../factories/entity-factory.hpp"
+#include "../constants/enums.hpp"
 
 //====================
 // CLASSES DECLARATION
