@@ -60,15 +60,15 @@ class Entity {
   public:
     Entity(EntityKind kind, Entity* parent, std::vector<Ability> abilities = {}, std::vector<Entity> subentities = {}, Coordinates coordinates = {});
 
-    void        Apply(AbilityKind kind, Entity& target);
-    int         GetSubEntitiesCount();
-    void        AddSubentity(std::vector<Entity> items);
-    void        RemoveSubentity(size_t index);
-    Entity*     GetSubentity(size_t index);
-    Coordinates GetCoordinates();
-    void        SetCoordinates(const Coordinates& new_pos);
-    Entity*     GetParentTile();
-    bool        CheckIfInRange(const Entity& target) const;
+    AbilityResult Apply(AbilityKind kind, Entity& target);
+    int           GetSubEntitiesCount();
+    void          AddSubentity(std::vector<Entity> items);
+    void          RemoveSubentity(size_t index);
+    Entity*       GetSubentity(size_t index);
+    Coordinates   GetCoordinates();
+    void          SetCoordinates(const Coordinates& new_pos);
+    Entity*       GetParentTile();
+    bool          CheckIfInRange(const Entity& target) const;
 
     friend std::ostream& operator<<(std::ostream& stream, Entity& entity);
     friend bool          operator==(Entity& entity1, Entity& entity2);

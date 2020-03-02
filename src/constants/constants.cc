@@ -3,33 +3,38 @@
 //====================
 // CONSTANTS
 
-std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_ability_dispatcher = {
-    {CanDie,
-     [](Entity& origin, Entity& target) -> void {
+std::map<AbilityKind, std::function<AbilityResult(Entity& origin, Entity& target)>> dict_ability_dispatcher = {
+    {AbilityKind::CanDie,
+     [](Entity& origin, Entity& target) -> AbilityResult {
          // EMPTY BY DESIGN
-         return;
+         return AbilityResult::NoDispatcher;
      }},
 
-    {CanContain,
-     [](Entity& origin, Entity& target) -> void {
+    {AbilityKind::CanContain,
+     [](Entity& origin, Entity& target) -> AbilityResult {
          // EMPTY BY DESIGN
-         return;
+         return AbilityResult::NoDispatcher;
      }},
 
-    {CanBePicked,
-     [](Entity& origin, Entity& target) -> void {
+    {AbilityKind::CanBePicked,
+     [](Entity& origin, Entity& target) -> AbilityResult {
          // EMPTY BY DESIGN
-         return;
+         return AbilityResult::NoDispatcher;
      }},
 
-    {CanMove, [](Entity& origin, Entity& target) -> void { return; }},
+    {AbilityKind::CanMove,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // FIXME
+         return AbilityResult::Success;
+     }},
 
-    {CanPick,
-     [](Entity& origin, Entity& target) -> void {
-         bool origin_can_contain   = origin.abilities_.count(CanContain) != 0;
-         bool target_can_be_picked = origin_can_contain && target.abilities_.count(CanBePicked) != 0;
-         bool origin_can_fit = target_can_be_picked && origin.GetSubEntitiesCount() < origin.abilities_[CanContain].GetStateValue(ContainCapacity);
-         bool can_reach      = origin.GetParentTile() == target.GetParentTile();
+    {AbilityKind::CanPick,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         bool origin_can_contain   = origin.abilities_.count(AbilityKind::CanContain) != 0;
+         bool can_reach            = origin.GetParentTile() == target.GetParentTile(); // FIXME redo trhough InReach function
+         bool target_can_be_picked = target.abilities_.count(AbilityKind::CanBePicked) != 0;
+         bool origin_can_fit       = origin_can_contain &&
+                               origin.GetSubEntitiesCount() < origin.abilities_[AbilityKind::CanContain].GetStateValue(AbilityState::ContainCapacity);
 
          if (origin_can_contain && target_can_be_picked && origin_can_fit && can_reach) {
              origin.AddSubentity({target});
@@ -44,61 +49,110 @@ std::map<AbilityKind, std::function<void(Entity& origin, Entity& target)>> dict_
                  }
 
              parent_subentites.erase(parent_subentites.begin() + target_index_as_subentity);
-         }
 
-         return;
+             return AbilityResult::Success;
+         } else {
+             return AbilityResult::ConditionsNotMet;
+         }
      }},
 
-    {CanLoot,
-     [](Entity& origin, Entity& target) -> void {
-         bool target_can_be_looted = target.abilities_.count(CanContain) != 0;
-         int  state_locked         = origin.abilities_[CanBeLocked].GetStateValue(LockLevel);
-         int  spot_to_loot         = origin.abilities_[CanLoot].GetStateValue(SpotToLoot);
+    {AbilityKind::CanLoot,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         bool target_can_be_looted = target.abilities_.count(AbilityKind::CanContain) != 0;
+         bool target_can_be_locked = target.abilities_.count(AbilityKind::CanBeLocked) != 0;
+         bool is_unlocked          = target_can_be_locked && origin.abilities_[AbilityKind::CanBeLocked].GetStateValue(AbilityState::LockLevel) == 0;
+         int  spot_to_loot         = origin.abilities_[AbilityKind::CanLoot].GetStateValue(AbilityState::SpotToLoot);
+         bool valid_index          = spot_to_loot < target.GetSubEntitiesCount() && spot_to_loot >= 0;
+         // FIXME reach check
 
-         if (target_can_be_looted && state_locked == 0 && spot_to_loot < target.GetSubEntitiesCount()) {
+         if (target_can_be_looted && is_unlocked && valid_index) {
              Entity loot = *(target.GetSubentity(spot_to_loot));
 
              origin.AddSubentity({loot});
              target.RemoveSubentity(spot_to_loot);
-         }
 
-         return;
+             return AbilityResult::Success;
+         } else {
+             return AbilityResult::ConditionsNotMet;
+         }
      }},
 
-    {CanKick,
-     [](Entity& origin, Entity& target) -> void {
-         if (target.abilities_.count(CanDie) != 0) {
-             Ability target_ability = target.abilities_[CanDie];
+    {AbilityKind::CanKick,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         bool target_can_die = target.abilities_.count(AbilityKind::CanDie) != 0;
+         // FIXME reach check
 
-             int damage_amount = origin.abilities_[CanKick].GetStateValue(DamageAmount);
-             int hp_was        = target_ability.GetStateValue(HpCurrent);
+         if (target_can_die) {
+             Ability target_ability = target.abilities_[AbilityKind::CanDie];
+
+             int damage_amount = origin.abilities_[AbilityKind::CanKick].GetStateValue(AbilityState::DamageAmount);
+             int hp_was        = target_ability.GetStateValue(AbilityState::HpCurrent);
              int hp_now        = hp_was - damage_amount;
 
-             target_ability.SetStateValue(HpCurrent, hp_now);
-             target.abilities_[CanDie] = target_ability;
+             target_ability.SetStateValue(AbilityState::HpCurrent, hp_now);
+             target.abilities_[AbilityKind::CanDie] = target_ability;
+
+             return AbilityResult::Success;
          } else {
-             std::cout << "it's invincible!" << std::endl;
+             return AbilityResult::ConditionsNotMet;
          }
-
-         return;
      }},
 
-    {CanHack,
-     [](Entity& origin, Entity& target) -> void {
-         if (target.abilities_.count(CanBeLocked) != 0) {
-             int lock_level = target.abilities_[CanBeLocked].GetStateValue(LockLevel);
-             int hack_level = origin.abilities_[CanHack].GetStateValue(HackLevel);
+    {AbilityKind::CanHack,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         bool target_can_be_hacked = target.abilities_.count(AbilityKind::CanBeLocked) != 0;
+         int  hack_level           = origin.abilities_[AbilityKind::CanHack].GetStateValue(AbilityState::HackLevel);
+         bool can_hack = target_can_be_hacked && target.abilities_[AbilityKind::CanBeLocked].GetStateValue(AbilityState::LockLevel) <= hack_level;
+         // FIXME reach check
 
-             if (hack_level >= lock_level)
-                 target.abilities_[CanBeLocked].SetStateValue(LockLevel, 0);
+         if (can_hack) {
+             target.abilities_[AbilityKind::CanBeLocked].SetStateValue(AbilityState::LockLevel, 0);
+
+             return AbilityResult::Success;
+         } else {
+             return AbilityResult::ConditionsNotMet;
          }
-
-         return;
      }},
 
-    {CanBeLocked,
-     [](Entity& origin, Entity& target) -> void {
+    {AbilityKind::CanBeLocked,
+     [](Entity& origin, Entity& target) -> AbilityResult {
          // EMPTY BY DESIGN
-         return;
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::IsMap,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // EMPTY BY DESIGN
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::IsTransparent,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // EMPTY BY DESIGN
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::IsWalkable,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // EMPTY BY DESIGN
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::IsPositioned,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // EMPTY BY DESIGN
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::CanConsume,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // FIXME
+         return AbilityResult::NoDispatcher;
+     }},
+
+    {AbilityKind::IsConsumable,
+     [](Entity& origin, Entity& target) -> AbilityResult {
+         // EMPTY BY DESIGN
+         return AbilityResult::NoDispatcher;
      }},
 };
