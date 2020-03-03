@@ -25,7 +25,7 @@ class Ability {
     void SetStateValue(const AbilityState& state_name, const int new_value);
 
     friend bool          operator==(const Ability& left, const Ability& right);
-    friend std::ostream& operator<<(std::ostream& stream, const Ability& ability);
+    friend std::ostream& operator<<(std::ostream& stream, Ability& ability);
 
     AbilityKind kind_;
 
@@ -46,11 +46,12 @@ class Entity {
     int           GetSubEntitiesCount() const;
     void          AddSubentity(const std::vector<Entity>& items);
     void          RemoveSubentity(const size_t index);
-    Entity*       GetSubentity(const size_t index); // redo as Entity&
-    Entity*       GetParentTile() const;            // redo as Entity&
-    bool          CheckIfInRange(const Entity& target, AbilityKind ability) const;
+    Entity*       GetSubentity(const size_t index);                                 // redo as Entity&
+    Entity*       GetParentTile() const;                                            // redo as Entity&
+    int           CheckIfHas(const Entity& target);                                 // -1 if not found, else index
+    int           CheckIfInRange(const Entity& target, const AbilityKind& ability); // -1 if not in range, else index of tile
 
-    friend std::ostream& operator<<(std::ostream& stream, const Entity& entity);
+    friend std::ostream& operator<<(std::ostream& stream, Entity& entity);
     friend bool          operator==(const Entity& entity1, const Entity& entity2);
 
     sole::uuid                     id_;

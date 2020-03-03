@@ -103,22 +103,33 @@ Entity EntityFactory::CreateTile(Entity* parent, int pos_x, int pos_y, int walka
     return Entity(EntityKind::Tile, parent, {ability_contain, ability_is_transparent, ability_is_walkable, ability_is_positioned});
 }
 
-Entity EntityFactory::CreateMapShell() {
-    Entity world_map(EntityKind::Map, nullptr);
+Entity EntityFactory::CreateMap(size_t width, size_t height) { // FIXME поверхностное копирование, дед на прошлом занятии говорил
+    Entity world_map = _CreateMapShell(width, height);
+
+    _InitMap(world_map, width, height);
 
     return world_map;
 }
 
-Entity EntityFactory::InitMap(Entity* map_shell, size_t width, size_t height) {
+Entity EntityFactory::_CreateMapShell(size_t width, size_t height) {
+    Ability ability_be_map  = Ability(AbilityKind::IsMap, {{AbilityState::MapWidth, width}, {AbilityState::MapHeight, height}});
+    Ability ability_contain = Ability(AbilityKind::CanContain, {{AbilityState::ContainCapacity, width * height + 1}});
+
+    Entity world_map(EntityKind::Map, nullptr, {ability_be_map, ability_contain});
+
+    return world_map;
+}
+
+void EntityFactory::_InitMap(Entity& map_shell, size_t width, size_t height) {
     std::vector<Entity> tiles;
 
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
-            tiles.push_back(CreateTile(map_shell, x, y, 0));
+            tiles.push_back(CreateTile(&map_shell, x, y, 0));
 
-    map_shell->subentities_ = tiles;
+    map_shell.subentities_ = tiles;
 
-    return *map_shell;
+    return;
 }
 
 // I odn't really understand how data works in this function, and it doesn't work
