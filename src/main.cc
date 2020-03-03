@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "factories/entity-factory.hpp"
-#include "main-classes/main-classes.hpp"
 
 // [+] coordinates -> ability "IsPositioned", only for tiles
 // [-] bool AbleToReach(source, origin, range)
@@ -20,6 +19,7 @@
 using namespace std;
 
 int main() {
+
     Entity world_map = EntityFactory::CreateMapShell();
     EntityFactory::InitMap(&world_map, 10, 10);
 
@@ -42,4 +42,6 @@ int main() {
     ch1.Apply(AbilityKind::CanKick, ch2);
 
     cout << "ch2: \n" << ch2;
+
+    return 0;
 }

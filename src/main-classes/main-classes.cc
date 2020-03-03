@@ -4,8 +4,7 @@
 #include <map>
 #include <vector>
 
-// #include "../constants/constants.hpp"
-#include "../constants/enums.hpp"
+#include "../constants/dict-ability-dispatcher.hpp"
 #include "main-classes.hpp"
 
 //====================
@@ -18,24 +17,24 @@ Ability::Ability() {
     return;
 }
 
-Ability::Ability(AbilityKind kind, std::map<AbilityState, int> init_state) {
+Ability::Ability(const AbilityKind& kind, const std::map<AbilityState, int>& init_state) {
     state_ = init_state;
     kind_  = kind;
 }
 
-int Ability::GetStateValue(AbilityState name) {
-    return state_[name];
+int Ability::GetStateValue(const AbilityState& state_name) { // operator[]  conflicts with const because returns lvalue? aka type&
+    return state_[state_name];
 }
 
-void Ability::SetStateValue(AbilityState name, int new_value) {
-    state_[name] = new_value;
+void Ability::SetStateValue(const AbilityState& state_name, const int new_value) {
+    state_[state_name] = new_value;
 }
 
 bool operator==(const Ability& left, const Ability& right) {
     return left.state_ == right.state_;
 }
 
-std::ostream& operator<<(std::ostream& stream, Ability ability) {
+std::ostream& operator<<(std::ostream& stream, const Ability& ability) {
     // stream << ability.kind_ << ": ";
 
     for (const auto& s : ability.state_)
@@ -44,53 +43,32 @@ std::ostream& operator<<(std::ostream& stream, Ability ability) {
     return stream;
 }
 
-//===================
-// coordinates
-
-Coordinates::Coordinates(int x, int y) {
-    x_ = x;
-    y_ = y;
-}
-
-int Coordinates::GetX() {
-    return x_;
-}
-
-int Coordinates::GetY() {
-    return y_;
-}
-
-void Coordinates::SetCoordinates(int x_new, int y_new) {
-    x_ = x_new;
-    y_ = y_new;
-}
-
 //====================
 // entity
 
-Entity::Entity(EntityKind kind, Entity* parent, std::vector<Ability> abilities, std::vector<Entity> subentities, Coordinates coordinates) {
+Entity::Entity(const EntityKind& kind, Entity* parent, const std::vector<Ability>& abilities /*= {}*/,
+               const std::vector<Entity>& subentities /*= {}*/) {
     subentities_ = subentities;
-    coordinates_ = coordinates_;
     parent_      = parent;
     kind_        = kind;
 
-    id_ = sole::uuid1();
+    id_ = sole::uuid1(); // unique id for the entity
 
     if (parent != nullptr)
-        parent->subentities_.push_back(*this); // Check if works
+        parent->subentities_.push_back(*this); // check if works
 
     for (const auto& ability : abilities)
         abilities_[ability.kind_] = ability;
 }
 
-AbilityResult Entity::Apply(AbilityKind kind, Entity& target) {
+AbilityResult Entity::Apply(const AbilityKind& kind, Entity& target) {
     if (abilities_.count(kind) != 0)
         return dict_ability_dispatcher[kind](*this, target);
     else
         return AbilityResult::OriginDoesntHaveAbility;
 }
 
-Entity* Entity::GetParentTile() {
+Entity* Entity::GetParentTile() const {
     if (parent_ == nullptr)
         throw std::string("no appropriate parent");
 
@@ -100,19 +78,19 @@ Entity* Entity::GetParentTile() {
         return parent_->GetParentTile();
 }
 
-int Entity::GetSubEntitiesCount() {
+int Entity::GetSubEntitiesCount() const {
     return subentities_.size();
 }
 
-void Entity::AddSubentity(std::vector<Entity> items) {
+void Entity::AddSubentity(const std::vector<Entity>& items) {
     if (abilities_.count(AbilityKind::CanContain) == 0)
         return;
 
     for (const Entity& item : items) {
         bool can_fit       = subentities_.size() < abilities_[AbilityKind::CanContain].GetStateValue(AbilityState::ContainCapacity);
-        int  can_be_picked = item.abilities_.count(AbilityKind::CanBePicked);
+        bool can_be_picked = item.abilities_.count(AbilityKind::CanBePicked) != 0;
 
-        if (can_fit && can_be_picked != 0)
+        if (can_fit && can_be_picked)
             subentities_.push_back(item);
         else if (!can_fit)
             break;
@@ -135,26 +113,29 @@ Entity* Entity::GetSubentity(size_t index) {
     int subentities_count = GetSubEntitiesCount();
 
     if (index < subentities_count)
-        return &(subentities_[index]);
+        return &(subentities_[index]); // & - non-const operator? when ttrying to add "const" to
     else
         return nullptr;
 }
 
-Coordinates Entity::GetCoordinates() {
-    return coordinates_;
+bool Entity::CheckIfInRange(const Entity& target, AbilityKind ability) const {
+    Entity* parent_tile = this->GetParentTile();
+
+    int map_size_x = parent_tile->parent_->abilities_[AbilityKind::IsMap].GetStateValue(AbilityState::MapWidth);
+    int map_size_y = parent_tile->parent_->abilities_[AbilityKind::IsMap].GetStateValue(AbilityState::MapHeight);
+    int pos_x      = parent_tile->abilities_[AbilityKind::IsPositioned].GetStateValue(AbilityState::PositionX);
+    int pos_y      = parent_tile->abilities_[AbilityKind::IsPositioned].GetStateValue(AbilityState::PositionY);
+
+    // index of (x, y) = y * size_x + x
 }
 
-void Entity::SetCoordinates(const Coordinates& new_pos) {
-    coordinates_ = new_pos;
-}
-
-std::ostream& operator<<(std::ostream& stream, Entity& entity) {
+std::ostream& operator<<(std::ostream& stream, const Entity& entity) {
     for (const auto& ability : entity.abilities_)
         stream << "AbilityKind - " /*<< ability.first*/ << ", Ability:" << ability.second << std::endl;
 
     return stream;
 }
 
-bool operator==(Entity& entity1, Entity& entity2) {
+bool operator==(const Entity& entity1, const Entity& entity2) {
     return entity1.id_ == entity2.id_;
 }

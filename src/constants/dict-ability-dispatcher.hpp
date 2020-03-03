@@ -1,7 +1,9 @@
-#include "constants.hpp"
+#pragma once
 
-//====================
-// CONSTANTS
+#include "../main-classes/main-classes.hpp"
+#include "./enums.hpp"
+#include <functional>
+#include <map>
 
 std::map<AbilityKind, std::function<AbilityResult(Entity& origin, Entity& target)>> dict_ability_dispatcher = {
     {AbilityKind::CanDie,
