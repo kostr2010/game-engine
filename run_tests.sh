@@ -1,1 +1,1 @@
-cd src/tests && make && ./main && cd ../../
+cd src/tests && make&& ./main && cd ../../
