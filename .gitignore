@@ -1,2 +1,5 @@
-/**/main
+*main
 libs/*
+*.gcda
+*.gcno
+*.gcov
