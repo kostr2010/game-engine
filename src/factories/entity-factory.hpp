@@ -4,7 +4,7 @@
 #include "../main-classes/main-classes.hpp"
 
 // class Entity;
-// class Coordinates;
+// class Coord;
 
 //===================
 // CLASSES DECLARATION
@@ -13,27 +13,29 @@
 // entity factory
 
 class EntityFactory {
-  public:
-    // heroes
-    static Entity CreateWarrior(Entity* parent);
+public:
+  // heroes
+  static Entity CreateWarrior(Entity* parent);
 
-    // enemies
-    static Entity CreateMimic(Entity* parent);
+  // enemies
+  static Entity CreateMimic(Entity* parent);
 
-    // containers
-    static Entity CreateChest(Entity* parent, size_t lock_lvl, const std::vector<Entity>& subentites = {});
+  // containers
+  static Entity CreateChest(Entity* parent, int lock_lvl,
+                            const std::vector<Entity>& subentites = {});
 
-    // items
-    static Entity CreateFood(Entity* parent);
+  // items
+  static Entity CreateFood(Entity* parent);
+  /*
+  // misc
+  static Entity CreateTile(Entity* parent, int pos_x, int pos_y,
+                           int walkability_level); // tile (only tile may be a subentity of a map)
+<- how to check? static Entity CreateMap(int width, int height);
 
-    // misc
-    static Entity CreateTile(Entity* parent, int pos_x, int pos_y,
-                             int walkability_level); // tile (only tile may be a subentity of a map) <- how to check?
-    static Entity CreateMap(size_t width, size_t height);
-
-  private:
-    static Entity _CreateMapShell(size_t width, size_t height);       // basic map
-    static void   _InitMap(Entity& map, size_t width, size_t height); // just a map (main parent entity)
-
-  protected:
+private:
+  static Entity _CreateMapShell(int width, int height);       // basic map
+  static void   _InitMap(Entity& map, int width, int height); // just a map (main parent
+entity)
+  */
+protected:
 };
