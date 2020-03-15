@@ -3,18 +3,18 @@
 #include "entity.hpp"
 
 class EntityFactory {
-public:
-  static Entity CreateChest(int hp, int capacity);
-  static Entity CreateThing();
+  public:
+    static Entity CreateChest(int hp, int capacity);
+    static Entity CreateThing();
 
-private:
-protected:
+  private:
+  protected:
 };
 
 class EntityFactoryActive {
-public:
-  static EntityActive CreateWarrior();
+  public:
+    static EntityActive CreateWarrior();
 
-private:
-protected:
+  private:
+  protected:
 };

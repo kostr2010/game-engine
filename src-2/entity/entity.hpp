@@ -7,6 +7,9 @@
 #include <vector>
 #include <map>
 
+//====================
+// Entity
+
 class Entity {
   public:
     Entity(std::map<AbilityKindEntity, Ability<AbilityKindEntity, AbilityStateEntity>> abilities,
@@ -46,6 +49,9 @@ class Entity {
     Tile*               parent_tile_;       // pointer to the parent tile. always non-null
     Entity* parent_entity_; // pointer to the entity-parent. always null for EntityActive
 };
+
+//====================
+// EntityActive
 
 class EntityActive : public Entity {
   public:

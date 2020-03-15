@@ -5,6 +5,7 @@ enum class AbilityKindEntity {
     IsContainer,
     IsLockable,
     IsConsumable,
+    IsPickable,
 };
 
 enum class AbilityKindEntityActive {
@@ -21,14 +22,15 @@ enum class AbilityStateEntity {
     HPCur,
     Capacity,
     LockLevel,
-    // FIXME
+    //
+    //
 };
 
 enum class AbilityStateEntityActive {
     Movability,
     DamageKick,
-    // FIXME
+    //
     SpotToLoot,
     HackLevel,
-    // FIXME
+    //
 };

@@ -3,11 +3,14 @@
 #include "../entity/entity.hpp"
 #include <map>
 
+//====================
+// AbilityResult
+
 enum class EventType {
     Died,
     Stunned,
     Moved,
-
+    Damaged,
 };
 
 struct AbilityResultPartial {
@@ -19,6 +22,9 @@ struct AbilityResult : AbilityResultPartial {
     Entity entity_before;
     Entity entity_after;
 };
+
+//====================
+// Ability
 
 template <class AbilityKind, class AbilityState>
 
@@ -36,6 +42,9 @@ class Ability {
   private:
   protected:
 };
+
+//====================
+// AbilityActive
 
 template <class AbilityKindActive, class AbilityStateActive>
 

@@ -31,6 +31,7 @@ Ability<AbilityKindEntity, AbilityStateEntity> AbilityFactoryEntity::CreateAbili
 
 AbilityResultPartial DispatcherMove(EntityActive& origin, Entity& target) {
     // FIXME
+    // adding a nullEntity to every Tile?
     return {.event_type = EventType::Moved, .sub_results = {}};
 }
 
@@ -56,7 +57,9 @@ AbilityResultPartial DispatcherKick(EntityActive& origin, Entity& target) {
             .SetAbilityStateValue(AbilityStateEntity::HPCur, hp_cur - damage);
     }
     // FIXME exception
-    return;
+    // Add ability RecieveDamage in orger to store data about creature being damaged. but breaks
+    // current semantics completely
+    return /*{.event_type = EventType::Kicked, .sub_results = {}}*/;
 }
 
 AbilityActive<AbilityKindEntityActive, AbilityStateEntityActive>
@@ -69,8 +72,15 @@ AbilityFactoryEntityActive::CreateAbilityKick(const int damage_base) {
 }
 
 AbilityResultPartial DispatcherPick(EntityActive& origin, Entity& target) {
-    // FIXME
-    return;
+    bool target_is_pickable = target.AbilitiesCountAbility(AbilityKindEntity::IsPickable) != 0;
+
+    if (target_is_pickable) {
+        origin.SubentitiesAdd({target});
+
+        target.GetParentTile()->ObjectsRemove(target);
+    }
+
+    return /*{.event_type = EventType::Kicked, .sub_results = {}}*/;
 }
 
 AbilityActive<AbilityKindEntityActive, AbilityStateEntityActive>
@@ -81,7 +91,7 @@ AbilityFactoryEntityActive::CreateAbilityPick(/* FIXME */) {
 
 AbilityResultPartial DispatcherLoot(EntityActive& origin, Entity& target) {
     // FIXME
-    return;
+    return /*{.event_type = EventType::Kicked, .sub_results = {}}*/;
 }
 
 AbilityActive<AbilityKindEntityActive, AbilityStateEntityActive>
@@ -95,7 +105,7 @@ AbilityFactoryEntityActive::CreateAbilityLoot(const int spot_to_loot) {
 
 AbilityResultPartial DispatcherHack(EntityActive& origin, Entity& target) {
     // FIXME
-    return;
+    return /*{.event_type = EventType::Kicked, .sub_results = {}}*/;
 }
 
 AbilityActive<AbilityKindEntityActive, AbilityStateEntityActive>
@@ -109,7 +119,7 @@ AbilityFactoryEntityActive::CreateAbilityHack(const int hack_level_base) {
 
 AbilityResultPartial DispatcherConsume(EntityActive& origin, Entity& target) {
     // FIXME
-    return;
+    return /*{.event_type = EventType::Kicked, .sub_results = {}}*/;
 }
 
 AbilityActive<AbilityKindEntityActive, AbilityStateEntityActive>

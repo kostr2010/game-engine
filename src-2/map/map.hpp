@@ -32,7 +32,7 @@ class Map {
                                AbilityKindEntityActive ability_kind);
 
     bool PushEntity(std::vector<int> path, Entity& entity);
-
+    // PushEntityActive ???
   private:
     std::map<Coord, Tile> tiles_;
 
