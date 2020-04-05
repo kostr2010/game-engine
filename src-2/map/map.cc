@@ -1,38 +1,3 @@
-/*
-#pragma once;
-
-#include <map>
-#include "../tile/tile.hpp"
-
-class Coord {
-  public:
-    Coord(int x, int y);
-    ~Coord() = default;
-
-    void CoordSet(int pos_x, int pos_y);
-    int  CoordGetX();
-    int  CoordGetY();
-
-  private:
-    int pos_x_, pos_y_;
-
-  protected:
-};
-
-class Map {
-  Map(std::vector<Tile> tiles);
-    ~Map() = default;
-
-    Entity GetEntity(std::vector<int> path);
-    bool   ApplyAbility(std::vector<int> path_origin, std::vector<int> path_target,
-                        AbilityKindEntityActive ability_kind);
-
-    bool PushEntity(std::vector<int> path, Entity& entity);
-
-  private:
-    std::map<Coord, Tile> tiles_;
-};
-*/
 #include "map.hpp"
 
 //====================

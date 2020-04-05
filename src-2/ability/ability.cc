@@ -1,5 +1,5 @@
-#include <iostream>
 #include "ability.hpp"
+#include <iostream>
 
 //====================
 // Ability
