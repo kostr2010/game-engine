@@ -1,9 +1,14 @@
 #pragma once
 
+#include <cassert>
+
+#include "../assembly/assembly.hpp"
 #include "../component/component.hpp"
 #include "../entity/entity.hpp"
 #include "../system/system.hpp"
 
+// ====================
+// Monitor
 // global manager for all managers
 
 class Monitor {
@@ -22,11 +27,11 @@ public:
   }
 
   template <typename Component_t>
-  void AddComponent(Entity entity, Component_t component) {
-    component_manager_.AddComponent(entity, component);
+  void AttachComponent(Entity entity, Component_t component_new) {
+    component_manager_.AttachComponent(entity, component_new);
 
     Signature signature_prev = entity_manager_.GetSignature(entity);
-    Component component      = entity_manager_.GetComponentType(entity);
+    Component component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, true);
 
@@ -34,11 +39,11 @@ public:
   }
 
   template <typename Component_t>
-  void RemoveComponent(Entity entity, Component_t component) {
-    component_manager_.RemoveComponent(entity);
+  void RemoveComponent(Entity entity) {
+    component_manager_.RemoveComponent<Component_t>(entity);
 
     Signature signature_prev = entity_manager_.GetSignature(entity);
-    Component component      = entity_manager_.GetComponentType(entity);
+    Component component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, false);
 
@@ -47,7 +52,7 @@ public:
 
   template <typename Component_t>
   Component_t GetComponent(Entity entity) {
-    return component_manager_.GetComponent(entity);
+    return component_manager_.GetComponent<Component_t>(entity);
   }
 
   Entity AddEntity() {
@@ -55,8 +60,6 @@ public:
   }
 
   void RemoveEntity(Entity entity) {
-    // TODO: catch "no such entity"
-
     entity_manager_.RemoveEntity(entity);
     component_manager_.RemoveEntity(entity);
     system_manager_.RemoveEntity(entity);
@@ -69,12 +72,13 @@ public:
 
   template <typename System_t>
   System* RegisterSystem(std::vector<Component> components) {
-    // TODO: catch "this system has been already registered"
+    assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
+
     System* system = system_manager_.RegisterSystem<System_t>();
 
     // merge all components to one signature
     Signature signature;
-    for (auto& component : vector) {
+    for (auto& component : components) {
       signature.set(component, true);
     }
 
@@ -97,7 +101,7 @@ private:
     system_manager_    = SystemManager{};
   }
 
-  ComponentManager component_manager_;
-  EntityManager    entity_manager_;
-  SystemManager    system_manager_;
+  ComponentManager component_manager_{};
+  EntityManager    entity_manager_{};
+  SystemManager    system_manager_{};
 };

@@ -12,7 +12,10 @@ typedef std::bitset<MAX_COMPONENTS> Signature;
 // Entity - just numeric Id
 typedef int Entity;
 
-// EntityManager - keep track of entities and their components(via signatures)
+// ====================
+// EntityManager
+// keeps track of entities and their components(via signatures)
+
 class EntityManager {
 public:
   // EntityManager()  = default;
@@ -24,7 +27,7 @@ public:
   }
 
   Entity CreateEntity() {
-    int id = available_ids_.front();
+    auto id = available_ids_.front();
     available_ids_.pop();
 
     return id;
@@ -47,5 +50,5 @@ private:
   std::array<Signature, MAX_ENTITIES>
                      abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
   std::queue<Entity> available_ids_{};
-  int                entities_alive_ = 0;
+  int                entities_alive_;
 };

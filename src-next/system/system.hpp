@@ -1,6 +1,8 @@
 #pragma once
 
+#include <map>
 #include <set>
+#include <typeinfo>
 
 #include "../entity/entity.hpp"
 
@@ -13,40 +15,46 @@
 
 // for (auto& entity : entities_) {
 //     auto& mortal = GetComponent<Mortal>(entity);
-
 //     mortal.health -= 1;
 // }
 
+// ====================
+// System
 // base class for each system
+
 class System {
 public:
   std::set<Entity> entities_;
 };
 
-// typeid !!!
-
+// ====================
+// SystemManager
 // registers new systems
+
 class SystemManager {
 public:
-  SystemManager()  = default;
-  ~SystemManager() = default;
+  SystemManager() = default;
+  ~SystemManager() {
+    for (auto& pair : systems_)
+      delete (pair.second);
+  }
 
   template <typename System_t>
   System_t* RegisterSystem() {
-    const char* typeName = typeid(System_t).name();
+    const char* type_name = typeid(System_t).name();
 
     System_t* system = new System_t{};
 
-    systems_[typeName] = system;
+    systems_[type_name] = system;
 
     return system;
   }
 
   template <typename System_t>
   void SetSignature(Signature signature) {
-    const char* typeName = typeid(T).name();
+    const char* typeName = typeid(System_t).name();
 
-    systems_.insert({typeName, signature});
+    system_signatures_.insert({typeName, signature});
   }
 
   void RemoveEntity(Entity entity) {
@@ -68,6 +76,13 @@ public:
       else
         system->entities_.erase(entity);
     }
+  }
+
+  template <typename System_t>
+  bool Contains() const {
+    const char* id = typeid(System_t).name();
+
+    return (systems_.find(id) == systems_.end());
   }
 
 private:
