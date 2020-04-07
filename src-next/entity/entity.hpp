@@ -1,7 +1,8 @@
 #pragma once
 
 #include <bitset>
-#include <queue>
+// #include <queue>
+#include <set>
 
 const int MAX_ENTITIES   = 128;
 const int MAX_COMPONENTS = 32;
@@ -23,18 +24,18 @@ public:
 
   EntityManager() {
     for (int i = 0; i < MAX_COMPONENTS; i++)
-      available_ids_.push(i);
+      available_ids_.insert(i);
   }
 
   Entity CreateEntity() {
-    auto id = available_ids_.front();
-    available_ids_.pop();
+    auto id = available_ids_.begin();
+    available_ids_.erase(id);
 
-    return id;
+    return *id;
   }
 
   void RemoveEntity(Entity entity) {
-    available_ids_.push(entity);
+    available_ids_.insert(entity);
     abilities_signatures_[entity].reset();
   }
 
@@ -46,9 +47,14 @@ public:
     return abilities_signatures_[entity] = signature;
   }
 
+  // SLOW AS HELL due to implementation issues. TODO: redo
+  bool CheckIfEntityExists(Entity entity_target) {
+    return available_ids_.find(entity_target) == available_ids_.end();
+  }
+
 private:
   std::array<Signature, MAX_ENTITIES>
-                     abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
-  std::queue<Entity> available_ids_{};
-  int                entities_alive_;
+                   abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
+  std::set<Entity> available_ids_{}; // TODO: replace "set" with smth better
+  int              entities_alive_;
 };

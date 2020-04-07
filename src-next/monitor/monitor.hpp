@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <vector>
 
 #include "../assembly/assembly.hpp"
 #include "../component/component.hpp"
@@ -18,11 +19,11 @@ public:
   }
   ~Monitor() = default;
 
-  // wrappers for managers, so user has to speak only to monitor instead of directly to each of
-  // managers
+  // wrappers for managers, so user has to speak only to monitor instead of directly to each one of
+  // the managers
 
   template <typename Component_t>
-  void RegisterComponent() {
+  Component RegisterComponent() {
     component_manager_.RegisterComponent<Component_t>();
   }
 
@@ -48,11 +49,6 @@ public:
     Signature signature_new = signature_prev.set(component, false);
 
     UpdateSignature(entity, signature_new);
-  }
-
-  template <typename Component_t>
-  Component_t GetComponent(Entity entity) {
-    return component_manager_.GetComponent<Component_t>(entity);
   }
 
   Entity AddEntity() {
@@ -86,6 +82,20 @@ public:
     SetSystemSignature<System_t>(signature);
 
     return system;
+  }
+
+  template <typename System_t>
+  System_t* GetSystem() {
+    return system_manager_.GetSystem<System_t>();
+  }
+
+  template <typename Component_t>
+  Component_t* GetComponent(Entity entity) {
+    return component_manager_.GetComponent<Component_t>(entity);
+  }
+
+  bool CheckIfEntityExists(Entity entity) {
+    return entity_manager_.CheckIfEntityExists(entity);
   }
 
 private:

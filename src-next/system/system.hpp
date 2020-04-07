@@ -5,6 +5,7 @@
 #include <typeinfo>
 
 #include "../entity/entity.hpp"
+#include "../monitor/monitor.hpp"
 
 // "A system is any functionality that iterates upon a list of entities with a certain signature of
 // components."
@@ -24,7 +25,14 @@
 
 class System {
 public:
-  std::set<Entity> entities_;
+  std::set<Entity> entities_{};
+
+  System(Monitor* monitor) {
+    monitor_ = monitor;
+  }
+
+protected:
+  Monitor* monitor_;
 };
 
 // ====================
@@ -48,6 +56,15 @@ public:
     systems_[type_name] = system;
 
     return system;
+  }
+
+  template <typename System_t>
+  System_t* GetSystem() {
+    const char* type_name = typeid(System_t).name();
+
+    // TODO: assert that the system exists
+
+    return systems_[type_name];
   }
 
   template <typename System_t>

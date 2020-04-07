@@ -20,13 +20,9 @@ class IComponentPack {
 public:
   // ~IComponentPack()        = default;
   // virtual ~IComponentPack() = default;
-  virtual void RemoveEntity(Entity entity) {
-    return;
-  }
+  virtual void RemoveEntity(Entity entity) = 0;
 
-  virtual bool Contains(Entity entity) const {
-    return true;
-  }
+  virtual bool Contains(Entity entity) const = 0;
 };
 
 // ====================
@@ -76,7 +72,7 @@ public:
   ~ComponentManager() = default;
 
   template <typename Component_t>
-  void RegisterComponent() {
+  Component RegisterComponent() {
     auto id = GetComponentId<Component_t>();
 
     assertm(component_packs_.find(id) == component_packs_.end(),
@@ -91,6 +87,8 @@ public:
 
     // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
+
+    return id;
   }
 
   template <typename Component_t>
@@ -113,7 +111,7 @@ public:
   }
 
   template <typename Component_t>
-  Component_t& GetComponent(Entity entity) {
+  Component_t* GetComponent(Entity entity) {
     GetComponentPack<Component_t>()->GetComponent(entity);
   }
 
