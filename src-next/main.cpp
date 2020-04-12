@@ -9,11 +9,20 @@
 #include "./component/components/health.hpp"
 #include "./component/components/movement.hpp"
 
-// how shared_ptr works
-// make_shared, shared_ptr
-// static vs dynamic type, cast
-// !!! unique_ptr
+// TO GOOGLE
+// [-] how shared_ptr works
+// [-] make_shared, shared_ptr
+// [-] static vs dynamic type, cast
+// [-] !!! unique_ptr
+// [-]
 // https://stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
+
+// FOR NEXT TIME
+// [-] add response codes
+
+// TO TRY
+// [-] systems as static class (it only contains functions anyways)
+// [-] get rid of booleans in components (! new bitmap and manager)
 
 int main() {
   Monitor monitor{};

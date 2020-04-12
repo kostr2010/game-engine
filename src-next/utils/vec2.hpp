@@ -12,6 +12,10 @@ public:
   }
 
   int x_, y_;
+
+  static Vec2 FixedProduct(Vec2 v1, Vec2 v2) {
+    return {v1.x_ * v2.x_, v1.y_ * v2.y_};
+  }
 };
 
 void operator+=(Vec2& left, Vec2& right) {

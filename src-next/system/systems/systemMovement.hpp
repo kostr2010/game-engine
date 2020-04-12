@@ -1,5 +1,6 @@
 #pragma once
 #include "../component/components/movement.hpp"
+#include "../component/components/position.hpp"
 #include "../system.hpp"
 
 class SystemMovement : public System {
@@ -9,6 +10,13 @@ public:
 
   void Move(Entity entity, Vec2 direction) {
     ComponentMovement* comp_move = monitor_->GetComponent<ComponentMovement>(entity);
-    comp_move->pos += direction;
+    ComponentPosition* comp_pos  = monitor_->GetComponent<ComponentPosition>(entity);
+
+    if (comp_move->steps_cur == 0)
+      return;
+
+    comp_move->steps_cur--;
+
+    comp_pos->pos += direction;
   }
 };
