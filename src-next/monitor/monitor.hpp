@@ -3,11 +3,11 @@
 #include <cassert>
 #include <vector>
 
-#include "../assembly/assembly.hpp"
 #include "../component/component.hpp"
 #include "../entity/entity.hpp"
 #include "../system/system.hpp"
 #include "../system/systemManager.hpp"
+#include "../utils/assembly.hpp"
 
 // ====================
 // Monitor
@@ -16,6 +16,13 @@
 class Monitor {
 public:
   Monitor() {
+    component_manager_ = ComponentManager{};
+    entity_manager_    = EntityManager{};
+    system_manager_    = SystemManager{this};
+
+    // при попытке вызова конструкторов в ф-ии Init, конструктор пытался сначала вызвать дефолтный
+    // к-тор СисМан
+
     Init();
   }
   ~Monitor() = default;
@@ -25,7 +32,9 @@ public:
 
   template <typename Component_t>
   Component RegisterComponent() {
-    component_manager_.RegisterComponent<Component_t>();
+    Component component = component_manager_.RegisterComponent<Component_t>();
+
+    return component;
   }
 
   template <typename Component_t>
@@ -99,6 +108,10 @@ public:
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
+  void Print() {
+    component_manager_.Print();
+  }
+
 private:
   void UpdateSignature(Entity entity, Signature signature) {
     entity_manager_.SetSignature(entity, signature);
@@ -107,12 +120,9 @@ private:
 
   // creates entity, system, component managers
   void Init() {
-    component_manager_ = ComponentManager{};
-    entity_manager_    = EntityManager{};
-    system_manager_    = SystemManager{};
   }
 
   ComponentManager component_manager_{};
   EntityManager    entity_manager_{};
-  SystemManager    system_manager_{};
+  SystemManager    system_manager_{this};
 };

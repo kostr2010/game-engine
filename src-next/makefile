@@ -2,11 +2,11 @@ CC = g++
 
 CFLAGS = -Wall
 
-MAIN = main.cpp
-COMPONENT = component/component.cpp
-ENTITY    = entity/entity.cpp
-MONITOR   = monitor/monitor.cpp
-SYSTEM    = system/system.cpp                                                                          system/systemManager.cpp
+MAIN = main.o
+COMPONENT = component/component.o
+ENTITY    = entity/entity.o
+MONITOR   = monitor/monitor.o
+SYSTEM    = system/system.o system/systemManager.o
 
 COMPONENT_DEPS = component/component.hpp component/components/health.hpp component/components/kick.hpp
 ENTITY_DEPS    = entity/entity.hpp
@@ -23,7 +23,7 @@ main: ${MAIN} ${DEPS}
 	${CC} -o main ${MAIN} ${CFLAGS}
 
 clean:
-	rm -f ${OBJS}
+	rm -f ${OBJS} ${MAIN}
 
 all: clear main clean
 

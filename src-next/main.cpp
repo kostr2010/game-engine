@@ -21,8 +21,6 @@ int main() {
   Component comp_health_id = monitor.RegisterComponent<ComponentHealth>();
   Component comp_kick_id   = monitor.RegisterComponent<ComponentKick>();
 
-  // SystemHealth* sys_health =
-  // (SystemHealth*)monitor.RegisterSystem<SystemHealth>({comp_health_id});
   monitor.RegisterSystem<SystemHealth>({comp_health_id});
   SystemKick* sys_kick = (SystemKick*)monitor.RegisterSystem<SystemKick>({comp_kick_id});
 
@@ -41,6 +39,9 @@ int main() {
   monitor.AttachComponent(ch1, ch1_kick);
 
   sys_kick->Kick(ch1, ch2);
+
+  std::cout << *monitor.GetComponent<ComponentHealth>(ch1) << std::endl;
+  std::cout << *monitor.GetComponent<ComponentHealth>(ch2) << std::endl;
 
   return 0;
 }

@@ -1,19 +1,11 @@
 #pragma once
 
-class Vector2 {
-public:
-  Vector2()  = default;
-  ~Vector2() = default;
-  Vector2(int x, int y) {
-    x_ = x;
-    y_ = y;
-  }
-
-private:
-  int x_, y_;
-};
+#include <iostream>
 
 struct ComponentMovement {
-  Vector2 vec{};
-  int     speed;
+  int speed;
 };
+
+std::ostream& operator<<(std::ostream& os, ComponentMovement comp_movement) {
+  return os << "speed: " << comp_movement.speed << std::endl;
+}

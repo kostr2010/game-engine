@@ -2,13 +2,14 @@
 
 #include <array>
 #include <cassert>
+#include <iostream>
 #include <list>
 #include <map>
 #include <memory>
 #include <typeinfo>
 
-#include "../assembly/assembly.hpp"
 #include "../entity/entity.hpp"
+#include "../utils/assembly.hpp"
 
 typedef int Component;
 
@@ -47,8 +48,8 @@ public:
     components_.erase(entity_index);
   };
 
-  Component_t& GetComponent(Entity entity) {
-    return components_[entity];
+  Component_t* GetComponent(Entity entity) {
+    return &(components_[entity]);
   };
 
   bool Contains(Entity entity) const override {
@@ -113,7 +114,7 @@ public:
 
   template <typename Component_t>
   Component_t* GetComponent(Entity entity) {
-    GetComponentPack<Component_t>()->GetComponent(entity);
+    return GetComponentPack<Component_t>()->GetComponent(entity);
   }
 
   // tell each component_pack that an entity has been destroyed
@@ -125,6 +126,13 @@ public:
 
       if (pack->Contains(entity))
         pack->RemoveEntity(entity);
+    }
+  }
+
+  void Print() {
+    for (auto& pair : component_types_) {
+      auto& comp = pair.second;
+      std::cout << comp << std::endl;
     }
   }
 

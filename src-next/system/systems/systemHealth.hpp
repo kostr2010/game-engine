@@ -19,6 +19,9 @@ public:
 
     comp_health->hp_cur += delta;
 
+    std::cout << "[SystemHealth] entity's " << entity << " hp was changed from "
+              << comp_health->hp_cur - delta << " to " << comp_health->hp_cur << std::endl;
+
     return true;
   }
 
@@ -28,6 +31,9 @@ public:
     ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
 
     comp_health->hp_max += delta;
+
+    std::cout << "[SystemHealth] entity's " << entity << " max hp was changed from "
+              << comp_health->hp_max - delta << " to " << comp_health->hp_max << std::endl;
 
     return true;
   }
