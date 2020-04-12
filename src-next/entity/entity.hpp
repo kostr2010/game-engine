@@ -1,7 +1,6 @@
 #pragma once
 
 #include <bitset>
-// #include <queue>
 #include <set>
 
 const int MAX_ENTITIES   = 128;

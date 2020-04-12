@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../component/components/kick.hpp"
+// #include "../../monitor/monitor.hpp"
 #include "../system.hpp"
 #include "./systemHealth.hpp"
 
@@ -13,5 +14,7 @@ public:
     // TODO: assert if health system exists
     SystemHealth* sys_health = monitor_->GetSystem<SystemHealth>();
     sys_health->ChangeCurrentHp(entity_target, comp_kick->damage_amount);
+
+    return true;
   }
 };

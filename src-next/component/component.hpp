@@ -78,7 +78,8 @@ public:
     assertm(component_packs_.find(id) == component_packs_.end(),
             "the component has already been registered");
 
-    component_types_.insert({id, next_++});
+    Component comp_id = next_++;
+    component_types_.insert({id, comp_id});
 
     // mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
     // std::unordered_map<const char*, std::shared_ptr<IComponentArray>> mComponentArrays{};
@@ -88,7 +89,7 @@ public:
     // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
 
-    return id;
+    return comp_id;
   }
 
   template <typename Component_t>
@@ -119,8 +120,8 @@ public:
   // if it has an component for that entity, it will remove it
   void RemoveEntity(Entity entity) {
     for (auto& pair : component_packs_) {
-      const auto pack_type = pair.first;
-      const auto pack      = pair.second;
+      // const auto pack_type = pair.first;
+      const auto pack = pair.second;
 
       if (pack->Contains(entity))
         pack->RemoveEntity(entity);

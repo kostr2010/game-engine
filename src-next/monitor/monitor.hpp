@@ -7,6 +7,7 @@
 #include "../component/component.hpp"
 #include "../entity/entity.hpp"
 #include "../system/system.hpp"
+#include "../system/systemManager.hpp"
 
 // ====================
 // Monitor

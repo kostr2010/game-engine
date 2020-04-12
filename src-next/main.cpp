@@ -1,3 +1,6 @@
+// utiles
+#include "./monitor/monitor.hpp"
+
 // systems
 #include "./system/systems/systemHealth.hpp"
 #include "./system/systems/systemKick.hpp"
@@ -6,13 +9,11 @@
 #include "./component/components/health.hpp"
 #include "./component/components/movement.hpp"
 
-// utiles
-#include "./monitor/monitor.hpp"
-
 // how shared_ptr works
 // make_shared, shared_ptr
 // static vs dynamic type, cast
 // !!! unique_ptr
+// https://stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
 
 int main() {
   Monitor monitor{};
@@ -20,8 +21,10 @@ int main() {
   Component comp_health_id = monitor.RegisterComponent<ComponentHealth>();
   Component comp_kick_id   = monitor.RegisterComponent<ComponentKick>();
 
-  SystemHealth* sys_health = monitor.RegisterSystem<SystemHealth>({comp_health_id});
-  SystemKick*   sys_kick   = monitor.RegisterSystem<SystemKick>({comp_kick_id});
+  // SystemHealth* sys_health =
+  // (SystemHealth*)monitor.RegisterSystem<SystemHealth>({comp_health_id});
+  monitor.RegisterSystem<SystemHealth>({comp_health_id});
+  SystemKick* sys_kick = (SystemKick*)monitor.RegisterSystem<SystemKick>({comp_kick_id});
 
   // TODO: wrap into factories
   Entity ch1 = monitor.AddEntity();
