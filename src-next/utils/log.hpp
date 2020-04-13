@@ -1,8 +1,16 @@
 #pragma once
 
-#include <chrono>
+// #include <chrono>
 #include <ctime>
 #include <fstream>
+
+// ====================
+// LVL_SYSTEM
+
+#define LOG_LVL_SYSTEM_CLEAR()                                                                     \
+  std::fstream log;                                                                                \
+  log.open("log/system_log.log", std::ios::trunc | std::ios::out);                                 \
+  log.close()
 
 #define LOG_LVL_SYSTEM(system, msg)                                                                \
   std::fstream log;                                                                                \
@@ -10,3 +18,6 @@
   std::time_t result = std::time(nullptr);                                                         \
   log << std::asctime(std::localtime(&result)) << "[" << system << "] " << msg << std::endl;       \
   log.close()
+
+// ====================
+// LVL_COMPONENT

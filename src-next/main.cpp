@@ -1,5 +1,6 @@
-// utiles
+// utils
 #include "./monitor/monitor.hpp"
+#include "./utils/log.hpp"
 
 // systems
 #include "./system/systems/systemHealth.hpp"
@@ -15,7 +16,7 @@
 // [-] static vs dynamic type, cast
 // [-] !!! unique_ptr
 // [-] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
-// [-] virtual destructor, where and why
+// [-] virtual destructor, where and why -> effective c++ #1
 
 // FOR NEXT TIME
 // [-] add response codes
@@ -26,6 +27,8 @@
 // [-] get rid of booleans in components (! new bitmap and manager)
 
 int main() {
+  LOG_LVL_SYSTEM_CLEAR();
+
   Monitor monitor{};
 
   Component comp_health_id = monitor.RegisterComponent<ComponentHealth>();
