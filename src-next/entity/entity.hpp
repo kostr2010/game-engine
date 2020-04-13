@@ -46,7 +46,6 @@ public:
     return abilities_signatures_[entity] = signature;
   }
 
-  // SLOW AS HELL due to implementation issues. TODO: redo
   bool CheckIfEntityExists(Entity entity_target) {
     return available_ids_.find(entity_target) == available_ids_.end();
   }

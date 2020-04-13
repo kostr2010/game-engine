@@ -14,11 +14,12 @@
 // [-] make_shared, shared_ptr
 // [-] static vs dynamic type, cast
 // [-] !!! unique_ptr
-// [-]
-// https://stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
+// [-] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
+// [-] virtual destructor, where and why
 
 // FOR NEXT TIME
 // [-] add response codes
+// (type2*)(type1*) -> static / dynamic cast
 
 // TO TRY
 // [-] systems as static class (it only contains functions anyways)
@@ -48,9 +49,6 @@ int main() {
   monitor.AttachComponent(ch1, ch1_kick);
 
   sys_kick->Kick(ch1, ch2);
-
-  std::cout << *monitor.GetComponent<ComponentHealth>(ch1) << std::endl;
-  std::cout << *monitor.GetComponent<ComponentHealth>(ch2) << std::endl;
 
   return 0;
 }

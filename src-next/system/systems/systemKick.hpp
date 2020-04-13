@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../component/components/kick.hpp"
-// #include "../../monitor/monitor.hpp"
 #include "../system.hpp"
 #include "./systemHealth.hpp"
 
@@ -17,8 +16,9 @@ public:
     // TODO: assert if health system exists
     SystemHealth* sys_health = monitor_->GetSystem<SystemHealth>();
 
-    std::cout << "[SystemKick] entity " << entity_origin << " kicks entity " << entity_target
-              << " for " << comp_kick->damage_amount << " points of damage" << std::endl;
+    LOG_LVL_SYSTEM("SystemKick",
+                   "entity " << entity_origin << " kicked entity " << entity_target << " for "
+                             << comp_kick->damage_amount << " points of damage!");
 
     sys_health->ChangeCurrentHp(entity_target, -1 * comp_kick->damage_amount);
 

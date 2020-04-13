@@ -6,6 +6,10 @@
 #include "../system/systems/systemMovement.hpp"
 #include "../utils/vec2.hpp"
 
+// ====================
+// EntityFactory
+// static class that provides functions for simple object creation
+
 class EntityFactory {
   static void SpawnWarrior(Monitor* monitor, Vec2 position) {
     Entity            entity   = monitor->AddEntity();

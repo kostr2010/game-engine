@@ -19,8 +19,6 @@ typedef int Component;
 
 class IComponentPack {
 public:
-  // ~IComponentPack()        = default;
-  // virtual ~IComponentPack() = default;
   virtual void RemoveEntity(Entity entity) = 0;
 
   virtual bool Contains(Entity entity) const = 0;

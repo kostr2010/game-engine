@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+// ====================
+// Vec2
+// implementation of the simple 2d vector
+
 class Vec2 {
 public:
   Vec2()  = default;
