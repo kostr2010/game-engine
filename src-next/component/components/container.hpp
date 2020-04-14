@@ -15,5 +15,5 @@ std::ostream& operator<<(std::ostream& os, ComponentContainer comp_container) {
     os << entity << " ";
   }
 
-  return os << std::endl;
+  return os;
 }

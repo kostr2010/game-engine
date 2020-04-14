@@ -19,9 +19,10 @@ public:
 
     comp_health->hp_cur += delta;
 
-    LOG_LVL_SYSTEM(SystemHealth,
-                   "entity's " << entity << " hp was changed from " << comp_health->hp_cur - delta
-                               << " to " << comp_health->hp_cur << std::endl);
+    LOG_LVL_SYSTEM_ROUTINE(SystemHealth,
+                           "entity's " << entity << " hp changed from "
+                                       << comp_health->hp_cur - delta << " to "
+                                       << comp_health->hp_cur << std::endl);
 
     return true;
   }
@@ -33,10 +34,10 @@ public:
 
     comp_health->hp_max += delta;
 
-    LOG_LVL_SYSTEM(SystemHealth,
-                   "entity's " << entity << " max hp was changed from "
-                               << comp_health->hp_max - delta << " to " << comp_health->hp_max
-                               << std::endl);
+    LOG_LVL_SYSTEM_ROUTINE(SystemHealth,
+                           "entity's " << entity << " max hp was changed from "
+                                       << comp_health->hp_max - delta << " to "
+                                       << comp_health->hp_max << std::endl);
 
     return true;
   }

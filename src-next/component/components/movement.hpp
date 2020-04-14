@@ -8,6 +8,5 @@ struct ComponentMovement {
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentMovement comp_movement) {
-  return os << "steps_max: " << comp_movement.steps_max << "steps_cur: " << comp_movement.steps_cur
-            << std::endl;
+  return os << "steps_max: " << comp_movement.steps_max << "steps_cur: " << comp_movement.steps_cur;
 }

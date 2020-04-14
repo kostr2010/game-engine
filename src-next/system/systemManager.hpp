@@ -18,7 +18,7 @@ public:
     monitor_ = monitor;
 
     LOG_LVL_SYSTEM_INIT();
-    LOG_LVL_SYSTEM(SystemManager, "SystemManager initialised");
+    LOG_LVL_SYSTEM_ROUTINE(SystemManager, "SystemManager initialised");
   }
 
   ~SystemManager() {
@@ -35,7 +35,8 @@ public:
     systems_[type_name] = system;
 
     // TODO add try catch here
-    LOG_LVL_SYSTEM(SystemManager, "new system " << typeid(System_t).name() << " registered");
+    LOG_LVL_SYSTEM_ROUTINE(SystemManager,
+                           "new system " << typeid(System_t).name() << " registered");
 
     return system;
   }
@@ -49,7 +50,6 @@ public:
     return (System_t*)systems_[type_name];
   }
 
-  // !!! it doesn't set, it adds system with given signature
   template <typename System_t>
   void SetSignature(Signature signature) {
     const char* typeName = typeid(System_t).name();
@@ -57,25 +57,26 @@ public:
     system_signatures_.insert({typeName, signature});
 
     // TODO add try/catch here
-    // LOG_LVL_SYSTEM(SystemManager, "SystemManager initialised");
+    // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "SystemManager initialised");
   }
 
   void RemoveEntity(Entity entity) {
-    // LOG_LVL_SYSTEM(SystemManager, "removing entity " << entity);
+    // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
 
     for (auto& pair : systems_) {
       auto& system = pair.second;
 
       system->entities_.erase(entity);
 
-      // LOG_LVL_SYSTEM(pair.first, "entity " << entity << "removed from system " << pair.first);
+      // LOG_LVL_SYSTEM_ROUTINE(pair.first, "entity " << entity << "removed from system " <<
+      // pair.first);
     }
 
-    LOG_LVL_SYSTEM(SystemManager, "removed entity " << entity);
+    LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removed entity " << entity);
   }
 
   void UpdateEntitySignature(Entity entity, Signature entity_signature) {
-    // LOG_LVL_SYSTEM(SystemManager, "updating entity's " << entity << " signature");
+    // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "updating entity's " << entity << " signature");
 
     for (auto& pair : systems_) {
       auto& system_type      = pair.first;
@@ -84,15 +85,17 @@ public:
 
       if (EntityBelongsToSystem(entity_signature, system_signature)) {
         system->entities_.insert(entity);
-        // LOG_LVL_SYSTEM(system_type, "entity " << entity << " added to system " << system_type);
+        // LOG_LVL_SYSTEM_ROUTINE(system_type, "entity " << entity << " added to system " <<
+        // system_type);
       } else {
-        // LOG_LVL_SYSTEM(system_type, "entity " << entity << " removed from system " <<
+        // LOG_LVL_SYSTEM_ROUTINE(system_type, "entity " << entity << " removed from system " <<
         // system_type);
         system->entities_.erase(entity);
       }
     }
 
-    LOG_LVL_SYSTEM(SystemManager, "updated entity's " << entity << " signature in every system");
+    LOG_LVL_SYSTEM_ROUTINE(SystemManager,
+                           "updated entity's " << entity << " signature in every system");
   }
 
   template <typename System_t>

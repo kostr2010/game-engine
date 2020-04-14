@@ -2,6 +2,7 @@ CC = g++
 
 CFLAGS = -Wall
 
+MAIN_TEST = main.test.o
 MAIN = main.o
 COMPONENT = component/component.o
 ENTITY    = entity/entity.o
@@ -23,9 +24,14 @@ main: ${MAIN} ${DEPS}
 	${CC} -o main ${MAIN} ${CFLAGS}
 
 clean:
-	rm -f ${OBJS} ${MAIN}
+	rm -f ${OBJS} ${MAIN} ${MAIN_TEST}
 
 all: clear main clean
+
+test: ${MAIN_TEST} ${DEPS}
+	${CC} -o test ${MAIN_TEST} ${CFLAGS}
+
+all_test: clear test clean
 
 .PHONY: clear clean main all
 

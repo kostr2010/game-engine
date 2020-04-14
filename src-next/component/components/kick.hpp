@@ -7,5 +7,5 @@ struct ComponentKick {
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentKick& comp_kick) {
-  return os << "dmg: " << comp_kick.damage_amount << std::endl;
+  return os << "dmg: " << comp_kick.damage_amount;
 }

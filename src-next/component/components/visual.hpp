@@ -7,5 +7,5 @@ struct ComponentVisual {
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentVisual vis_comp) {
-  return os << "sprite: " << vis_comp.sprite << std::endl;
+  return os << "sprite: " << vis_comp.sprite;
 }

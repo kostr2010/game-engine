@@ -8,5 +8,5 @@ struct ComponentPosition {
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentPosition pos) {
-  return os << "pos: " << pos.pos << std::endl;
+  return os << "pos: " << pos.pos;
 }

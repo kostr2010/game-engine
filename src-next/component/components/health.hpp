@@ -7,5 +7,5 @@ struct ComponentHealth {
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentHealth comp_health) {
-  return os << "max: " << comp_health.hp_max << " cur: " << comp_health.hp_cur << std::endl;
+  return os << "max: " << comp_health.hp_max << " cur: " << comp_health.hp_cur;
 }

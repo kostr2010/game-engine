@@ -10,6 +10,7 @@
 
 #include "../entity/entity.hpp"
 #include "../utils/assembly.hpp"
+#include "../utils/log.hpp"
 
 typedef int Component;
 
@@ -50,6 +51,10 @@ public:
     return &(components_[entity]);
   };
 
+  bool HasEntity(Entity entity) {
+    return components_.find(entity) != components_.end();
+  }
+
   bool Contains(Entity entity) const override {
     return components_.find(entity) != components_.end();
   }
@@ -67,7 +72,10 @@ private:
 
 class ComponentManager {
 public:
-  ComponentManager() = default;
+  ComponentManager() {
+    LOG_LVL_COMPONENT_INIT();
+  }
+
   ~ComponentManager() {
     for (auto& pair : component_packs_) {
       delete pair.second;
@@ -94,6 +102,11 @@ public:
     // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
 
+    // TODO add try / catch
+    LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
+                              "component " << typeid(Component_t).name() << " registered as "
+                                           << comp_id);
+
     return comp_id;
   }
 
@@ -109,11 +122,26 @@ public:
   template <typename Component_t>
   void AttachComponent(Entity entity, Component_t component) {
     GetComponentPack<Component_t>()->AddEntity(entity, component);
+
+    // TODO add try / catch
+    LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
+                              "component " << typeid(Component_t).name() << "(" << component << ")"
+                                           << " attached to entity " << entity);
   }
 
   template <typename Component_t>
   void RemoveComponent(Entity entity) {
     GetComponentPack<Component_t>()->RemoveEntity(entity);
+
+    // TODO add try / catch
+    LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
+                              "component " << typeid(Component_t).name() << "removed from entity "
+                                           << entity);
+  }
+
+  template <typename Component_t>
+  bool HasComponent(Entity entity) {
+    return GetComponentPack<Component_t>()->HasEntity(entity);
   }
 
   template <typename Component_t>
@@ -131,6 +159,10 @@ public:
       if (pack->Contains(entity))
         pack->RemoveEntity(entity);
     }
+
+    // TODO add try / catch
+    LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
+                              "entity " << entity << " removed from all components");
   }
 
   void Print() {

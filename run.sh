@@ -1,1 +1,1 @@
-cd src && make && ./main -s && cd ../
+cd src-next && make all && ./main
