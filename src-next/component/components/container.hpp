@@ -6,12 +6,14 @@
 #include <vector>
 
 struct ComponentContainer {
-  std::vector<Entity> subentities_;
+  // FIXME dynamic array / std::array / []check vector size
+  std::vector<Entity> subentities;
+  int                 capacity;
 };
 
 std::ostream& operator<<(std::ostream& os, ComponentContainer comp_container) {
   os << "subentities: ";
-  for (const auto& entity : comp_container.subentities_) {
+  for (const auto& entity : comp_container.subentities) {
     os << entity << " ";
   }
 

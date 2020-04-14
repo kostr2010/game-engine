@@ -14,6 +14,8 @@
 #include "./component/components/health.hpp"
 #include "./component/components/movement.hpp"
 
+#include "./factories/factories.hpp"
+
 TEST_CASE("Kick") {
   Monitor monitor{};
 
@@ -74,12 +76,38 @@ TEST_CASE("Transfer") {
   ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
 
   // check if chest has no item
-  REQUIRE(std::find(chest_inventory_after->subentities_.begin(),
-                    chest_inventory_after->subentities_.end(),
-                    item) == chest_inventory_after->subentities_.end());
+  REQUIRE(std::find(chest_inventory_after->subentities.begin(),
+                    chest_inventory_after->subentities.end(),
+                    item) == chest_inventory_after->subentities.end());
 
   // check if ch1 has item
-  REQUIRE(std::find(ch1_inventory_after->subentities_.begin(),
-                    ch1_inventory_after->subentities_.end(),
-                    item) != ch1_inventory_after->subentities_.end());
+  REQUIRE(std::find(ch1_inventory_after->subentities.begin(),
+                    ch1_inventory_after->subentities.end(),
+                    item) != ch1_inventory_after->subentities.end());
+}
+
+TEST_CASE("Move") {
+  /*
+Monitor monitor{};
+
+Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
+Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+
+SystemMovement* sys_move = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
+
+Entity ch1 = monitor.AddEntity()
+
+ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
+ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
+
+// check if chest has no item
+REQUIRE(std::find(chest_inventory_after->subentities.begin(),
+                  chest_inventory_after->subentities.end(),
+                  item) == chest_inventory_after->subentities.end());
+
+// check if ch1 has item
+REQUIRE(std::find(ch1_inventory_after->subentities.begin(),
+                  ch1_inventory_after->subentities.end(),
+                  item) != ch1_inventory_after->subentities.end());
+                  */
 }

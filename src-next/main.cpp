@@ -22,7 +22,9 @@
 
 // FOR NEXT TIME
 // [-] add response codes
-// (type2*)(type1*) -> static / dynamic cast
+// [-] (type2*)(type1*) -> static / dynamic cast
+// [-] UI thread to read console commands
+// [-] read / write to disc
 
 // TO TRY
 // [-] systems as static class (it only contains functions anyways)
@@ -30,45 +32,28 @@
 // [+] deactivate instead of delete
 
 int main() {
-  // Monitor monitor{};
+  Monitor monitor{};
 
-  // Component comp_health_id  = monitor.RegisterComponent<ComponentHealth>();
-  // Component comp_kick_id    = monitor.RegisterComponent<ComponentKick>();
-  // Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
-  // monitor.RegisterSystem<SystemHealth>({comp_health_id});
-  // SystemKick*      sys_kick = monitor.RegisterSystem<SystemKick>({comp_kick_id});
-  // SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
+  SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
 
-  // // TODO: wrap into factories
-  // Entity ch1   = monitor.AddEntity();
-  // Entity ch2   = monitor.AddEntity();
-  // Entity chest = monitor.AddEntity();
-  // Entity item  = monitor.AddEntity();
+  Entity ch1   = monitor.AddEntity();
+  Entity chest = monitor.AddEntity();
+  Entity item  = monitor.AddEntity();
 
-  // ComponentHealth ch1_health = {.hp_max = 10, .hp_cur = 10};
-  // ComponentHealth ch2_health = {.hp_max = 25, .hp_cur = 25};
+  ComponentContainer ch1_inventory   = {};
+  ComponentContainer chest_inventory = {{item}};
 
-  // ComponentContainer ch1_inventory   = {};
-  // ComponentContainer chest_inventory = {{item}};
+  monitor.AttachProperty(item, Pickable);
 
-  // ComponentKick ch1_kick = {.damage_amount = 3};
+  monitor.AttachComponent(chest, chest_inventory);
+  monitor.AttachComponent(ch1, ch1_inventory);
 
-  // monitor.AttachProperty(item, Pickable);
+  sys_cont->Transfer(chest, item, ch1);
 
-  // monitor.AttachComponent(ch2, ch2_health);
-  // monitor.AttachComponent(chest, chest_inventory);
-  // monitor.AttachComponent(ch1, ch1_inventory);
-
-  // std::cout << "chest: " << *monitor.GetComponent<ComponentContainer>(chest)
-  //           << "| ch1: " << *monitor.GetComponent<ComponentContainer>(ch1) << std::endl;
-
-  // sys_kick->Kick(ch1, ch2);
-
-  // sys_cont->Transfer(chest, item, ch1);
-
-  // std::cout << "chest: " << *monitor.GetComponent<ComponentContainer>(chest)
-  //           << "| ch1: " << *monitor.GetComponent<ComponentContainer>(ch1) << std::endl;
+  ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
+  ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
 
   return 0;
 }

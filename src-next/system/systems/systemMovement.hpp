@@ -19,4 +19,11 @@ public:
 
     comp_pos->pos += direction;
   }
+
+  void ResetCurrentSteps() {
+    for (auto entity : entities_) {
+      ComponentMovement* comp_move = monitor_->GetComponent<ComponentMovement>(entity);
+      comp_move->steps_cur         = comp_move->steps_max;
+    }
+  }
 };

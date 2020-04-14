@@ -20,7 +20,7 @@ public:
     ComponentContainer* origin_comp_contain =
         monitor_->GetComponent<ComponentContainer>(entity_origin);
 
-    origin_comp_contain->subentities_.push_back(entity_target);
+    origin_comp_contain->subentities.push_back(entity_target);
   }
 
   void Drop(Entity entity_origin, Entity entity_target) {
@@ -31,13 +31,13 @@ public:
     ComponentContainer* origin_comp_contain =
         monitor_->GetComponent<ComponentContainer>(entity_origin);
 
-    auto position = std::find(origin_comp_contain->subentities_.begin(),
-                              origin_comp_contain->subentities_.end(),
+    auto position = std::find(origin_comp_contain->subentities.begin(),
+                              origin_comp_contain->subentities.end(),
                               entity_target);
-    assertm(position != origin_comp_contain->subentities_.end(),
+    assertm(position != origin_comp_contain->subentities.end(),
             "entity tries to drop an entity it does not have");
 
-    origin_comp_contain->subentities_.erase(position);
+    origin_comp_contain->subentities.erase(position);
   }
 
   void Transfer(Entity entity_from, Entity entity_whom, Entity entity_to) {
