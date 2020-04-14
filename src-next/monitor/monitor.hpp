@@ -8,6 +8,7 @@
 #include "../system/system.hpp"
 #include "../system/systemManager.hpp"
 #include "../utils/assembly.hpp"
+#include "../utils/log.hpp"
 
 // ====================
 // Monitor
@@ -16,14 +17,24 @@
 class Monitor {
 public:
   Monitor() {
+    LOG_LVL_MONITOR_INIT();
+
     component_manager_ = ComponentManager{};
-    entity_manager_    = EntityManager{};
-    system_manager_    = SystemManager{this};
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("ComponentManager initialized");
+
+    entity_manager_ = EntityManager{};
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("EntityManager initialized");
+
+    system_manager_ = SystemManager{this};
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("SystemManager initialized");
 
     // при попытке вызова конструкторов в ф-ии Init, конструктор пытался сначала вызвать дефолтный
     // к-тор СисМан
 
-    Init();
+    // Init();
   }
   ~Monitor() = default;
 
@@ -33,6 +44,10 @@ public:
   template <typename Component_t>
   Component RegisterComponent() {
     Component component = component_manager_.RegisterComponent<Component_t>();
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("component " << typeid(Component_t).name() << " registered with id "
+                                 << component);
 
     return component;
   }
@@ -47,6 +62,11 @@ public:
     Signature signature_new = signature_prev.set(component, true);
 
     UpdateSignature(entity, signature_new);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("component " << typeid(Component_t).name() << " aka " << component
+                                 << " attached to entity " << entity << ". now it's signature is "
+                                 << entity_manager_.GetSignature(entity));
   }
 
   template <typename Component_t>
@@ -59,21 +79,38 @@ public:
     Signature signature_new = signature_prev.set(component, false);
 
     UpdateSignature(entity, signature_new);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("component " << typeid(Component_t).name() << " aka " << component
+                                 << " removed from entity " << entity << ". now it's signature is "
+                                 << entity_manager_.GetSignature(entity));
   }
 
   Entity AddEntity() {
-    return entity_manager_.CreateEntity();
+    Entity entity_new = entity_manager_.CreateEntity();
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("new entity with id " << entity_new << " registered");
+
+    return entity_new;
   }
 
   void RemoveEntity(Entity entity) {
     entity_manager_.RemoveEntity(entity);
     component_manager_.RemoveEntity(entity);
     system_manager_.RemoveEntity(entity);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("entity " << entity << "deleted from all managers");
   }
 
-  template <typename Component_t>
+  // !!! it doesn't set, it adds system with given signature
+  template <typename System_t>
   void SetSystemSignature(Signature signature) {
-    system_manager_.SetSignature<Component_t>(signature);
+    system_manager_.SetSignature<System_t>(signature);
+
+    // TODO add try/catch here
+    // LOG_LVL_MONITOR("now ");
   }
 
   template <typename System_t>
@@ -90,6 +127,9 @@ public:
 
     // set the system's initial signature
     SetSystemSignature<System_t>(signature);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("new system " << typeid(System_t).name() << " registered");
 
     return system;
   }
@@ -116,6 +156,10 @@ private:
   void UpdateSignature(Entity entity, Signature signature) {
     entity_manager_.SetSignature(entity, signature);
     system_manager_.UpdateEntitySignature(entity, signature);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR("entity's " << entity << " signature updated. now it's signature is "
+                                << signature);
   }
 
   // creates entity, system, component managers

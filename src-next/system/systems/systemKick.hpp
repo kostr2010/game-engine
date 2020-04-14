@@ -16,7 +16,7 @@ public:
     // TODO: assert if health system exists
     SystemHealth* sys_health = monitor_->GetSystem<SystemHealth>();
 
-    LOG_LVL_SYSTEM("SystemKick",
+    LOG_LVL_SYSTEM(SystemKick,
                    "entity " << entity_origin << " kicks entity " << entity_target << " for "
                              << comp_kick->damage_amount << " points of damage!");
 

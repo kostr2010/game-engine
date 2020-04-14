@@ -11,6 +11,7 @@
 #include "./component/components/movement.hpp"
 
 // TO GOOGLE
+// [-] кд дерево
 // [-] how shared_ptr works
 // [-] make_shared, shared_ptr
 // [-] static vs dynamic type, cast
@@ -25,10 +26,9 @@
 // TO TRY
 // [-] systems as static class (it only contains functions anyways)
 // [-] get rid of booleans in components (! new bitmap and manager)
+// deactivate instead of delete
 
 int main() {
-  LOG_LVL_SYSTEM_CLEAR();
-
   Monitor monitor{};
 
   Component comp_health_id = monitor.RegisterComponent<ComponentHealth>();

@@ -16,6 +16,9 @@ class SystemManager {
 public:
   SystemManager(Monitor* monitor) {
     monitor_ = monitor;
+
+    LOG_LVL_SYSTEM_INIT();
+    LOG_LVL_SYSTEM(SystemManager, "SystemManager initialised");
   }
 
   ~SystemManager() {
@@ -31,6 +34,9 @@ public:
 
     systems_[type_name] = system;
 
+    // TODO add try catch here
+    LOG_LVL_SYSTEM(SystemManager, "new system " << typeid(System_t).name() << " registered");
+
     return system;
   }
 
@@ -43,32 +49,50 @@ public:
     return (System_t*)systems_[type_name];
   }
 
+  // !!! it doesn't set, it adds system with given signature
   template <typename System_t>
   void SetSignature(Signature signature) {
     const char* typeName = typeid(System_t).name();
 
     system_signatures_.insert({typeName, signature});
+
+    // TODO add try/catch here
+    // LOG_LVL_SYSTEM(SystemManager, "SystemManager initialised");
   }
 
   void RemoveEntity(Entity entity) {
+    // LOG_LVL_SYSTEM(SystemManager, "removing entity " << entity);
+
     for (auto& pair : systems_) {
       auto& system = pair.second;
 
       system->entities_.erase(entity);
+
+      // LOG_LVL_SYSTEM(pair.first, "entity " << entity << "removed from system " << pair.first);
     }
+
+    LOG_LVL_SYSTEM(SystemManager, "removed entity " << entity);
   }
 
   void UpdateEntitySignature(Entity entity, Signature entity_signature) {
+    // LOG_LVL_SYSTEM(SystemManager, "updating entity's " << entity << " signature");
+
     for (auto& pair : systems_) {
       auto& system_type      = pair.first;
       auto& system           = pair.second;
       auto& system_signature = system_signatures_[system_type];
 
-      if (EntityBelongsToSystem(entity_signature, system_signature))
+      if (EntityBelongsToSystem(entity_signature, system_signature)) {
         system->entities_.insert(entity);
-      else
+        // LOG_LVL_SYSTEM(system_type, "entity " << entity << " added to system " << system_type);
+      } else {
+        // LOG_LVL_SYSTEM(system_type, "entity " << entity << " removed from system " <<
+        // system_type);
         system->entities_.erase(entity);
+      }
     }
+
+    LOG_LVL_SYSTEM(SystemManager, "updated entity's " << entity << " signature in every system");
   }
 
   template <typename System_t>
@@ -81,7 +105,7 @@ public:
   bool EntityBelongsToSystem(Signature signature_entity, Signature signature_system) {
     return (signature_entity & signature_system) == signature_system;
   };
-
+  // private: ?????????
   Monitor*                       monitor_;
   std::map<const char*, System*> systems_{};
   std::map<const char*, Signature>

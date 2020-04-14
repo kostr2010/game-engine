@@ -67,8 +67,12 @@ private:
 
 class ComponentManager {
 public:
-  ComponentManager()  = default;
-  ~ComponentManager() = default;
+  ComponentManager() = default;
+  ~ComponentManager() {
+    for (auto& pair : component_packs_) {
+      delete pair.second;
+    }
+  }
 
   template <typename Component_t>
   Component RegisterComponent() {
@@ -83,7 +87,9 @@ public:
     // mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
     // std::unordered_map<const char*, std::shared_ptr<IComponentArray>> mComponentArrays{};
 
-    auto pack = std::make_shared<ComponentPack<Component_t>>();
+    // auto pack = std::make_shared<ComponentPack<Component_t>>();
+
+    IComponentPack* pack = new ComponentPack<Component_t>{};
 
     // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
@@ -135,8 +141,8 @@ public:
   }
 
 private:
-  std::map<const char*, Component>                       component_types_{};
-  std::map<const char*, std::shared_ptr<IComponentPack>> component_packs_{};
+  std::map<const char*, Component>       component_types_{};
+  std::map<const char*, IComponentPack*> component_packs_{};
 
   Component next_{};
 
@@ -146,10 +152,9 @@ private:
   }
 
   template <typename Component_t>
-  std::shared_ptr<ComponentPack<Component_t>> GetComponentPack() {
+  ComponentPack<Component_t>* GetComponentPack() {
     // TODO: check if the component is registeredd
 
-    return std::static_pointer_cast<ComponentPack<Component_t>>(
-        component_packs_[GetComponentId<Component_t>()]);
+    return (ComponentPack<Component_t>*)(component_packs_[GetComponentId<Component_t>()]);
   };
 };

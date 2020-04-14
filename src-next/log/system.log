@@ -1,5 +1,9 @@
-Mon Apr 13 21:56:59 2020
-[SystemKick] entity 0 kicks entity 1 for 3 points of damage!
-Mon Apr 13 21:56:59 2020
-[SystemHealth] entity's 1 hp was changed from 25 to 22
+[13SystemManager] SystemManager initialised
+[13SystemManager] new system 12SystemHealth registered
+[13SystemManager] new system 10SystemKick registered
+[13SystemManager] updated entity's 0 signature in every system
+[13SystemManager] updated entity's 1 signature in every system
+[13SystemManager] updated entity's 0 signature in every system
+[10SystemKick] entity 0 kicks entity 1 for 3 points of damage!
+[12SystemHealth] entity's 1 hp was changed from 25 to 22
 
