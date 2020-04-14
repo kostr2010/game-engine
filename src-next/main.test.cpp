@@ -48,3 +48,38 @@ TEST_CASE("Kick") {
   REQUIRE(ch1_health_after->hp_cur == 10);
   REQUIRE(ch2_health_after->hp_cur == 22);
 }
+
+TEST_CASE("Transfer") {
+  Monitor monitor{};
+
+  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+
+  SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
+
+  Entity ch1   = monitor.AddEntity();
+  Entity chest = monitor.AddEntity();
+  Entity item  = monitor.AddEntity();
+
+  ComponentContainer ch1_inventory   = {};
+  ComponentContainer chest_inventory = {{item}};
+
+  monitor.AttachProperty(item, Pickable);
+
+  monitor.AttachComponent(chest, chest_inventory);
+  monitor.AttachComponent(ch1, ch1_inventory);
+
+  sys_cont->Transfer(chest, item, ch1);
+
+  ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
+  ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
+
+  // check if chest has no item
+  REQUIRE(std::find(chest_inventory_after->subentities_.begin(),
+                    chest_inventory_after->subentities_.end(),
+                    item) == chest_inventory_after->subentities_.end());
+
+  // check if ch1 has item
+  REQUIRE(std::find(ch1_inventory_after->subentities_.begin(),
+                    ch1_inventory_after->subentities_.end(),
+                    item) != ch1_inventory_after->subentities_.end());
+}

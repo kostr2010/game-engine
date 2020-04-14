@@ -1,19 +1,12 @@
 [Monitor] ComponentManager initialized
 [Monitor] EntityManager initialized
 [Monitor] SystemManager initialized
-[Monitor] component 15ComponentHealth registered with id 0
-[Monitor] component 13ComponentKick registered with id 1
-[Monitor] component 18ComponentContainer registered with id 2
-[Monitor] new system 12SystemHealth registered
-[Monitor] new system 10SystemKick registered
+[Monitor] component 18ComponentContainer registered with id 0
 [Monitor] new system 15SystemContainer registered
 [Monitor] new entity with id 0 registered
 [Monitor] new entity with id 1 registered
 [Monitor] new entity with id 2 registered
-[Monitor] new entity with id 3 registered
 [Monitor] entity's 1 signature updated. now it's signature is 00000000000000000000000000000001
-[Monitor] component 15ComponentHealth aka 0 attached to entity 1. now it's signature is 00000000000000000000000000000001
-[Monitor] entity's 2 signature updated. now it's signature is 00000000000000000000000000000100
-[Monitor] component 18ComponentContainer aka 2 attached to entity 2. now it's signature is 00000000000000000000000000000100
-[Monitor] entity's 0 signature updated. now it's signature is 00000000000000000000000000000100
-[Monitor] component 18ComponentContainer aka 2 attached to entity 0. now it's signature is 00000000000000000000000000000100
+[Monitor] component 18ComponentContainer aka 0 attached to entity 1. now it's signature is 00000000000000000000000000000001
+[Monitor] entity's 0 signature updated. now it's signature is 00000000000000000000000000000001
+[Monitor] component 18ComponentContainer aka 0 attached to entity 0. now it's signature is 00000000000000000000000000000001

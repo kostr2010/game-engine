@@ -1,10 +1,4 @@
 [13SystemManager] SystemManager initialised
-[13SystemManager] new system 12SystemHealth registered
-[13SystemManager] new system 10SystemKick registered
 [13SystemManager] new system 15SystemContainer registered
 [13SystemManager] updated entity's 1 signature in every system
-[13SystemManager] updated entity's 2 signature in every system
 [13SystemManager] updated entity's 0 signature in every system
-[10SystemKick] entity 0 kicks entity 1 for 0 points of damage!
-[12SystemHealth] entity's 1 hp changed from 25 to 25
-

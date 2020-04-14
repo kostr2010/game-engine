@@ -1,6 +1,3 @@
-[16ComponentManager] component 15ComponentHealth registered as 0
-[16ComponentManager] component 13ComponentKick registered as 1
-[16ComponentManager] component 18ComponentContainer registered as 2
-[16ComponentManager] component 15ComponentHealth(max: 25 cur: 25) attached to entity 1
-[16ComponentManager] component 18ComponentContainer(subentities: 3 ) attached to entity 2
+[16ComponentManager] component 18ComponentContainer registered as 0
+[16ComponentManager] component 18ComponentContainer(subentities: 2 ) attached to entity 1
 [16ComponentManager] component 18ComponentContainer(subentities: ) attached to entity 0
