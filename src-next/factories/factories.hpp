@@ -34,11 +34,11 @@ class EntityFactory {
     ComponentKick      kick      = {.damage_amount = DMG_WARRIOR};
     ComponentContainer container = {.subentities = {}, .capacity = CAP_WARRIOR};
 
-    monitor->AttachComponent(warrior, pos);
-    monitor->AttachComponent(warrior, health);
-    monitor->AttachComponent(warrior, move);
-    monitor->AttachComponent(warrior, kick);
-    monitor->AttachComponent(warrior, container);
+    monitor->AttachComponent(pos, warrior);
+    monitor->AttachComponent(health, warrior);
+    monitor->AttachComponent(move, warrior);
+    monitor->AttachComponent(kick, warrior);
+    monitor->AttachComponent(container, warrior);
 
     return warrior;
   }
@@ -49,8 +49,8 @@ class EntityFactory {
     ComponentMovement movement = {.steps_max = 2, .steps_cur = 2};
     ComponentPosition pos      = {.pos = position};
 
-    monitor->AttachComponent(movec, movement);
-    monitor->AttachComponent(movec, pos);
+    monitor->AttachComponent(movement, movec);
+    monitor->AttachComponent(pos, movec);
 
     return movec;
   }
@@ -61,8 +61,8 @@ class EntityFactory {
     ComponentHealth   health = {.hp_max = HP_DUMMY, .hp_cur = HP_DUMMY};
     ComponentPosition pos    = {.pos = position};
 
-    monitor->AttachComponent(dummy, health);
-    monitor->AttachComponent(dummy, pos);
+    monitor->AttachComponent(health, dummy);
+    monitor->AttachComponent(pos, dummy);
 
     return dummy;
   }
@@ -74,9 +74,9 @@ class EntityFactory {
     ComponentHealth    health    = {.hp_max = HP_CHEST, .hp_cur = HP_CHEST};
     ComponentContainer container = {.subentities = {}, .capacity = CAP_CHEST};
 
-    monitor->AttachComponent(chest, pos);
-    monitor->AttachComponent(chest, health);
-    monitor->AttachComponent(chest, container);
+    monitor->AttachComponent(pos, chest);
+    monitor->AttachComponent(health, chest);
+    monitor->AttachComponent(container, chest);
 
     return chest;
   }

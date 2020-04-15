@@ -22,9 +22,13 @@ public:
   }
 };
 
+bool operator==(Vec2 left, Vec2 right) {
+  return (left.x_ == right.x_) && (left.y_ == right.y_);
+}
+
 void operator+=(Vec2& left, Vec2& right) {
   left.x_ += right.x_;
-  left.y_ += left.y_;
+  left.y_ += right.y_;
 }
 
 std::ostream& operator<<(std::ostream& os, Vec2 v) {

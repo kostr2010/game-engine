@@ -55,7 +55,7 @@ public:
   }
 
   template <typename Component_t>
-  void AttachComponent(Entity entity, Component_t component_new) {
+  void AttachComponent(Component_t component_new, Entity entity) {
     component_manager_.AttachComponent(entity, component_new);
 
     Signature signature_prev = entity_manager_.GetSignature(entity);
@@ -148,6 +148,11 @@ public:
   }
 
   template <typename Component_t>
+  bool HasNoComponent(Entity entity) {
+    return !HasComponent<Component_t>(entity);
+  }
+
+  template <typename Component_t>
   Component_t* GetComponent(Entity entity) {
     return component_manager_.GetComponent<Component_t>(entity);
   }
@@ -164,11 +169,9 @@ public:
     return property_manager.HasProperty(entity, property);
   }
 
-  /*
   bool HasNoProperty(Entity entity, PropertyType property) {
     return property_manager.HasNoProperty(entity, property);
   }
-  */
 
   bool CheckIfEntityExists(Entity entity) {
     return entity_manager_.CheckIfEntityExists(entity);

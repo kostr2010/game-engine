@@ -1,3 +1,5 @@
-[16ComponentManager] component 18ComponentContainer registered as 0
-[16ComponentManager] component 18ComponentContainer(subentities: 2 ) attached to entity 1
-[16ComponentManager] component 18ComponentContainer(subentities: ) attached to entity 0
+[16ComponentManager] component 17ComponentPosition registered as 0
+[16ComponentManager] component 17ComponentMovement registered as 1
+[16ComponentManager] component 17ComponentPosition(pos: x: 0 y: 0
+) attached to entity 0
+[16ComponentManager] component 17ComponentMovement(steps_max: 3steps_cur: 3) attached to entity 0

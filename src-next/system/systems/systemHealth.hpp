@@ -12,8 +12,8 @@ public:
   SystemHealth(Monitor* monitor) : System(monitor) {
   }
 
-  bool ChangeCurrentHp(Entity entity, int delta) {
-    // TODO: assert if entity is correct and has given component
+  ResponseCode ChangeCurrentHp(Entity entity, int delta) {
+    REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
     ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
 
@@ -24,11 +24,11 @@ public:
                                        << comp_health->hp_cur - delta << " to "
                                        << comp_health->hp_cur << std::endl);
 
-    return true;
+    return ResponseCode::Success;
   }
 
-  bool ChangeMaximumHP(Entity entity, int delta) {
-    // TODO: assert if entity is correct and has given component
+  ResponseCode ChangeMaximumHP(Entity entity, int delta) {
+    REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
     ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
 
@@ -39,6 +39,6 @@ public:
                                        << comp_health->hp_max - delta << " to "
                                        << comp_health->hp_max << std::endl);
 
-    return true;
+    return ResponseCode::Success;
   }
 };

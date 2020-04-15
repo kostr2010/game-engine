@@ -13,22 +13,22 @@
 
 // TO GOOGLE
 // [-] кд дерево
-// [-] how shared_ptr works
-// [-] make_shared, shared_ptr
-// [-] static vs dynamic type, cast
-// [-] !!! unique_ptr
-// [-] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
-// [-] virtual destructor, where and why -> effective c++ #1
+// [+] how shared_ptr works
+// [+] make_shared, shared_ptr
+// [+] static vs dynamic type, cast
+// [+] !!! unique_ptr
+// [?] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
+// [+] virtual destructor, where and why -> effective c++ #1
 
 // FOR NEXT TIME
+// [-] UI thread to read console commands
 // [-] add response codes
 // [-] (type2*)(type1*) -> static / dynamic cast
-// [-] UI thread to read console commands
-// [-] read / write to disc
+// [-] read / write from / to disc
 
 // TO TRY
 // [-] systems as static class (it only contains functions anyways)
-// [-] get rid of booleans in components (! new bitmap and manager)
+// [+] get rid of booleans in components (! new bitmap and manager)
 // [+] deactivate instead of delete
 
 int main() {
@@ -47,8 +47,8 @@ int main() {
 
   monitor.AttachProperty(item, Pickable);
 
-  monitor.AttachComponent(chest, chest_inventory);
-  monitor.AttachComponent(ch1, ch1_inventory);
+  monitor.AttachComponent(chest_inventory, chest);
+  monitor.AttachComponent(ch1_inventory, ch1);
 
   sys_cont->Transfer(chest, item, ch1);
 

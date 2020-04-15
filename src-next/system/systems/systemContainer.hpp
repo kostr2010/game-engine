@@ -12,21 +12,21 @@ public:
   SystemContainer(Monitor* monitor) : System(monitor) {
   }
 
-  void Pick(Entity entity_origin, Entity entity_target) {
-    assertm(monitor_->HasComponent<ComponentContainer>(entity_origin),
-            "entity origin is not a container");
-    assertm(monitor_->HasProperty(entity_target, Pickable), "entity origin has no picking ability");
+  ResponseCode Pick(Entity entity_origin, Entity entity_target) {
+    REQUIRE_COMPONENT(SystemContainer, ComponentContainer, entity_origin);
+    REQUIRE_PROPERTY(SystemContainer, Pickable, entity_target);
 
     ComponentContainer* origin_comp_contain =
         monitor_->GetComponent<ComponentContainer>(entity_origin);
 
     origin_comp_contain->subentities.push_back(entity_target);
+
+    return ResponseCode::Success;
   }
 
-  void Drop(Entity entity_origin, Entity entity_target) {
-    assertm(monitor_->HasComponent<ComponentContainer>(entity_origin),
-            "entity origin is not a container");
-    assertm(monitor_->HasProperty(entity_target, Pickable), "entity origin has no picking ability");
+  ResponseCode Drop(Entity entity_origin, Entity entity_target) {
+    REQUIRE_COMPONENT(SystemContainer, ComponentContainer, entity_origin);
+    REQUIRE_PROPERTY(SystemContainer, Pickable, entity_target);
 
     ComponentContainer* origin_comp_contain =
         monitor_->GetComponent<ComponentContainer>(entity_origin);
@@ -34,14 +34,24 @@ public:
     auto position = std::find(origin_comp_contain->subentities.begin(),
                               origin_comp_contain->subentities.end(),
                               entity_target);
-    assertm(position != origin_comp_contain->subentities.end(),
-            "entity tries to drop an entity it does not have");
+
+    if (position == origin_comp_contain->subentities.end()) {
+      LOG_LVL_SYSTEM_ERROR(SystemContainer,
+                           "entity " << entity_origin << " tries to drop an item " << entity_target
+                                     << "it does not have");
+      return ResponseCode::Restricted;
+    }
 
     origin_comp_contain->subentities.erase(position);
+
+    return ResponseCode::Success;
   }
 
-  void Transfer(Entity entity_from, Entity entity_whom, Entity entity_to) {
-    Drop(entity_from, entity_whom);
-    Pick(entity_to, entity_whom);
+  ResponseCode Transfer(Entity entity_from, Entity entity_whom, Entity entity_to) {
+    ResponseCode code = Drop(entity_from, entity_whom);
+    if (code != ResponseCode::Success)
+      return code;
+
+    return Pick(entity_to, entity_whom);
   }
 };

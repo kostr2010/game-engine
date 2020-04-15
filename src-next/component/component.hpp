@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cassert>
+#include <cstring>
 #include <iostream>
 #include <list>
 #include <map>
@@ -51,10 +52,6 @@ public:
     return &(components_[entity]);
   };
 
-  bool HasEntity(Entity entity) {
-    return components_.find(entity) != components_.end();
-  }
-
   bool Contains(Entity entity) const override {
     return components_.find(entity) != components_.end();
   }
@@ -68,7 +65,7 @@ private:
 
 // ====================
 // ComponentManager
-// easy interaction with all components
+// easy ERROR with all components
 
 class ComponentManager {
 public:
@@ -141,7 +138,11 @@ public:
 
   template <typename Component_t>
   bool HasComponent(Entity entity) {
-    return GetComponentPack<Component_t>()->HasEntity(entity);
+    IComponentPack* comp_pack = GetComponentPack<Component_t>();
+
+    assertm(comp_pack != nullptr, "unregistered component");
+
+    return comp_pack->Contains(entity);
   }
 
   template <typename Component_t>

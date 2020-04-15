@@ -16,6 +16,8 @@
 
 #include "./factories/factories.hpp"
 
+#include "./utils/response.hpp"
+
 TEST_CASE("Kick") {
   Monitor monitor{};
 
@@ -37,10 +39,10 @@ TEST_CASE("Kick") {
 
   ComponentKick ch1_kick = {.damage_amount = 3};
 
-  monitor.AttachComponent(ch1, ch1_health);
-  monitor.AttachComponent(ch2, ch2_health);
+  monitor.AttachComponent(ch1_health, ch1);
+  monitor.AttachComponent(ch2_health, ch2);
 
-  monitor.AttachComponent(ch1, ch1_kick);
+  monitor.AttachComponent(ch1_kick, ch1);
 
   sys_kick->Kick(ch1, ch2);
 
@@ -67,8 +69,8 @@ TEST_CASE("Transfer") {
 
   monitor.AttachProperty(item, Pickable);
 
-  monitor.AttachComponent(chest, chest_inventory);
-  monitor.AttachComponent(ch1, ch1_inventory);
+  monitor.AttachComponent(chest_inventory, chest);
+  monitor.AttachComponent(ch1_inventory, ch1);
 
   sys_cont->Transfer(chest, item, ch1);
 
@@ -87,27 +89,36 @@ TEST_CASE("Transfer") {
 }
 
 TEST_CASE("Move") {
-  /*
-Monitor monitor{};
+  Monitor monitor{};
 
-Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
-Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+  Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
+  Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
 
-SystemMovement* sys_move = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
+  SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
 
-Entity ch1 = monitor.AddEntity()
+  Entity ch1 = monitor.AddEntity();
 
-ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
-ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
+  ComponentPosition ch1_pos = {.pos = Vec2{0, 0}};
+  ComponentMovement ch1_mov = {.steps_max = 3, .steps_cur = 3};
 
-// check if chest has no item
-REQUIRE(std::find(chest_inventory_after->subentities.begin(),
-                  chest_inventory_after->subentities.end(),
-                  item) == chest_inventory_after->subentities.end());
+  monitor.AttachComponent(ch1_pos, ch1);
+  monitor.AttachComponent(ch1_mov, ch1);
 
-// check if ch1 has item
-REQUIRE(std::find(ch1_inventory_after->subentities.begin(),
-                  ch1_inventory_after->subentities.end(),
-                  item) != ch1_inventory_after->subentities.end());
-                  */
+  sys_movement->Move(ch1, Vec2{1, 0});
+  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{1, 0});
+
+  sys_movement->Move(ch1, Vec2{1, 1});
+  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{2, 1});
+
+  sys_movement->Move(ch1, Vec2{-2, -1});
+  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{0, 0});
+
+  ResponseCode code1 = sys_movement->Move(ch1, Vec2{1, 1});
+  REQUIRE(code1 == ResponseCode::Restricted);
+
+  sys_movement->ResetCurrentSteps();
+  REQUIRE(monitor.GetComponent<ComponentMovement>(ch1)->steps_cur == 3);
+
+  sys_movement->Move(ch1, Vec2{-1, 0});
+  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{-1, 0});
 }

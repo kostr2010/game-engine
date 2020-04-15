@@ -7,6 +7,7 @@
 #include "../entity/entity.hpp"
 #include "../monitor/monitor.hpp"
 #include "../utils/log.hpp"
+#include "../utils/response.hpp"
 
 // "A system is any functionality that iterates upon a list of entities with a certain signature of
 // components."
