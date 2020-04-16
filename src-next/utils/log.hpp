@@ -3,6 +3,7 @@
 // #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <iomanip>
 
 #ifndef LOG_LVL_SYSTEM_
 std::fstream log_system;
@@ -30,15 +31,17 @@ std::time_t result = std::time(nullptr);
 #define LOG_LVL_SYSTEM_ROUTINE(system, msg)                                                        \
   log_system.open("log/system.log", std::ios::app | std::ios::in);                                 \
   /* result = std::time(nullptr); */                                                               \
-  log_system /* << std::asctime(std::localtime(&result))*/ << "[" << typeid(system).name() << "] " \
-                                                           << msg << std::endl;                    \
+  log_system /* << std::asctime(std::localtime(&result))*/ << "[" << std::setw(16) << std::left    \
+                                                           << typeid(system).name() << "] " << msg \
+                                                           << std::endl;                           \
   log_system.close()
 
 #define LOG_LVL_SYSTEM_ERROR(system, msg)                                                          \
   log_system.open("log/system.log", std::ios::app | std::ios::in);                                 \
   /* result = std::time(nullptr); */                                                               \
   log_system /* << std::asctime(std::localtime(&result))*/                                         \
-      << "[" << typeid(system).name() << "] {FAILURE} " << msg << std::endl;                       \
+      << "[" << std::setw(16) << std::left << typeid(system).name() << "] "                        \
+      << "{FAILURE} " << msg << std::endl;                                                         \
   log_system.close()
 
 // ====================

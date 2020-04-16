@@ -21,10 +21,8 @@
 // [-] read / write from / to disc (serialization)
 // [-] make spawner - smth that calls factory and checks needed conditions & requirements
 
-// TO TRY
-// [-] systems as static class (it only contains functions anyways)
-
 // DONE
+// [+] movement
 // [+] virtual destructor, where and why -> effective c++ #1
 // [+] how shared_ptr works
 // [+] make_shared, shared_ptr

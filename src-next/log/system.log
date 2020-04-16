@@ -1,55 +1,55 @@
-[13SystemManager] SystemManager initialised
-[13SystemManager] new system 14SystemMovement registered
-[13SystemManager] new system 13SystemTerrain registered
-[13SystemManager] updated entity's 0 signature in every system
-[13SystemManager] updated entity's 0 signature in every system
-[13SystemManager] updated entity's 1 signature in every system
-[13SystemManager] updated entity's 1 signature in every system
-[13SystemManager] updated entity's 2 signature in every system
-[13SystemManager] updated entity's 2 signature in every system
-[13SystemManager] updated entity's 3 signature in every system
-[13SystemManager] updated entity's 3 signature in every system
-[13SystemManager] updated entity's 4 signature in every system
-[13SystemManager] updated entity's 4 signature in every system
-[13SystemManager] updated entity's 5 signature in every system
-[13SystemManager] updated entity's 5 signature in every system
-[13SystemManager] updated entity's 6 signature in every system
-[13SystemManager] updated entity's 6 signature in every system
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] entity 6 successfully left the tile
-[13SystemTerrain] entity 6 tries to enter the tile x: 1 y: 0
+[13SystemManager ] SystemManager initialised
+[13SystemManager ] new system 14SystemMovement registered
+[13SystemManager ] new system 13SystemTerrain registered
+[13SystemManager ] updated entity's 0 signature in every system
+[13SystemManager ] updated entity's 0 signature in every system
+[13SystemManager ] updated entity's 1 signature in every system
+[13SystemManager ] updated entity's 1 signature in every system
+[13SystemManager ] updated entity's 2 signature in every system
+[13SystemManager ] updated entity's 2 signature in every system
+[13SystemManager ] updated entity's 3 signature in every system
+[13SystemManager ] updated entity's 3 signature in every system
+[13SystemManager ] updated entity's 4 signature in every system
+[13SystemManager ] updated entity's 4 signature in every system
+[13SystemManager ] updated entity's 5 signature in every system
+[13SystemManager ] updated entity's 5 signature in every system
+[13SystemManager ] updated entity's 6 signature in every system
+[13SystemManager ] updated entity's 6 signature in every system
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] entity 6 successfully left the tile
+[13SystemTerrain ] entity 6 tries to enter the tile x: 1 y: 0
 
-[13SystemTerrain] entity 6 entered new tile x: 1 y: 0
-
-[14SystemMovement] entity 6 stepped into direction x: 1 y: 0
-
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] {FAILURE} entity 6 has 1steps avaliable, but 2 are needed to leave tile
-[14SystemMovement] {FAILURE} entity 6 unable to leave its tile
-[14SystemMovement] steps for all entities were reset
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] entity 6 successfully left the tile
-[13SystemTerrain] entity 6 tries to enter the tile x: 2 y: 0
-
-[13SystemTerrain] entity 6 entered new tile x: 2 y: 0
+[13SystemTerrain ] entity 6 entered new tile x: 1 y: 0
 
 [14SystemMovement] entity 6 stepped into direction x: 1 y: 0
 
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] {FAILURE} entity 6 has 0steps avaliable, but 1 are needed to leave tile
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] {FAILURE} entity 6 has 1steps avaliable, but 2 are needed to leave tile
 [14SystemMovement] {FAILURE} entity 6 unable to leave its tile
 [14SystemMovement] steps for all entities were reset
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] entity 6 successfully left the tile
-[13SystemTerrain] entity 6 tries to enter the tile x: 2 y: 1
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] entity 6 successfully left the tile
+[13SystemTerrain ] entity 6 tries to enter the tile x: 2 y: 0
 
-[13SystemTerrain] entity 6 entered new tile x: 2 y: 1
+[13SystemTerrain ] entity 6 entered new tile x: 2 y: 0
+
+[14SystemMovement] entity 6 stepped into direction x: 1 y: 0
+
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] {FAILURE} entity 6 has 0steps avaliable, but 1 are needed to leave tile
+[14SystemMovement] {FAILURE} entity 6 unable to leave its tile
+[14SystemMovement] steps for all entities were reset
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] entity 6 successfully left the tile
+[13SystemTerrain ] entity 6 tries to enter the tile x: 2 y: 1
+
+[13SystemTerrain ] entity 6 entered new tile x: 2 y: 1
 
 [14SystemMovement] entity 6 stepped into direction x: 0 y: 1
 
-[13SystemTerrain] entity 6 tries to leave the tile
-[13SystemTerrain] entity 6 successfully left the tile
-[13SystemTerrain] entity 6 tries to enter the tile x: 1 y: 1
+[13SystemTerrain ] entity 6 tries to leave the tile
+[13SystemTerrain ] entity 6 successfully left the tile
+[13SystemTerrain ] entity 6 tries to enter the tile x: 1 y: 1
 
-[13SystemTerrain] {FAILURE} destination terrain for entity 6 is unwalkable
+[13SystemTerrain ] {FAILURE} destination terrain for entity 6 is unwalkable
 [14SystemMovement] {FAILURE} entity 6 unable to enter new tile. returning back...
