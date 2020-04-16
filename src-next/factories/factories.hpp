@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../component/components/container.hpp"
+#include "../component/components/health.hpp"
+#include "../component/components/kick.hpp"
+#include "../component/components/movement.hpp"
+#include "../component/components/position.hpp"
+#include "../component/components/terrain.hpp"
 #include "../monitor/monitor.hpp"
-#include "../system/systems/systemContainer.hpp"
-#include "../system/systems/systemHealth.hpp"
-#include "../system/systems/systemKick.hpp"
-#include "../system/systems/systemMovement.hpp"
 #include "../utils/vec2.hpp"
 
 // warrior
@@ -25,6 +27,7 @@ const int HP_DUMMY = 1e6; // kek
 // static class that provides functions for simple object creation
 
 class EntityFactory {
+public:
   static Entity SpawnWarrior(Monitor* monitor, Vec2 position) {
     Entity warrior = monitor->AddEntity();
 
@@ -79,5 +82,41 @@ class EntityFactory {
     monitor->AttachComponent(container, chest);
 
     return chest;
+  }
+
+  static Entity SpawnTileFloorUsual(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
+
+    ComponentPosition pos     = {.pos = position};
+    ComponentTerrain  terrain = {.step_cost = 1, .walkable = true};
+
+    monitor->AttachComponent(pos, tile);
+    monitor->AttachComponent(terrain, tile);
+
+    return tile;
+  }
+
+  static Entity SpawnTileFloorViscous(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
+
+    ComponentPosition pos     = {.pos = position};
+    ComponentTerrain  terrain = {.step_cost = 2, .walkable = true};
+
+    monitor->AttachComponent(pos, tile);
+    monitor->AttachComponent(terrain, tile);
+
+    return tile;
+  }
+
+  static Entity SpawnTileWall(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
+
+    ComponentPosition pos     = {.pos = position};
+    ComponentTerrain  terrain = {.walkable = false};
+
+    monitor->AttachComponent(pos, tile);
+    monitor->AttachComponent(terrain, tile);
+
+    return tile;
   }
 };

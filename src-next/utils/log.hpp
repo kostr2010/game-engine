@@ -37,8 +37,8 @@ std::time_t result = std::time(nullptr);
 #define LOG_LVL_SYSTEM_ERROR(system, msg)                                                          \
   log_system.open("log/system.log", std::ios::app | std::ios::in);                                 \
   /* result = std::time(nullptr); */                                                               \
-  log_system /* << std::asctime(std::localtime(&result))*/ << "{ERROR} [" << typeid(system).name() \
-                                                           << "] " << msg << std::endl;            \
+  log_system /* << std::asctime(std::localtime(&result))*/                                         \
+      << "[" << typeid(system).name() << "] {FAILURE} " << msg << std::endl;                       \
   log_system.close()
 
 // ====================

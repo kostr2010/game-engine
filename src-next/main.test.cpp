@@ -3,20 +3,22 @@
 
 // utils
 #include "./monitor/monitor.hpp"
+#include "./utils/dsl.hpp"
 #include "./utils/log.hpp"
+#include "./utils/response.hpp"
 
 // systems
 #include "./system/systems/systemContainer.hpp"
 #include "./system/systems/systemHealth.hpp"
 #include "./system/systems/systemKick.hpp"
+#include "./system/systems/systemMovement.hpp"
+#include "./system/systems/systemTerrain.hpp"
 
 // components
 #include "./component/components/health.hpp"
 #include "./component/components/movement.hpp"
 
 #include "./factories/factories.hpp"
-
-#include "./utils/response.hpp"
 
 TEST_CASE("Kick") {
   Monitor monitor{};
@@ -89,36 +91,111 @@ TEST_CASE("Transfer") {
 }
 
 TEST_CASE("Move") {
-  Monitor monitor{};
+  Monitor  monitor{};
+  Monitor* monitor_ptr = &monitor;
 
   Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
   Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+  Component comp_id_terrain  = monitor.RegisterComponent<ComponentTerrain>();
 
   SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
+  monitor.RegisterSystem<SystemTerrain>({comp_id_terrain});
 
-  Entity ch1 = monitor.AddEntity();
+  EntityFactory::SpawnTileFloorUsual(monitor_ptr, {0, 0});
+  EntityFactory::SpawnTileFloorViscous(monitor_ptr, {1, 0});
+  EntityFactory::SpawnTileFloorUsual(monitor_ptr, {0, 1});
+  EntityFactory::SpawnTileWall(monitor_ptr, {1, 1});
+  EntityFactory::SpawnTileFloorUsual(monitor_ptr, {2, 0});
+  EntityFactory::SpawnTileFloorUsual(monitor_ptr, {2, 1});
 
-  ComponentPosition ch1_pos = {.pos = Vec2{0, 0}};
-  ComponentMovement ch1_mov = {.steps_max = 3, .steps_cur = 3};
+  // map:
+  // U V U
+  // U W U
 
-  monitor.AttachComponent(ch1_pos, ch1);
-  monitor.AttachComponent(ch1_mov, ch1);
+  Entity ch = EntityFactory::SpawnMovec(monitor_ptr, {0, 0});
+  REQUIRE(GET_STEPS_CUR(ch) == 2);
+  // map:
+  // * V U
+  // U W U
 
-  sys_movement->Move(ch1, Vec2{1, 0});
-  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{1, 0});
+  sys_movement->Move(ch, {1, 0});
+  REQUIRE(GET_POS(ch) == Vec2{1, 0});
+  REQUIRE(GET_STEPS_CUR(ch) == 1);
+  // map:
+  // U * U
+  // U W U
 
-  sys_movement->Move(ch1, Vec2{1, 1});
-  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{2, 1});
-
-  sys_movement->Move(ch1, Vec2{-2, -1});
-  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{0, 0});
-
-  ResponseCode code1 = sys_movement->Move(ch1, Vec2{1, 1});
-  REQUIRE(code1 == ResponseCode::Restricted);
+  // failure because of (steps_cur == 1) < (step_cost == 2)
+  auto code1 = sys_movement->Move(ch, {1, 0});
+  REQUIRE(code1 == ResponseCode::Failure);
+  REQUIRE(GET_POS(ch) == Vec2{1, 0});
+  REQUIRE(GET_STEPS_CUR(ch) == 1);
 
   sys_movement->ResetCurrentSteps();
-  REQUIRE(monitor.GetComponent<ComponentMovement>(ch1)->steps_cur == 3);
+  REQUIRE(GET_STEPS_CUR(ch) == 2);
 
-  sys_movement->Move(ch1, Vec2{-1, 0});
-  REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{-1, 0});
+  sys_movement->Move(ch, {1, 0});
+  REQUIRE(GET_POS(ch) == Vec2{2, 0});
+  REQUIRE(GET_STEPS_CUR(ch) == 0);
+  // map:
+  // U V *
+  // U W U
+
+  // failure because of (steps_cur == 0)
+  auto code2 = sys_movement->Move(ch, {0, 1});
+  REQUIRE(code2 == ResponseCode::Failure);
+  REQUIRE(GET_POS(ch) == Vec2{2, 0});
+  REQUIRE(GET_STEPS_CUR(ch) == 0);
+
+  sys_movement->ResetCurrentSteps();
+  REQUIRE(GET_STEPS_CUR(ch) == 2);
+
+  sys_movement->Move(ch, {0, 1});
+  REQUIRE(GET_POS(ch) == Vec2{2, 1});
+  REQUIRE(GET_STEPS_CUR(ch) == 1);
+  // map:
+  // U V U
+  // U W *
+
+  // failure because of Wall is not walkable
+  auto code3 = sys_movement->Move(ch, {-1, 0});
+  REQUIRE(code3 == ResponseCode::Failure);
+  REQUIRE(GET_POS(ch) == Vec2{2, 1});
+  REQUIRE(GET_STEPS_CUR(ch) == 1);
 }
+
+// TEST_CASE("Move") {
+//   Monitor monitor{};
+//   Map     map{};
+
+//   Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
+//   Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+
+//   SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
+
+//   Entity ch1 = monitor.AddEntity();
+
+//   ComponentPosition ch1_pos = {.pos = Vec2{0, 0}};
+//   ComponentMovement ch1_mov = {.steps_max = 3, .steps_cur = 3};
+
+//   monitor.AttachComponent(ch1_pos, ch1);
+//   monitor.AttachComponent(ch1_mov, ch1);
+
+//   sys_movement->Move(ch1, Vec2{1, 0});
+//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{1, 0});
+
+//   sys_movement->Move(ch1, Vec2{1, 1});
+//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{2, 1});
+
+//   sys_movement->Move(ch1, Vec2{-2, -1});
+//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{0, 0});
+
+//   ResponseCode code1 = sys_movement->Move(ch1, Vec2{1, 1});
+//   REQUIRE(code1 == ResponseCode::Failure);
+
+//   sys_movement->ResetCurrentSteps();
+//   REQUIRE(monitor.GetComponent<ComponentMovement>(ch1)->steps_cur == 3);
+
+//   sys_movement->Move(ch1, Vec2{-1, 0});
+//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{-1, 0});
+// }

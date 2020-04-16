@@ -1,7 +1,11 @@
 #pragma once
+
 #include "../../component/components/movement.hpp"
 #include "../../component/components/position.hpp"
 #include "../system.hpp"
+#include "./systemTerrain.hpp"
+
+#include <cmath>
 
 class SystemMovement : public System {
 public:
@@ -9,20 +13,47 @@ public:
   }
 
   ResponseCode Move(Entity entity, Vec2 direction) {
+    if (std::abs(direction.x) + std::abs(direction.y) != 1) {
+      LOG_LVL_SYSTEM_ERROR(SystemMovement, "direction invalid " << direction);
+      return ResponseCode::Failure;
+    }
+
     REQUIRE_COMPONENT(SystemMovement, ComponentMovement, entity);
     REQUIRE_COMPONENT(SystemMovement, ComponentPosition, entity);
 
-    ComponentMovement* comp_move = monitor_->GetComponent<ComponentMovement>(entity);
-    ComponentPosition* comp_pos  = monitor_->GetComponent<ComponentPosition>(entity);
+    SystemTerrain* sys_terrain = monitor_->GetSystem<SystemTerrain>();
 
-    if (comp_move->steps_cur == 0)
-      return ResponseCode::Restricted;
+    ComponentMovement* comp_movement = monitor_->GetComponent<ComponentMovement>(entity);
+    ComponentPosition* comp_pos      = monitor_->GetComponent<ComponentPosition>(entity);
 
-    comp_move->steps_cur--;
+    int          steps_cur_before = comp_movement->steps_cur;
+    ResponseCode resp_code_leave  = sys_terrain->LeaveTile(entity);
 
-    // TODO check if direction is valid
+    if (resp_code_leave != ResponseCode::Success) {
+      LOG_LVL_SYSTEM_ERROR(SystemMovement, "entity " << entity << " unable to leave its tile");
+      return resp_code_leave;
+    }
 
-    comp_pos->pos += direction;
+    Vec2 position_new = comp_pos->pos + direction;
+    // LOG_LVL_SYSTEM_ROUTINE(SystemMovement,
+    //                        "entity " << entity << " tries to enter " << position_new
+    //                                  << " (getting the tile)");
+
+    ResponseCode resp_code_arrive = sys_terrain->EnterTile(entity, position_new);
+
+    if (resp_code_arrive != ResponseCode::Success) {
+      LOG_LVL_SYSTEM_ERROR(SystemMovement,
+                           "entity " << entity << " unable to enter new tile. returning back...");
+
+      comp_movement->steps_cur = steps_cur_before;
+      return resp_code_arrive;
+    }
+
+    comp_pos->pos = position_new;
+
+    LOG_LVL_SYSTEM_ROUTINE(SystemMovement,
+                           "entity " << entity << " stepped into direction " << direction);
+
     return ResponseCode::Success;
   }
 
@@ -31,6 +62,8 @@ public:
       ComponentMovement* comp_move = monitor_->GetComponent<ComponentMovement>(entity);
       comp_move->steps_cur         = comp_move->steps_max;
     }
+
+    LOG_LVL_SYSTEM_ROUTINE(SystemMovement, "steps for all entities were reset");
 
     return ResponseCode::Success;
   }

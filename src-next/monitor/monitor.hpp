@@ -5,12 +5,17 @@
 
 #include "../component/component.hpp"
 #include "../entity/entity.hpp"
+#include "../map/map.hpp"
+
 #include "../property/properties.hpp"
 #include "../property/property.hpp"
+
 #include "../system/system.hpp"
 #include "../system/systemManager.hpp"
+
 #include "../utils/assembly.hpp"
 #include "../utils/log.hpp"
+#include "../utils/vec2.hpp"
 
 // ====================
 // Monitor
@@ -55,7 +60,7 @@ public:
   }
 
   template <typename Component_t>
-  void AttachComponent(Component_t component_new, Entity entity) {
+  void AttachComponent(Component_t& component_new, Entity entity) {
     component_manager_.AttachComponent(entity, component_new);
 
     Signature signature_prev = entity_manager_.GetSignature(entity);
@@ -109,7 +114,7 @@ public:
   }
 
   template <typename System_t>
-  void SetSystemSignature(Signature signature) {
+  void SetSystemSignature(Signature& signature) {
     system_manager_.SetSignature<System_t>(signature);
 
     // TODO add try/catch here
@@ -158,31 +163,59 @@ public:
   }
 
   void AttachProperty(Entity entity, PropertyType property) {
-    property_manager.AttachProperty(entity, property);
+    property_manager_.AttachProperty(entity, property);
   }
 
   void RemoveProperty(Entity entity, PropertyType property) {
-    property_manager.RemoveProperty(entity, property);
+    property_manager_.RemoveProperty(entity, property);
   }
 
   bool HasProperty(Entity entity, PropertyType property) {
-    return property_manager.HasProperty(entity, property);
+    return property_manager_.HasProperty(entity, property);
   }
 
   bool HasNoProperty(Entity entity, PropertyType property) {
-    return property_manager.HasNoProperty(entity, property);
+    return property_manager_.HasNoProperty(entity, property);
   }
 
   bool CheckIfEntityExists(Entity entity) {
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
-  void Print() {
-    component_manager_.Print();
-  }
+  // Entity GetTile(Vec2 pos) {
+  //   SystemTerrain* sys_terrain = GetSystem<SystemTerrain>();
+
+  //   for (const auto& entity : sys_terrain->entities_) {
+  //     ComponentPosition* comp_pos = GetComponent<ComponentPosition>(entity);
+  //     if (comp_pos->pos == pos)
+  //       return entity;
+  //   }
+
+  //   assertm(false, "pos for the tile is out of range");
+  // }
+
+  // Terrain CellGetTerrain(Vec2 pos) {
+  //   return map_->GetTerrain(pos);
+  // }
+
+  // bool CellContainsEntity(Vec2 pos, Entity entity) {
+  //   return map_->ContainsEntity(pos, entity);
+  // }
+
+  // void CellRemoveEntity(Vec2 pos, Entity entity) {
+  //   map_->RemoveEntity(pos, entity);
+  // }
+
+  // void CellAddEntity(Vec2 pos, Entity entity) {
+  //   map_->AddEntity(pos, entity);
+  // }
+
+  // bool CellIsWalkable(Vec2 pos) {
+  //   return map_->IsWalkable(pos);
+  // }
 
 private:
-  void UpdateSignature(Entity entity, Signature signature) {
+  void UpdateSignature(Entity entity, Signature& signature) {
     entity_manager_.SetSignature(entity, signature);
     system_manager_.UpdateEntitySignature(entity, signature);
 
@@ -191,11 +224,8 @@ private:
                                         << signature);
   }
 
-  // creates entity, system, component managers
-  void Init() {
-  }
-
-  PropertyManager  property_manager{};
+  // Map*             map_{};
+  PropertyManager  property_manager_{};
   ComponentManager component_manager_{};
   EntityManager    entity_manager_{};
   SystemManager    system_manager_{this};

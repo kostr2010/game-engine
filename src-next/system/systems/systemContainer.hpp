@@ -13,7 +13,8 @@ public:
   }
 
   ResponseCode Pick(Entity entity_origin, Entity entity_target) {
-    REQUIRE_COMPONENT(SystemContainer, ComponentContainer, entity_origin);
+    // TODO remove position component from target
+
     REQUIRE_PROPERTY(SystemContainer, Pickable, entity_target);
 
     ComponentContainer* origin_comp_contain =
@@ -25,6 +26,8 @@ public:
   }
 
   ResponseCode Drop(Entity entity_origin, Entity entity_target) {
+    // TODO add position component to target
+
     REQUIRE_COMPONENT(SystemContainer, ComponentContainer, entity_origin);
     REQUIRE_PROPERTY(SystemContainer, Pickable, entity_target);
 
@@ -39,7 +42,7 @@ public:
       LOG_LVL_SYSTEM_ERROR(SystemContainer,
                            "entity " << entity_origin << " tries to drop an item " << entity_target
                                      << "it does not have");
-      return ResponseCode::Restricted;
+      return ResponseCode::Failure;
     }
 
     origin_comp_contain->subentities.erase(position);

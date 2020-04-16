@@ -1,4 +1,5 @@
 *main
+*test
 libs/*
 *.gcda
 *.gcno

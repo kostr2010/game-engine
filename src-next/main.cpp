@@ -13,21 +13,24 @@
 
 // TO GOOGLE
 // [-] кд дерево
+// [?] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
+
+// FOR NEXT TIME
+// [-] UI thread to read console commands
+// [-] (type2*)(type1*) -> static / dynamic cast
+// [-] read / write from / to disc (serialization)
+// [-] make spawner - smth that calls factory and checks needed conditions & requirements
+
+// TO TRY
+// [-] systems as static class (it only contains functions anyways)
+
+// DONE
+// [+] virtual destructor, where and why -> effective c++ #1
 // [+] how shared_ptr works
 // [+] make_shared, shared_ptr
 // [+] static vs dynamic type, cast
 // [+] !!! unique_ptr
-// [?] stackoverflow.com/questions/400257/how-can-i-pass-a-class-member-function-as-a-callback
-// [+] virtual destructor, where and why -> effective c++ #1
-
-// FOR NEXT TIME
-// [-] UI thread to read console commands
-// [-] add response codes
-// [-] (type2*)(type1*) -> static / dynamic cast
-// [-] read / write from / to disc
-
-// TO TRY
-// [-] systems as static class (it only contains functions anyways)
+// [+] add response codes
 // [+] get rid of booleans in components (! new bitmap and manager)
 // [+] deactivate instead of delete
 
