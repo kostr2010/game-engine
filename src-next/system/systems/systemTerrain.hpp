@@ -29,10 +29,10 @@ public:
     ComponentTerrain*  comp_terrain  = monitor_->GetComponent<ComponentTerrain>(tile);
 
     if (comp_movement->steps_cur < comp_terrain->step_cost) {
-      LOG_LVL_SYSTEM_ERROR(SystemTerrain,
-                           "entity " << entity << " has " << comp_movement->steps_cur
-                                     << "steps avaliable, but " << comp_terrain->step_cost
-                                     << " are needed to leave tile");
+      LOG_LVL_SYSTEM_FAILURE(SystemTerrain,
+                             "entity " << entity << " has " << comp_movement->steps_cur
+                                       << "steps avaliable, but " << comp_terrain->step_cost
+                                       << " are needed to leave tile");
       return ResponseCode::Failure;
     }
 
@@ -57,8 +57,8 @@ public:
 
     ComponentTerrain* comp_terrain = monitor_->GetComponent<ComponentTerrain>(tile);
     if (!comp_terrain->walkable) {
-      LOG_LVL_SYSTEM_ERROR(SystemTerrain,
-                           "destination terrain for entity " << entity << " is unwalkable");
+      LOG_LVL_SYSTEM_FAILURE(SystemTerrain,
+                             "destination terrain for entity " << entity << " is unwalkable");
 
       return ResponseCode::Failure;
     }

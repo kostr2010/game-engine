@@ -14,7 +14,7 @@ public:
 
   ResponseCode Move(Entity entity, Vec2 direction) {
     if (std::abs(direction.x) + std::abs(direction.y) != 1) {
-      LOG_LVL_SYSTEM_ERROR(SystemMovement, "direction invalid " << direction);
+      LOG_LVL_SYSTEM_FAILURE(SystemMovement, "direction invalid " << direction);
       return ResponseCode::Failure;
     }
 
@@ -30,7 +30,7 @@ public:
     ResponseCode resp_code_leave  = sys_terrain->LeaveTile(entity);
 
     if (resp_code_leave != ResponseCode::Success) {
-      LOG_LVL_SYSTEM_ERROR(SystemMovement, "entity " << entity << " unable to leave its tile");
+      LOG_LVL_SYSTEM_FAILURE(SystemMovement, "entity " << entity << " unable to leave its tile");
       return resp_code_leave;
     }
 
@@ -42,8 +42,8 @@ public:
     ResponseCode resp_code_arrive = sys_terrain->EnterTile(entity, position_new);
 
     if (resp_code_arrive != ResponseCode::Success) {
-      LOG_LVL_SYSTEM_ERROR(SystemMovement,
-                           "entity " << entity << " unable to enter new tile. returning back...");
+      LOG_LVL_SYSTEM_FAILURE(SystemMovement,
+                             "entity " << entity << " unable to enter new tile. returning back...");
 
       comp_movement->steps_cur = steps_cur_before;
       return resp_code_arrive;

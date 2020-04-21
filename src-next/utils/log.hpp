@@ -25,19 +25,19 @@ std::time_t result = std::time(nullptr);
 // LVL_SYSTEM
 
 #define LOG_LVL_SYSTEM_INIT()                                                                      \
-  log_system.open("log/system.log", std::ios::trunc | std::ios::out);                              \
+  log_system.open("../log/system.log", std::ios::trunc | std::ios::out);                           \
   log_system.close()
 
 #define LOG_LVL_SYSTEM_ROUTINE(system, msg)                                                        \
-  log_system.open("log/system.log", std::ios::app | std::ios::in);                                 \
+  log_system.open("../log/system.log", std::ios::app | std::ios::in);                              \
   /* result = std::time(nullptr); */                                                               \
   log_system /* << std::asctime(std::localtime(&result))*/ << "[" << std::setw(16) << std::left    \
                                                            << typeid(system).name() << "] " << msg \
                                                            << std::endl;                           \
   log_system.close()
 
-#define LOG_LVL_SYSTEM_ERROR(system, msg)                                                          \
-  log_system.open("log/system.log", std::ios::app | std::ios::in);                                 \
+#define LOG_LVL_SYSTEM_FAILURE(system, msg)                                                        \
+  log_system.open("../log/system.log", std::ios::app | std::ios::in);                              \
   /* result = std::time(nullptr); */                                                               \
   log_system /* << std::asctime(std::localtime(&result))*/                                         \
       << "[" << std::setw(16) << std::left << typeid(system).name() << "] "                        \
@@ -49,11 +49,11 @@ std::time_t result = std::time(nullptr);
 
 #define LOG_LVL_MONITOR_INIT()                                                                     \
   /*std::fstream log_monitor;*/                                                                    \
-  log_monitor.open("log/monitor.log", std::ios::trunc | std::ios::out);                            \
+  log_monitor.open("../log/system.log", std::ios::trunc | std::ios::out);                          \
   log_monitor.close()
 
 #define LOG_LVL_MONITOR_ROUTINE(msg)                                                               \
-  log_monitor.open("log/monitor.log", std::ios::app | std::ios::in);                               \
+  log_monitor.open("../log/system.log", std::ios::app | std::ios::in);                             \
   /*result = std::time(nullptr);*/                                                                 \
   log_monitor /*<< std::asctime(std::localtime(&result))*/ << "[Monitor] " << msg << std::endl;    \
   log_monitor.close()
@@ -62,11 +62,11 @@ std::time_t result = std::time(nullptr);
 // LVL_COMPONENT
 
 #define LOG_LVL_COMPONENT_INIT()                                                                   \
-  log_component.open("log/component.log", std::ios::trunc | std::ios::out);                        \
+  log_component.open("../log/component.log", std::ios::trunc | std::ios::out);                     \
   log_component.close()
 
 #define LOG_LVL_COMPONENT_ROUTINE(component, msg)                                                  \
-  log_component.open("log/component.log", std::ios::app | std::ios::in);                           \
+  log_component.open("../log/component.log", std::ios::app | std::ios::in);                        \
   /*result = std::time(nullptr);*/                                                                 \
   log_component /*<< std::asctime(std::localtime(&result))*/ << "[" << typeid(component).name()    \
                                                              << "] " << msg << std::endl;          \

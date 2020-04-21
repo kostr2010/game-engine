@@ -20,6 +20,30 @@
 
 #include "./factories/factories.hpp"
 
+TEST_CASE("Serialize") {
+  ComponentHealth h1{.hp_max = 13, .hp_cur = 25};
+
+  json j = h1.Serialize();
+
+  std::ofstream file;
+  file.open("../saves/test.json", std::ios_base::trunc);
+
+  file << j;
+}
+
+TEST_CASE("Deserialize") {
+  std::ifstream file;
+  file.open("../saves/test.json");
+
+  json j;
+  file >> j;
+
+  ComponentHealth* h1 = ComponentHealth::Deserialize(j);
+
+  REQUIRE(h1->hp_max == 13);
+  REQUIRE(h1->hp_cur == 25);
+}
+
 TEST_CASE("Kick") {
   Monitor monitor{};
 
@@ -163,39 +187,3 @@ TEST_CASE("Move") {
   REQUIRE(GET_POS(ch) == Vec2{2, 1});
   REQUIRE(GET_STEPS_CUR(ch) == 1);
 }
-
-// TEST_CASE("Move") {
-//   Monitor monitor{};
-//   Map     map{};
-
-//   Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
-//   Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
-
-//   SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
-
-//   Entity ch1 = monitor.AddEntity();
-
-//   ComponentPosition ch1_pos = {.pos = Vec2{0, 0}};
-//   ComponentMovement ch1_mov = {.steps_max = 3, .steps_cur = 3};
-
-//   monitor.AttachComponent(ch1_pos, ch1);
-//   monitor.AttachComponent(ch1_mov, ch1);
-
-//   sys_movement->Move(ch1, Vec2{1, 0});
-//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{1, 0});
-
-//   sys_movement->Move(ch1, Vec2{1, 1});
-//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{2, 1});
-
-//   sys_movement->Move(ch1, Vec2{-2, -1});
-//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{0, 0});
-
-//   ResponseCode code1 = sys_movement->Move(ch1, Vec2{1, 1});
-//   REQUIRE(code1 == ResponseCode::Failure);
-
-//   sys_movement->ResetCurrentSteps();
-//   REQUIRE(monitor.GetComponent<ComponentMovement>(ch1)->steps_cur == 3);
-
-//   sys_movement->Move(ch1, Vec2{-1, 0});
-//   REQUIRE(monitor.GetComponent<ComponentPosition>(ch1)->pos == Vec2{-1, 0});
-// }

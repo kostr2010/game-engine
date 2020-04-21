@@ -13,7 +13,15 @@
 #include "../utils/assembly.hpp"
 #include "../utils/log.hpp"
 
+#include "../../libs/json/json.hpp"
+using json = nlohmann::json;
+
 typedef int Component;
+
+// struct IComponent {
+//   virtual json        Serialize()         = 0;
+//   virtual IComponent* Deserialize(json j) = 0;
+// };
 
 // ====================
 // IComponentPack

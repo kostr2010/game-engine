@@ -39,9 +39,9 @@ public:
                               entity_target);
 
     if (position == origin_comp_contain->subentities.end()) {
-      LOG_LVL_SYSTEM_ERROR(SystemContainer,
-                           "entity " << entity_origin << " tries to drop an item " << entity_target
-                                     << "it does not have");
+      LOG_LVL_SYSTEM_FAILURE(SystemContainer,
+                             "entity " << entity_origin << " tries to drop an item "
+                                       << entity_target << "it does not have");
       return ResponseCode::Failure;
     }
 
