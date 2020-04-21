@@ -9,24 +9,16 @@ struct ComponentContainer {
   // FIXME dynamic array / std::array / []check vector size
   std::vector<Entity> subentities;
   int                 capacity;
-
-  json Serialize() {
-    json j{};
-
-    j["subentities"] = this->subentities;
-    j["capacity"]    = this->capacity;
-
-    return j;
-  }
-
-  static ComponentContainer* Deserialize(json j) {
-    ComponentContainer* comp = new ComponentContainer;
-    comp->subentities        = j["subentities"].get<std::vector<Entity>>();
-    comp->capacity           = j["capacity"].get<int>();
-
-    return comp;
-  }
 };
+
+void to_json(json& j, const ComponentContainer& p) {
+  // j = json{{"hp_max", p.hp_max}, {"hp_cur", p.hp_cur}};
+}
+
+void from_json(const json& j, ComponentContainer& p) {
+  // j.at("hp_max").get_to(p.hp_max);
+  // j.at("hp_cur").get_to(p.hp_cur);
+}
 
 std::ostream& operator<<(std::ostream& os, ComponentContainer comp_container) {
   os << "subentities: ";

@@ -20,9 +20,9 @@
 // [-] (type2*)(type1*) -> static / dynamic cast
 // [-] read / write from / to disc (serialization)
 // [-] make spawner - smth that calls factory and checks needed conditions & requirements
-// [-] padding
 
 // DONE
+// [+] padding
 // [+] movement
 // [+] virtual destructor, where and why -> effective c++ #1
 // [+] how shared_ptr works

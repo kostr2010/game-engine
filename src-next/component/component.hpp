@@ -32,6 +32,10 @@ public:
   virtual void RemoveEntity(Entity entity) = 0;
 
   virtual bool Contains(Entity entity) const = 0;
+
+  virtual json Serialize() = 0;
+
+  virtual void Deserialize(json j) = 0;
 };
 
 // ====================
@@ -63,6 +67,15 @@ public:
   bool Contains(Entity entity) const override {
     return components_.find(entity) != components_.end();
   }
+
+  json Serialize() override {
+    json j(components_);
+    return j;
+  }
+
+  void Deserialize(json j) override {
+    components_ = j.get<std::map<Entity, Component_t>>();
+  };
 
 private:
   // std::array<Component_t, MAX_ENTITIES> abilities_;
