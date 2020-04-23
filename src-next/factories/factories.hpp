@@ -28,8 +28,8 @@ const int HP_DUMMY = 1e6; // kek
 
 class EntityFactory {
 public:
-  static EntityId SpawnWarrior(Monitor* monitor, Vec2 position) {
-    EntityId warrior = monitor->AddEntity();
+  static Entity SpawnWarrior(Monitor* monitor, Vec2 position) {
+    Entity warrior = monitor->AddEntity();
 
     ComponentHealth    health    = {.hp_max = HP_WARRIOR, .hp_cur = HP_WARRIOR};
     ComponentMovement  move      = {.steps_max = STEPS_WARRIOR, .steps_cur = STEPS_WARRIOR};
@@ -46,8 +46,8 @@ public:
     return warrior;
   }
 
-  static EntityId SpawnMovec(Monitor* monitor, Vec2 position) {
-    EntityId movec = monitor->AddEntity();
+  static Entity SpawnMovec(Monitor* monitor, Vec2 position) {
+    Entity movec = monitor->AddEntity();
 
     ComponentMovement movement = {.steps_max = 2, .steps_cur = 2};
     ComponentPosition pos      = {.pos = position};
@@ -58,8 +58,8 @@ public:
     return movec;
   }
 
-  static EntityId SpawnDummy(Monitor* monitor, Vec2 position) {
-    EntityId dummy = monitor->AddEntity();
+  static Entity SpawnDummy(Monitor* monitor, Vec2 position) {
+    Entity dummy = monitor->AddEntity();
 
     ComponentHealth   health = {.hp_max = HP_DUMMY, .hp_cur = HP_DUMMY};
     ComponentPosition pos    = {.pos = position};
@@ -70,8 +70,8 @@ public:
     return dummy;
   }
 
-  static EntityId SpawnChest(Monitor* monitor, Vec2 position) {
-    EntityId chest = monitor->AddEntity();
+  static Entity SpawnChest(Monitor* monitor, Vec2 position) {
+    Entity chest = monitor->AddEntity();
 
     ComponentPosition  pos       = {.pos = position};
     ComponentHealth    health    = {.hp_max = HP_CHEST, .hp_cur = HP_CHEST};
@@ -84,8 +84,8 @@ public:
     return chest;
   }
 
-  static EntityId SpawnTileFloorUsual(Monitor* monitor, Vec2 position) {
-    EntityId tile = monitor->AddEntity();
+  static Entity SpawnTileFloorUsual(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
 
     ComponentPosition pos     = {.pos = position};
     ComponentTerrain  terrain = {.step_cost = 1, .walkable = true};
@@ -96,8 +96,8 @@ public:
     return tile;
   }
 
-  static EntityId SpawnTileFloorViscous(Monitor* monitor, Vec2 position) {
-    EntityId tile = monitor->AddEntity();
+  static Entity SpawnTileFloorViscous(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
 
     ComponentPosition pos     = {.pos = position};
     ComponentTerrain  terrain = {.step_cost = 2, .walkable = true};
@@ -108,8 +108,8 @@ public:
     return tile;
   }
 
-  static EntityId SpawnTileWall(Monitor* monitor, Vec2 position) {
-    EntityId tile = monitor->AddEntity();
+  static Entity SpawnTileWall(Monitor* monitor, Vec2 position) {
+    Entity tile = monitor->AddEntity();
 
     ComponentPosition pos     = {.pos = position};
     ComponentTerrain  terrain = {.walkable = false};

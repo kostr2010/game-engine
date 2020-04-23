@@ -49,8 +49,8 @@ public:
   // the managers
 
   template <typename Component_t>
-  ComponentType RegisterComponent() {
-    ComponentType component = component_manager_.RegisterComponent<Component_t>();
+  Component RegisterComponent() {
+    Component component = component_manager_.RegisterComponent<Component_t>();
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("component " << typeid(Component_t).name() << " registered with id "
@@ -60,11 +60,11 @@ public:
   }
 
   template <typename Component_t>
-  void AttachComponent(Component_t& component_new, EntityId entity) {
+  void AttachComponent(Component_t& component_new, Entity entity) {
     component_manager_.AttachComponent(entity, component_new);
 
-    Signature     signature_prev = entity_manager_.GetSignature(entity);
-    ComponentType component      = component_manager_.GetComponentType<Component_t>();
+    Signature signature_prev = entity_manager_.GetSignature(entity);
+    Component component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, true);
 
@@ -78,11 +78,11 @@ public:
   }
 
   template <typename Component_t>
-  void RemoveComponent(EntityId entity) {
+  void RemoveComponent(Entity entity) {
     component_manager_.RemoveComponent<Component_t>(entity);
 
-    Signature     signature_prev = entity_manager_.GetSignature(entity);
-    ComponentType component      = component_manager_.GetComponentType<Component_t>();
+    Signature signature_prev = entity_manager_.GetSignature(entity);
+    Component component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, false);
 
@@ -95,8 +95,8 @@ public:
                                          << entity_manager_.GetSignature(entity));
   }
 
-  EntityId AddEntity() {
-    EntityId entity_new = entity_manager_.CreateEntity();
+  Entity AddEntity() {
+    Entity entity_new = entity_manager_.CreateEntity();
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("new entity with id " << entity_new << " registered");
@@ -104,7 +104,7 @@ public:
     return entity_new;
   }
 
-  void RemoveEntity(EntityId entity) {
+  void RemoveEntity(Entity entity) {
     entity_manager_.RemoveEntity(entity);
     component_manager_.RemoveEntity(entity);
     system_manager_.RemoveEntity(entity);
@@ -148,41 +148,41 @@ public:
   }
 
   template <typename Component_t>
-  bool HasComponent(EntityId entity) {
+  bool HasComponent(Entity entity) {
     return component_manager_.HasComponent<Component_t>(entity);
   }
 
   template <typename Component_t>
-  bool HasNoComponent(EntityId entity) {
+  bool HasNoComponent(Entity entity) {
     return !HasComponent<Component_t>(entity);
   }
 
   template <typename Component_t>
-  Component_t* GetComponent(EntityId entity) {
+  Component_t* GetComponent(Entity entity) {
     return component_manager_.GetComponent<Component_t>(entity);
   }
 
-  void AttachProperty(EntityId entity, PropertyType property) {
+  void AttachProperty(Entity entity, PropertyType property) {
     property_manager_.AttachProperty(entity, property);
   }
 
-  void RemoveProperty(EntityId entity, PropertyType property) {
+  void RemoveProperty(Entity entity, PropertyType property) {
     property_manager_.RemoveProperty(entity, property);
   }
 
-  bool HasProperty(EntityId entity, PropertyType property) {
+  bool HasProperty(Entity entity, PropertyType property) {
     return property_manager_.HasProperty(entity, property);
   }
 
-  bool HasNoProperty(EntityId entity, PropertyType property) {
+  bool HasNoProperty(Entity entity, PropertyType property) {
     return property_manager_.HasNoProperty(entity, property);
   }
 
-  bool CheckIfEntityExists(EntityId entity) {
+  bool CheckIfEntityExists(Entity entity) {
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
-  // EntityId GetTile(Vec2 pos) {
+  // Entity GetTile(Vec2 pos) {
   //   SystemTerrain* sys_terrain = GetSystem<SystemTerrain>();
 
   //   for (const auto& entity : sys_terrain->entities_) {
@@ -198,15 +198,15 @@ public:
   //   return map_->GetTerrain(pos);
   // }
 
-  // bool CellContainsEntity(Vec2 pos, EntityId entity) {
+  // bool CellContainsEntity(Vec2 pos, Entity entity) {
   //   return map_->ContainsEntity(pos, entity);
   // }
 
-  // void CellRemoveEntity(Vec2 pos, EntityId entity) {
+  // void CellRemoveEntity(Vec2 pos, Entity entity) {
   //   map_->RemoveEntity(pos, entity);
   // }
 
-  // void CellAddEntity(Vec2 pos, EntityId entity) {
+  // void CellAddEntity(Vec2 pos, Entity entity) {
   //   map_->AddEntity(pos, entity);
   // }
 
@@ -215,7 +215,7 @@ public:
   // }
 
 private:
-  void UpdateSignature(EntityId entity, Signature& signature) {
+  void UpdateSignature(Entity entity, Signature& signature) {
     entity_manager_.SetSignature(entity, signature);
     system_manager_.UpdateEntitySignature(entity, signature);
 

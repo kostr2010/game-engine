@@ -7,8 +7,8 @@
 
 struct ComponentContainer {
   // FIXME dynamic array / std::array / []check vector size
-  std::vector<EntityId> subentities;
-  int                   capacity;
+  std::vector<Entity> subentities;
+  int                 capacity;
 };
 
 void to_json(json& j, const ComponentContainer& p) {

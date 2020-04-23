@@ -21,22 +21,6 @@
 // [-] read / write from / to disc (serialization)
 // [-] make spawner - smth that calls factory and checks needed conditions & requirements
 
-// DED
-// [-] components.hpp map -> array
-// [-] System templates -> dynamic Systems loading (via unique id (LUID)) -> serialization
-// [-] console for dynamic modules loading and management + dynamic console commands based on
-// already loaded systems
-// [-] ComponentType templates -> dynamic Components loading and attaching
-// [-] pack of standart hard-coded Components&Systems (aka standar(d/t) library)
-// [-] diagram of references between classes and functionality and properties and functions
-// [-] illustrate real-life workflow (Gopher to the moon) with diagram of classes + main.cpp
-// fragment (real code)
-// [-] illustrating via one system, two systems, multiple systems..
-
-// Q
-// [?] unable to load components dynamically int the way they are now. POD prohibits dynamic cast /
-// interpretation
-
 // DONE
 // [+] padding
 // [+] movement
@@ -52,13 +36,13 @@
 int main() {
   Monitor monitor{};
 
-  ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
   SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
 
-  EntityId ch1   = monitor.AddEntity();
-  EntityId chest = monitor.AddEntity();
-  EntityId item  = monitor.AddEntity();
+  Entity ch1   = monitor.AddEntity();
+  Entity chest = monitor.AddEntity();
+  Entity item  = monitor.AddEntity();
 
   ComponentContainer ch1_inventory   = {};
   ComponentContainer chest_inventory = {{item}};
