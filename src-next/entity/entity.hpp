@@ -9,8 +9,8 @@ const int MAX_COMPONENTS = 32;
 // bitmap to keep track of assigned components to specific entities
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
-// Entity - just numeric Id
-typedef int Entity;
+// EntityId - just numeric Id
+typedef int EntityId;
 
 // ====================
 // EntityManager
@@ -26,33 +26,33 @@ public:
       available_ids_.insert(i);
   }
 
-  Entity CreateEntity() {
+  EntityId CreateEntity() {
     auto id = available_ids_.begin();
     available_ids_.erase(id);
 
     return *id;
   }
 
-  void RemoveEntity(Entity entity) {
+  void RemoveEntity(EntityId entity) {
     available_ids_.insert(entity);
     abilities_signatures_[entity].reset();
   }
 
-  Signature GetSignature(Entity entity) {
+  Signature GetSignature(EntityId entity) {
     return abilities_signatures_[entity];
   }
 
-  Signature SetSignature(Entity entity, Signature signature) {
+  Signature SetSignature(EntityId entity, Signature signature) {
     return abilities_signatures_[entity] = signature;
   }
 
-  bool CheckIfEntityExists(Entity entity_target) {
+  bool CheckIfEntityExists(EntityId entity_target) {
     return available_ids_.find(entity_target) == available_ids_.end();
   }
 
 private:
   std::array<Signature, MAX_ENTITIES>
-                   abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
-  std::set<Entity> available_ids_{}; // TODO: replace "set" with smth better
-  int              entities_alive_;
+                     abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
+  std::set<EntityId> available_ids_{}; // TODO: replace "set" with smth better
+  int                entities_alive_;
 };

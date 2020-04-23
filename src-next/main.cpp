@@ -36,13 +36,13 @@
 int main() {
   Monitor monitor{};
 
-  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
   SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
 
-  Entity ch1   = monitor.AddEntity();
-  Entity chest = monitor.AddEntity();
-  Entity item  = monitor.AddEntity();
+  EntityId ch1   = monitor.AddEntity();
+  EntityId chest = monitor.AddEntity();
+  EntityId item  = monitor.AddEntity();
 
   ComponentContainer ch1_inventory   = {};
   ComponentContainer chest_inventory = {{item}};

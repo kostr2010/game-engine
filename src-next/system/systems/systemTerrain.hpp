@@ -16,14 +16,14 @@ public:
     return ResponseCode::Success;
   }
 
-  ResponseCode LeaveTile(Entity entity) {
+  ResponseCode LeaveTile(EntityId entity) {
     LOG_LVL_SYSTEM_ROUTINE(SystemTerrain, "entity " << entity << " tries to leave the tile");
 
     REQUIRE_COMPONENT(SystemTerrain, ComponentMovement, entity);
     REQUIRE_COMPONENT(SystemTerrain, ComponentPosition, entity);
 
     ComponentPosition* comp_pos = monitor_->GetComponent<ComponentPosition>(entity);
-    Entity             tile     = GetTile(comp_pos->pos);
+    EntityId           tile     = GetTile(comp_pos->pos);
 
     ComponentMovement* comp_movement = monitor_->GetComponent<ComponentMovement>(entity);
     ComponentTerrain*  comp_terrain  = monitor_->GetComponent<ComponentTerrain>(tile);
@@ -43,7 +43,7 @@ public:
     return ResponseCode::Success;
   }
 
-  ResponseCode EnterTile(Entity entity, Vec2 position_new) {
+  ResponseCode EnterTile(EntityId entity, Vec2 position_new) {
     LOG_LVL_SYSTEM_ROUTINE(SystemTerrain,
                            "entity " << entity << " tries to enter the tile " << position_new);
 
@@ -53,7 +53,7 @@ public:
     // apply effects via if-es of tile.poison, tile.fire, etc.
 
     // TODO: assert that position_new is not out of range
-    Entity tile = GetTile(position_new);
+    EntityId tile = GetTile(position_new);
 
     ComponentTerrain* comp_terrain = monitor_->GetComponent<ComponentTerrain>(tile);
     if (!comp_terrain->walkable) {
@@ -70,7 +70,7 @@ public:
   }
 
 private:
-  Entity GetTile(Vec2 pos) {
+  EntityId GetTile(Vec2 pos) {
     for (const auto& entity : entities_) {
       ComponentPosition* comp_pos = monitor_->GetComponent<ComponentPosition>(entity);
       if (comp_pos->pos == pos)

@@ -12,7 +12,7 @@ public:
   SystemHealth(Monitor* monitor) : System(monitor) {
   }
 
-  ResponseCode ChangeCurrentHp(Entity entity, int delta) {
+  ResponseCode ChangeCurrentHp(EntityId entity, int delta) {
     REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
     ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
@@ -27,7 +27,7 @@ public:
     return ResponseCode::Success;
   }
 
-  ResponseCode ChangeMaximumHP(Entity entity, int delta) {
+  ResponseCode ChangeMaximumHP(EntityId entity, int delta) {
     REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
     ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
