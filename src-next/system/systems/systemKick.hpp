@@ -10,7 +10,7 @@ public:
   SystemKick(Monitor* monitor) : System(monitor) {
   }
 
-  ResponseCode Kick(Entity entity_origin, Entity entity_target) {
+  ResponseCode Kick(EntityId entity_origin, EntityId entity_target) {
     LOG_LVL_SYSTEM_ROUTINE(SystemKick,
                            "entity " << entity_origin << " attempts to kick " << entity_target);
 

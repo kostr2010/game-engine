@@ -12,7 +12,7 @@ public:
   SystemContainer(Monitor* monitor) : System(monitor) {
   }
 
-  ResponseCode Pick(Entity entity_origin, Entity entity_target) {
+  ResponseCode Pick(EntityId entity_origin, EntityId entity_target) {
     // TODO remove position component from target
 
     REQUIRE_PROPERTY(SystemContainer, Pickable, entity_target);
@@ -25,7 +25,7 @@ public:
     return ResponseCode::Success;
   }
 
-  ResponseCode Drop(Entity entity_origin, Entity entity_target) {
+  ResponseCode Drop(EntityId entity_origin, EntityId entity_target) {
     // TODO add position component to target
 
     REQUIRE_COMPONENT(SystemContainer, ComponentContainer, entity_origin);
@@ -50,7 +50,7 @@ public:
     return ResponseCode::Success;
   }
 
-  ResponseCode Transfer(Entity entity_from, Entity entity_whom, Entity entity_to) {
+  ResponseCode Transfer(EntityId entity_from, EntityId entity_whom, EntityId entity_to) {
     ResponseCode code = Drop(entity_from, entity_whom);
     if (code != ResponseCode::Success)
       return code;

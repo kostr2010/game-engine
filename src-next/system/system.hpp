@@ -30,7 +30,7 @@ class Monitor;
 
 class System {
 public:
-  std::set<Entity> entities_{};
+  std::set<EntityId> entities_{};
 
   System(Monitor* monitor) {
     monitor_ = monitor;

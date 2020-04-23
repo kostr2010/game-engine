@@ -12,7 +12,7 @@ public:
   SystemMovement(Monitor* monitor) : System(monitor) {
   }
 
-  ResponseCode Move(Entity entity, Vec2 direction) {
+  ResponseCode Move(EntityId entity, Vec2 direction) {
     if (std::abs(direction.x) + std::abs(direction.y) != 1) {
       LOG_LVL_SYSTEM_FAILURE(SystemMovement, "direction invalid " << direction);
       return ResponseCode::Failure;

@@ -48,16 +48,16 @@ TEST_CASE("Serialize component pack") {
 TEST_CASE("Kick") {
   Monitor monitor{};
 
-  Component comp_health_id  = monitor.RegisterComponent<ComponentHealth>();
-  Component comp_kick_id    = monitor.RegisterComponent<ComponentKick>();
-  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  ComponentType comp_health_id  = monitor.RegisterComponent<ComponentHealth>();
+  ComponentType comp_kick_id    = monitor.RegisterComponent<ComponentKick>();
+  ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
   monitor.RegisterSystem<SystemHealth>({comp_health_id});
   SystemKick*      sys_kick = monitor.RegisterSystem<SystemKick>({comp_kick_id});
   SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
 
-  Entity ch1 = monitor.AddEntity();
-  Entity ch2 = monitor.AddEntity();
+  EntityId ch1 = monitor.AddEntity();
+  EntityId ch2 = monitor.AddEntity();
 
   ComponentHealth ch1_health = {.hp_max = 10, .hp_cur = 10};
   ComponentHealth ch2_health = {.hp_max = 25, .hp_cur = 25};
@@ -83,13 +83,13 @@ TEST_CASE("Kick") {
 TEST_CASE("Transfer") {
   Monitor monitor{};
 
-  Component comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
   SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
 
-  Entity ch1   = monitor.AddEntity();
-  Entity chest = monitor.AddEntity();
-  Entity item  = monitor.AddEntity();
+  EntityId ch1   = monitor.AddEntity();
+  EntityId chest = monitor.AddEntity();
+  EntityId item  = monitor.AddEntity();
 
   ComponentContainer ch1_inventory   = {};
   ComponentContainer chest_inventory = {{item}};
@@ -119,9 +119,9 @@ TEST_CASE("Move") {
   Monitor  monitor{};
   Monitor* monitor_ptr = &monitor;
 
-  Component comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
-  Component comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
-  Component comp_id_terrain  = monitor.RegisterComponent<ComponentTerrain>();
+  ComponentType comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
+  ComponentType comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+  ComponentType comp_id_terrain  = monitor.RegisterComponent<ComponentTerrain>();
 
   SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>({comp_id_movement});
   monitor.RegisterSystem<SystemTerrain>({comp_id_terrain});
@@ -137,7 +137,7 @@ TEST_CASE("Move") {
   // U V U
   // U W U
 
-  Entity ch = EntityFactory::SpawnMovec(monitor_ptr, {0, 0});
+  EntityId ch = EntityFactory::SpawnMovec(monitor_ptr, {0, 0});
   REQUIRE(GET_STEPS_CUR(ch) == 2);
   // map:
   // * V U

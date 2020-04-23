@@ -60,7 +60,7 @@ public:
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "SystemManager initialised");
   }
 
-  void RemoveEntity(Entity entity) {
+  void RemoveEntity(EntityId entity) {
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
 
     for (auto& pair : systems_) {
@@ -75,7 +75,7 @@ public:
     LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removed entity " << entity);
   }
 
-  void UpdateEntitySignature(Entity entity, Signature entity_signature) {
+  void UpdateEntitySignature(EntityId entity, Signature entity_signature) {
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "updating entity's " << entity << " signature");
 
     for (auto& pair : systems_) {

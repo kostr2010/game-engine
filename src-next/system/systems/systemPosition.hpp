@@ -10,9 +10,9 @@
 //     map_ = map;
 //   }
 
-//   Vec2 GetPosition(Entity entity) {
+//   Vec2 GetPosition(EntityId entity) {
 
 //   }
 
-//   ResponseCode ApplyTerrainEffect(Entity entity, Vec2 position);
+//   ResponseCode ApplyTerrainEffect(EntityId entity, Vec2 position);
 // };

@@ -16,7 +16,7 @@
 #include "../../libs/json/json.hpp"
 using json = nlohmann::json;
 
-typedef int Component;
+typedef int ComponentType;
 
 // struct IComponent {
 //   virtual json        Serialize()         = 0;
@@ -29,9 +29,9 @@ typedef int Component;
 
 class IComponentPack {
 public:
-  virtual void RemoveEntity(Entity entity) = 0;
+  virtual void RemoveEntity(EntityId entity) = 0;
 
-  virtual bool Contains(Entity entity) const = 0;
+  virtual bool Contains(EntityId entity) const = 0;
 
   virtual json Serialize() = 0;
 
@@ -48,11 +48,11 @@ public:
   // ComponentPack()  = default;
   // ~ComponentPack() = default;
 
-  void AddEntity(Entity entity, Component_t component) {
+  void AddEntity(EntityId entity, Component_t component) {
     components_[entity] = component;
   }
 
-  void RemoveEntity(Entity entity) override {
+  void RemoveEntity(EntityId entity) override {
     auto entity_index = components_.find(entity);
 
     assertm(entity_index == components_.end(), "entity not found");
@@ -60,11 +60,11 @@ public:
     components_.erase(entity_index);
   };
 
-  Component_t* GetComponent(Entity entity) {
+  Component_t* GetComponent(EntityId entity) {
     return &(components_[entity]);
   };
 
-  bool Contains(Entity entity) const override {
+  bool Contains(EntityId entity) const override {
     return components_.find(entity) != components_.end();
   }
 
@@ -74,14 +74,14 @@ public:
   }
 
   void Deserialize(json j) override {
-    components_ = j.get<std::map<Entity, Component_t>>();
+    components_ = j.get<std::map<EntityId, Component_t>>();
   };
 
 private:
   // std::array<Component_t, MAX_ENTITIES> abilities_;
   // entity to index
   // index to entity
-  std::map<Entity, Component_t> components_; // TODO: replace with Packed Array
+  std::map<EntityId, Component_t> components_; // TODO: replace with Packed Array
 };
 
 // ====================
@@ -101,13 +101,13 @@ public:
   }
 
   template <typename Component_t>
-  Component RegisterComponent() {
+  ComponentType RegisterComponent() {
     auto id = GetComponentId<Component_t>();
 
     assertm(component_packs_.find(id) == component_packs_.end(),
             "the component has already been registered");
 
-    Component comp_id = next_++;
+    ComponentType comp_id = next_++;
     component_types_.insert({id, comp_id});
 
     // mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
@@ -129,7 +129,7 @@ public:
   }
 
   template <typename Component_t>
-  Component GetComponentType() { // wrapper for private function
+  ComponentType GetComponentType() { // wrapper for private function
     auto id = GetComponentId<Component_t>();
 
     // TODO: assert if the component exists
@@ -138,7 +138,7 @@ public:
   }
 
   template <typename Component_t>
-  void AttachComponent(Entity entity, Component_t component) {
+  void AttachComponent(EntityId entity, Component_t component) {
     GetComponentPack<Component_t>()->AddEntity(entity, component);
 
     // TODO add try / catch
@@ -148,7 +148,7 @@ public:
   }
 
   template <typename Component_t>
-  void RemoveComponent(Entity entity) {
+  void RemoveComponent(EntityId entity) {
     GetComponentPack<Component_t>()->RemoveEntity(entity);
 
     // TODO add try / catch
@@ -158,7 +158,7 @@ public:
   }
 
   template <typename Component_t>
-  bool HasComponent(Entity entity) {
+  bool HasComponent(EntityId entity) {
     IComponentPack* comp_pack = GetComponentPack<Component_t>();
 
     assertm(comp_pack != nullptr, "unregistered component");
@@ -167,13 +167,13 @@ public:
   }
 
   template <typename Component_t>
-  Component_t* GetComponent(Entity entity) {
+  Component_t* GetComponent(EntityId entity) {
     return GetComponentPack<Component_t>()->GetComponent(entity);
   }
 
   // tell each component_pack that an entity has been destroyed
   // if it has an component for that entity, it will remove it
-  void RemoveEntity(Entity entity) {
+  void RemoveEntity(EntityId entity) {
     for (auto& pair : component_packs_) {
       // const auto pack_type = pair.first;
       const auto pack = pair.second;
@@ -195,10 +195,10 @@ public:
   }
 
 private:
-  std::map<const char*, Component>       component_types_{};
+  std::map<const char*, ComponentType>   component_types_{};
   std::map<const char*, IComponentPack*> component_packs_{};
 
-  Component next_{};
+  ComponentType next_{};
 
   template <typename Component_t>
   inline const char* GetComponentId() {
