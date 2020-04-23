@@ -55,6 +55,7 @@ EntityId SpawnHuman(Monitor* monitor, int x, int y) {
 }
 
 class SystemMovement : public System {
+public:
   SystemMovement(Monitor* monitor) : System(monitor) {
   }
 
@@ -96,6 +97,7 @@ private:
 };
 
 class SystemHealth : public System {
+public:
   SystemHealth(Monitor* monitor) : System(monitor) {
   }
 
@@ -110,6 +112,7 @@ class SystemHealth : public System {
 };
 
 class SystemCombat : public System {
+public:
   SystemCombat(Monitor* monitor) : System(monitor) {
   }
 
@@ -121,8 +124,7 @@ class SystemCombat : public System {
 
     SystemHealth* sys_health = monitor_->GetSystem<SystemHealth>();
 
-    sys_health->ChangeCurrentHp(entity_target,
-                                -1 * comp_dmg->head_angle_per_turn * comp_euc->aggresiveness);
+    sys_health->RotateHead(entity_target, comp_dmg->head_angle_per_turn);
 
     return ResponseCode::Success;
   }
