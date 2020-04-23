@@ -6,15 +6,10 @@
 #include "./system/systems/systemContainer.hpp"
 #include "./system/systems/systemHealth.hpp"
 #include "./system/systems/systemKick.hpp"
-#include "./system/systems/systemMovement.hpp"
-#include "./system/systems/systemPosition.hpp"
-#include "./system/systems/systemTerrain.hpp"
 
 // components
 #include "./component/components/health.hpp"
 #include "./component/components/movement.hpp"
-#include "./component/components/position.hpp"
-#include "./component/components/visual.hpp"
 
 // TO GOOGLE
 // [-] кд дерево
@@ -25,18 +20,6 @@
 // [-] (type2*)(type1*) -> static / dynamic cast
 // [-] read / write from / to disc (serialization)
 // [-] make spawner - smth that calls factory and checks needed conditions & requirements
-
-// DED
-// [-] components.hpp map -> array
-// [-] System templates -> dynamic Systems loading (via unique id (LUID)) -> serialization
-// [-] console for dynamic modules loading and management + dynamic console commands based on
-// already loaded systems
-// [-] Component templates -> dynamic Components loading and attaching
-// [-] pack of standart hard-coded Components&Systems (aka standar(d/t) library)
-// [-] diagram of references between classes and functionality and properties and functions
-// [-] illustrate real-life workflow (Gopher to the moon) with diagram of classes + main.cpp
-// fragment (real code)
-// [-] illustrating via one system, two systems, multiple systems..
 
 // DONE
 // [+] padding

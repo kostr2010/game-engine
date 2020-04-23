@@ -6,7 +6,6 @@
 #include "../component/components/movement.hpp"
 #include "../component/components/position.hpp"
 #include "../component/components/terrain.hpp"
-#include "../component/components/visual.hpp"
 #include "../monitor/monitor.hpp"
 #include "../utils/vec2.hpp"
 
@@ -119,19 +118,5 @@ public:
     monitor->AttachComponent(terrain, tile);
 
     return tile;
-  }
-
-  static Entity SpawnGopher(Monitor* monitor, Vec2 position) {
-    Entity gopher = monitor->AddEntity();
-
-    ComponentPosition pos    = {.pos = position};
-    ComponentMovement move   = {.steps_max = 2, .steps_cur = 2};
-    ComponentVisual   sprite = {.sprite = '1'};
-
-    monitor->AttachComponent(pos, gopher);
-    monitor->AttachComponent(sprite, gopher);
-    monitor->AttachComponent(move, gopher);
-
-    return gopher;
   }
 };

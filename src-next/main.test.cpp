@@ -62,6 +62,8 @@ TEST_CASE("Kick") {
   ComponentHealth ch1_health = {.hp_max = 10, .hp_cur = 10};
   ComponentHealth ch2_health = {.hp_max = 25, .hp_cur = 25};
 
+  ComponentContainer chest_inventory = {};
+
   ComponentKick ch1_kick = {.damage_amount = 3};
 
   monitor.AttachComponent(ch1_health, ch1);

@@ -36,23 +36,19 @@ public:
   virtual json Serialize() = 0;
 
   virtual void Deserialize(json j) = 0;
-
-  virtual int GetId() = 0;
 };
 
 // ====================
 // ComponentPack
 // for us to be able to store entities that belong to each component
 
+template <typename Component_t>
 class ComponentPack : public IComponentPack {
 public:
-  ComponentPack(int id) {
-    id_ = id;
-  }
+  // ComponentPack()  = default;
+  // ~ComponentPack() = default;
 
-  ~ComponentPack() = default;
-
-  void AddEntity(Entity entity, void* component) {
+  void AddEntity(Entity entity, Component_t component) {
     components_[entity] = component;
   }
 
@@ -81,17 +77,11 @@ public:
     components_ = j.get<std::map<Entity, Component_t>>();
   };
 
-  int GetId() override {
-    return id_;
-  }
-
 private:
   // std::array<Component_t, MAX_ENTITIES> abilities_;
   // entity to index
   // index to entity
-  std::map<Entity, Component_t> components_{}; // TODO: replace with Packed Array
-
-  int id_ = 0;
+  std::map<Entity, Component_t> components_; // TODO: replace with Packed Array
 };
 
 // ====================
@@ -130,7 +120,7 @@ public:
     // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
 
-    // TODO: add try / catch
+    // TODO add try / catch
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
                               "component " << typeid(Component_t).name() << " registered as "
                                            << comp_id);
