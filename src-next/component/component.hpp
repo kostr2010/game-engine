@@ -6,15 +6,15 @@
 #include <iostream>
 #include <list>
 #include <map>
-#include <memory>
+// #include <memory>
 #include <typeinfo>
 
 #include "../entity/entity.hpp"
 #include "../utils/assembly.hpp"
 #include "../utils/log.hpp"
 
-#include "../../libs/json/json.hpp"
-using json = nlohmann::json;
+// #include "../../libs/json/json.hpp"
+// using json = nlohmann::json;
 
 typedef int ComponentType;
 
@@ -33,9 +33,9 @@ public:
 
   virtual bool Contains(EntityId entity) const = 0;
 
-  virtual json Serialize() = 0;
+  // virtual json Serialize() = 0;
 
-  virtual void Deserialize(json j) = 0;
+  // virtual void Deserialize(json j) = 0;
 };
 
 // ====================
@@ -55,9 +55,9 @@ public:
   void RemoveEntity(EntityId entity) override {
     auto entity_index = components_.find(entity);
 
-    assertm(entity_index == components_.end(), "entity not found");
+    assertm(entity_index != components_.end(), "entity not found");
 
-    components_.erase(entity_index);
+    components_.erase(entity);
   };
 
   Component_t* GetComponent(EntityId entity) {
@@ -68,14 +68,14 @@ public:
     return components_.find(entity) != components_.end();
   }
 
-  json Serialize() override {
-    json j(components_);
-    return j;
-  }
+  // json Serialize() override {
+  //   json j(components_);
+  //   return j;
+  // }
 
-  void Deserialize(json j) override {
-    components_ = j.get<std::map<EntityId, Component_t>>();
-  };
+  // void Deserialize(json j) override {
+  //   components_ = j.get<std::map<EntityId, Component_t>>();
+  // };
 
 private:
   // std::array<Component_t, MAX_ENTITIES> abilities_;
@@ -169,6 +169,11 @@ public:
   template <typename Component_t>
   Component_t* GetComponent(EntityId entity) {
     return GetComponentPack<Component_t>()->GetComponent(entity);
+  }
+
+  template <typename Component_t>
+  bool Contains() {
+    return component_types_.find(GetComponentId<Component_t>()) != component_types_.end();
   }
 
   // tell each component_pack that an entity has been destroyed

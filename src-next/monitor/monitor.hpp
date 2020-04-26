@@ -37,11 +37,6 @@ public:
     system_manager_ = SystemManager{this};
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("SystemManager initialized");
-
-    // при попытке вызова конструкторов в ф-ии Init, конструктор пытался сначала вызвать дефолтный
-    // к-тор СисМан
-
-    // Init();
   }
   ~Monitor() = default;
 
@@ -50,6 +45,9 @@ public:
 
   template <typename Component_t>
   ComponentType RegisterComponent() {
+    if (component_manager_.Contains<Component_t>())
+      return component_manager_.GetComponentType<Component_t>();
+
     ComponentType component = component_manager_.RegisterComponent<Component_t>();
 
     // TODO add try/catch here
@@ -105,9 +103,13 @@ public:
   }
 
   void RemoveEntity(EntityId entity) {
+    std::cout << "*\n";
     entity_manager_.RemoveEntity(entity);
+    std::cout << "*\n";
     component_manager_.RemoveEntity(entity);
+    std::cout << "*\n";
     system_manager_.RemoveEntity(entity);
+    std::cout << "*\n";
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("entity " << entity << "deleted from all managers");
@@ -122,19 +124,25 @@ public:
   }
 
   template <typename System_t>
-  System_t* RegisterSystem(std::vector<ComponentType> components) {
-    assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
-
-    System_t* system = system_manager_.RegisterSystem<System_t>();
-
+  void SetSystemSignature(std::vector<ComponentType> components) {
     // merge all components to one signature
-    Signature signature;
+    Signature signature{};
     for (auto& component : components) {
       signature.set(component, true);
     }
 
     // set the system's initial signature
     SetSystemSignature<System_t>(signature);
+  }
+
+  template <typename System_t>
+  System_t* RegisterSystem() {
+    if (system_manager_.Contains<System_t>())
+      return system_manager_.GetSystem<System_t>();
+
+    // assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
+    System_t* system = system_manager_.RegisterSystem<System_t>();
+    SetSystemSignature<System_t>(system->GetRequiredComponentTypes());
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("new system " << typeid(System_t).name() << " registered");
@@ -216,8 +224,11 @@ public:
 
 private:
   void UpdateSignature(EntityId entity, Signature& signature) {
+    // std::cout << "*\n" << std::endl;
     entity_manager_.SetSignature(entity, signature);
+    // std::cout << "*\n" << std::endl;
     system_manager_.UpdateEntitySignature(entity, signature);
+    // std::cout << "*\n" << std::endl;
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("entity's " << entity << " signature updated. now it's signature is "

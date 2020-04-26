@@ -49,13 +49,14 @@ std::time_t result = std::time(nullptr);
 
 #define LOG_LVL_MONITOR_INIT()                                                                     \
   /*std::fstream log_monitor;*/                                                                    \
-  log_monitor.open("../log/system.log", std::ios::trunc | std::ios::out);                          \
+  log_monitor.open("../log/monitor.log", std::ios::trunc | std::ios::out);                         \
   log_monitor.close()
 
 #define LOG_LVL_MONITOR_ROUTINE(msg)                                                               \
-  log_monitor.open("../log/system.log", std::ios::app | std::ios::in);                             \
+  log_monitor.open("../log/monitor.log", std::ios::app | std::ios::in);                            \
   /*result = std::time(nullptr);*/                                                                 \
-  log_monitor /*<< std::asctime(std::localtime(&result))*/ << "[Monitor] " << msg << std::endl;    \
+  log_monitor /*<< std::asctime(std::localtime(&result))*/                                         \
+      << "[Monitor] " << msg << std::endl;                                                         \
   log_monitor.close()
 
 // ====================

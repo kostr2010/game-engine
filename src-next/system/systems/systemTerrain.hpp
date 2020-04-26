@@ -69,6 +69,10 @@ public:
     return ResponseCode::Success;
   }
 
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
+    return {monitor_->RegisterComponent<ComponentTerrain>()};
+  }
+
 private:
   EntityId GetTile(Vec2 pos) {
     for (const auto& entity : entities_) {
@@ -77,6 +81,6 @@ private:
         return entity;
     }
 
-    assertm(false, "pos  for the tile is out of range");
+    assertm(false, "pos for the tile is out of range");
   }
 };

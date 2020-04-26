@@ -67,4 +67,13 @@ public:
 
     return ResponseCode::Success;
   }
+
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
+    return {monitor_->RegisterComponent<ComponentMovement>()};
+  }
+
+private:
+  void RegisterDependentSystems() override {
+    monitor_->RegisterSystem<SystemTerrain>();
+  }
 };

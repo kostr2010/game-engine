@@ -63,10 +63,19 @@ public:
   void RemoveEntity(EntityId entity) {
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
 
-    for (auto& pair : systems_) {
-      auto& system = pair.second;
+    std::cout << entity << "***\n";
 
-      system->entities_.erase(entity);
+    for (auto& pair : systems_) {
+      auto system = pair.second;
+
+      auto it = system->entities_.find(entity);
+      if (it == system->entities_.end())
+        continue;
+
+      std::cout << "to erase: " << *it << " from system " << pair.first << std::endl;
+      auto iter = system->entities_.erase(it);
+      std::cout << "after erase: " << *iter << "( end = " << *system->entities_.end() << ") "
+                << std::endl;
 
       // LOG_LVL_SYSTEM_ROUTINE(pair.first, "entity " << entity << "removed from system " <<
       // pair.first);
@@ -102,7 +111,7 @@ public:
   bool Contains() const {
     const char* id = typeid(System_t).name();
 
-    return (systems_.find(id) == systems_.end());
+    return systems_.find(id) != systems_.end();
   }
 
   bool EntityBelongsToSystem(Signature signature_entity, Signature signature_system) {

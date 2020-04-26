@@ -61,6 +61,8 @@
     "bit": "cpp",
     "list": "cpp",
     "shared_mutex": "cpp",
-    "valarray": "cpp"
+    "valarray": "cpp",
+    "strstream": "cpp",
+    "forward_list": "cpp"
   }
 }

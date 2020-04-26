@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <bitset>
 #include <set>
 
@@ -22,19 +23,19 @@ public:
   ~EntityManager() = default;
 
   EntityManager() {
-    for (int i = 0; i < MAX_COMPONENTS; i++)
-      available_ids_.insert(i);
+    for (int i = MAX_ENTITIES; i >= 0; i--)
+      available_ids_.push_back(i);
   }
 
   EntityId CreateEntity() {
-    auto id = available_ids_.begin();
-    available_ids_.erase(id);
+    auto id = available_ids_.back();
+    available_ids_.pop_back();
 
-    return *id;
+    return id;
   }
 
   void RemoveEntity(EntityId entity) {
-    available_ids_.insert(entity);
+    available_ids_.push_back(entity);
     abilities_signatures_[entity].reset();
   }
 
@@ -47,12 +48,13 @@ public:
   }
 
   bool CheckIfEntityExists(EntityId entity_target) {
-    return available_ids_.find(entity_target) == available_ids_.end();
+    return std::find(available_ids_.begin(), available_ids_.end(), entity_target) ==
+           available_ids_.end();
   }
 
 private:
   std::array<Signature, MAX_ENTITIES>
-                     abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
-  std::set<EntityId> available_ids_{}; // TODO: replace "set" with smth better
-  int                entities_alive_;
+                        abilities_signatures_{}; // shows whenever an component is present for an entity // list!!!!
+  std::vector<EntityId> available_ids_{}; // TODO: replace "set" with smth better
+  int                   entities_alive_;
 };

@@ -11,14 +11,14 @@ struct ComponentContainer {
   int                   capacity;
 };
 
-void to_json(json& j, const ComponentContainer& p) {
-  // j = json{{"hp_max", p.hp_max}, {"hp_cur", p.hp_cur}};
-}
+// void to_json(json& j, const ComponentContainer& p) {
+//   // j = json{{"hp_max", p.hp_max}, {"hp_cur", p.hp_cur}};
+// }
 
-void from_json(const json& j, ComponentContainer& p) {
-  // j.at("hp_max").get_to(p.hp_max);
-  // j.at("hp_cur").get_to(p.hp_cur);
-}
+// void from_json(const json& j, ComponentContainer& p) {
+//   // j.at("hp_max").get_to(p.hp_max);
+//   // j.at("hp_cur").get_to(p.hp_cur);
+// }
 
 std::ostream& operator<<(std::ostream& os, ComponentContainer comp_container) {
   os << "subentities: ";

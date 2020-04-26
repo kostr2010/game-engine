@@ -38,7 +38,7 @@ int main() {
 
   ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
-  SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>({comp_contain_id});
+  SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>();
 
   EntityId ch1   = monitor.AddEntity();
   EntityId chest = monitor.AddEntity();

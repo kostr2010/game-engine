@@ -57,4 +57,8 @@ public:
 
     return Pick(entity_to, entity_whom);
   }
+
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
+    return {monitor_->RegisterComponent<ComponentContainer>()};
+  }
 };

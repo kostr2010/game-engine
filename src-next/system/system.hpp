@@ -34,8 +34,14 @@ public:
 
   System(Monitor* monitor) {
     monitor_ = monitor;
+
+    RegisterDependentSystems();
   }
+
+  virtual std::vector<ComponentType> GetRequiredComponentTypes() = 0;
 
 protected:
   Monitor* monitor_;
+
+  virtual void RegisterDependentSystems(){};
 };
