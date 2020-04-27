@@ -36,7 +36,7 @@ public:
   }
 
   void RemoveEntity(EntityId entity) {
-    std::cout << "    > ent man RemoveEntity " << entity << "\n";
+    // std::cout << "    > ent man RemoveEntity " << entity << "\n";
 
     available_ids_.push_back(entity);
     abilities_signatures_[entity].reset();

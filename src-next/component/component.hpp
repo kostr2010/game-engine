@@ -179,7 +179,7 @@ public:
   // tell each component_pack that an entity has been destroyed
   // if it has an component for that entity, it will remove it
   void RemoveEntity(EntityId entity) {
-    std::cout << "    > comp man RemoveEntity " << entity << "\n";
+    // std::cout << "    > comp man RemoveEntity " << entity << "\n";
 
     for (auto& pair : component_packs_) {
       // const auto pack_type = pair.first;

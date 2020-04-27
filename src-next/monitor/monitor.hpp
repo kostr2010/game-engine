@@ -103,13 +103,13 @@ public:
   }
 
   void RemoveEntity(EntityId entity) {
-    std::cout << "  > start removing from entity manager\n";
+    // std::cout << "  > start removing from entity manager\n";
     entity_manager_.RemoveEntity(entity);
-    std::cout << "  > start removing from component manager\n";
+    // std::cout << "  > start removing from component manager\n";
     component_manager_.RemoveEntity(entity);
-    std::cout << "  > start removing from system manager\n";
+    // std::cout << "  > start removing from system manager\n";
     system_manager_.RemoveEntity(entity);
-    std::cout << "  > removed from all systems\n";
+    // std::cout << "  > removed from all systems\n";
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("entity " << entity << "deleted from all managers");
@@ -142,6 +142,8 @@ public:
 
     // assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
     System_t* system = system_manager_.RegisterSystem<System_t>();
+    system->RegisterDependentSystems();
+
     SetSystemSignature<System_t>(system->GetRequiredComponentTypes());
 
     // TODO add try/catch here

@@ -9,14 +9,16 @@
 #include "system/system.hpp"
 #include "utils/vec2.hpp"
 
-#define log(text) std::cout << text << std::endl
+#define log(text) std::cout << text << std::endl;
+#define MAP_WIDTH 10
+#define MAP_HEIGHT 10
+
+struct SCPComponentVisual {
+  char sprite;
+};
 
 struct SCPComponentPosition {
   int x, y;
-};
-
-struct SCPComponentEuclid {
-  int damage;
 };
 
 struct SCPComponentHealth {
@@ -29,6 +31,9 @@ struct SCPComponentMovement {
 
 // sometimes we need to define empty structure to identify a class of entities
 struct SCPComponentHuman {};
+struct SCPComponentEuclid {
+  int damage;
+};
 
 std::ostream& operator<<(std::ostream& os, SCPComponentPosition& comp) {
   return os << "x: " << comp.x << ", y: " << comp.y;
@@ -46,6 +51,10 @@ std::ostream& operator<<(std::ostream& os, SCPComponentMovement& comp) {
   return os << "speed " << comp.speed;
 }
 
+std::ostream& operator<<(std::ostream& os, SCPComponentVisual& comp) {
+  return os << "sprite " << comp.sprite;
+}
+
 std::ostream& operator<<(std::ostream& os, SCPComponentHuman& comp) {
   return os << "is human";
 }
@@ -56,14 +65,16 @@ public:
     EntityId scp = monitor->AddEntity();
 
     SCPComponentPosition position = {.x = x, .y = y};
-    SCPComponentEuclid   euclid   = {.damage = 10};
     SCPComponentMovement movement = {.speed = 5};
     SCPComponentHealth   health   = {.hp = 10};
+    SCPComponentVisual   visual   = {.sprite = 'S'};
+    SCPComponentEuclid   euclid   = {.damage = 10};
 
     monitor->AttachComponent(position, scp);
     monitor->AttachComponent(euclid, scp);
     monitor->AttachComponent(movement, scp);
     monitor->AttachComponent(health, scp);
+    monitor->AttachComponent(visual, scp);
 
     LOG_LVL_MONITOR_ROUTINE("scp173 spawned as " << scp << " at {" << x << ", " << y << "}");
 
@@ -76,12 +87,14 @@ public:
     SCPComponentPosition position   = {.x = x, .y = y};
     SCPComponentHealth   health     = {.hp = 5};
     SCPComponentMovement movement   = {.speed = 1};
+    SCPComponentVisual   visual     = {.sprite = 'H'};
     SCPComponentHuman    human_comp = {};
 
     monitor->AttachComponent(position, human);
     monitor->AttachComponent(health, human);
     monitor->AttachComponent(movement, human);
     monitor->AttachComponent(human_comp, human);
+    monitor->AttachComponent(visual, human);
 
     LOG_LVL_MONITOR_ROUTINE("human spawned as " << human << " at {" << x << ", " << y << "}");
 
@@ -112,6 +125,8 @@ public:
             monitor_->RegisterComponent<SCPComponentMovement>(),
             monitor_->RegisterComponent<SCPComponentHuman>()};
   }
+
+  void RegisterDependentSystems() override{};
 };
 
 class SCPSystemMovement : public System {
@@ -162,6 +177,8 @@ public:
     return {monitor_->RegisterComponent<SCPComponentPosition>(),
             monitor_->RegisterComponent<SCPComponentMovement>()};
   }
+
+  void RegisterDependentSystems() override{};
 };
 
 class SCPSystemHealth : public System {
@@ -198,11 +215,40 @@ public:
   std::vector<ComponentType> GetRequiredComponentTypes() override {
     return {monitor_->RegisterComponent<SCPComponentHealth>()};
   }
+
+  void RegisterDependentSystems() override{};
 };
 
 class SCPSystemEuclid : public System {
 public:
   SCPSystemEuclid(Monitor* monitor) : System(monitor) {
+  }
+
+  ResponseCode DealDamage(EntityId entity_origin, EntityId entity_target) {
+
+    SCPComponentPosition* comp_pos_origin =
+        monitor_->GetComponent<SCPComponentPosition>(entity_origin);
+    SCPComponentPosition* comp_pos_target =
+        monitor_->GetComponent<SCPComponentPosition>(entity_target);
+
+    std::cout << "entity " << entity_origin << "(" << comp_pos_origin->x << ", "
+              << comp_pos_origin->y << ")"
+              << " attempts to DealDamage to " << entity_target << "(" << comp_pos_target->x << ", "
+              << comp_pos_target->y << ")" << std::endl;
+
+    int dist = GetDistance(comp_pos_origin, comp_pos_target);
+
+    if (dist != 0)
+      return ResponseCode::Failure;
+
+    SCPComponentEuclid* comp_eu = monitor_->GetComponent<SCPComponentEuclid>(entity_origin);
+
+    SCPSystemHealth* sys_health = monitor_->GetSystem<SCPSystemHealth>();
+
+    sys_health->ChangeHp(entity_target, -1 * comp_eu->damage);
+
+    log("dealt damage successfully");
+    return ResponseCode::Success;
   }
 
   ResponseCode TeleportToClosest(EntityId entity) {
@@ -238,38 +284,90 @@ public:
             monitor_->RegisterComponent<SCPComponentEuclid>()};
   }
 
-  ResponseCode DealDamage(EntityId entity_origin, EntityId entity_target) {
-
-    SCPComponentPosition* comp_pos_origin =
-        monitor_->GetComponent<SCPComponentPosition>(entity_origin);
-    SCPComponentPosition* comp_pos_target =
-        monitor_->GetComponent<SCPComponentPosition>(entity_target);
-
-    std::cout << "entity " << entity_origin << "(" << comp_pos_origin->x << ", "
-              << comp_pos_origin->y << ")"
-              << " attempts to DealDamage to " << entity_target << "(" << comp_pos_target->x << ", "
-              << comp_pos_target->y << ")" << std::endl;
-
-    int dist = GetDistance(comp_pos_origin, comp_pos_target);
-
-    if (dist != 0)
-      return ResponseCode::Failure;
-
-    SCPComponentEuclid* comp_eu = monitor_->GetComponent<SCPComponentEuclid>(entity_origin);
-
-    SCPSystemHealth* sys_health = monitor_->GetSystem<SCPSystemHealth>();
-
-    sys_health->ChangeHp(entity_target, -1 * comp_eu->damage);
-
-    log("dealt damage successfully");
-    return ResponseCode::Success;
-  }
-
-private:
   void RegisterDependentSystems() override {
     monitor_->RegisterSystem<SCPSystemHuman>();
     monitor_->RegisterSystem<SCPSystemMovement>();
+    monitor_->RegisterSystem<SCPSystemEuclid>();
   }
+};
+
+class SCPSystemVisual : public System {
+public:
+  SCPSystemVisual(Monitor* monitor) : System(monitor) {
+  }
+  ~SCPSystemVisual() = default;
+
+  ResponseCode VisualiseToConsole() {
+    // int  x_min{};
+    // bool x_min_init = false;
+
+    // int  y_min{};
+    // bool y_min_init = false;
+
+    // int  x_max{};
+    // bool x_max_init = false;
+
+    // int  y_max{};
+    // bool y_max_init = false;
+
+    // // detect render dimensions
+    // for (const auto& entity : entities_) {
+    //   SCPComponentPosition* comp_pos = monitor_->GetComponent<SCPComponentPosition>(entity);
+
+    //   if (!x_max_init || comp_pos->x > x_max) {
+    //     x_max_init = true;
+    //     x_max      = comp_pos->x;
+    //   }
+
+    //   if (!y_max_init || comp_pos->y > y_max) {
+    //     y_max_init = true;
+    //     y_max      = comp_pos->y;
+    //   }
+    //   if (!x_min_init || comp_pos->x < x_min) {
+    //     x_min_init = true;
+    //     x_min      = comp_pos->x;
+    //   }
+
+    //   if (!y_min_init || comp_pos->y < y_min) {
+    //     y_min_init = true;
+    //     y_min      = comp_pos->y;
+    //   }
+    // }
+
+    // int MAP_WIDTH  = x_max - x_min;
+    // int MAP_HEIGHT = y_max - y_min;
+
+    char map[MAP_WIDTH * MAP_HEIGHT];
+
+    for (int y = 0; y < MAP_HEIGHT; y++)
+      for (int x = 0; x < MAP_WIDTH; x++)
+        map[y * MAP_HEIGHT + x] = '.';
+
+    for (const auto& entity : entities_) {
+      SCPComponentPosition* comp_pos = monitor_->GetComponent<SCPComponentPosition>(entity);
+      SCPComponentVisual*   comp_vis = monitor_->GetComponent<SCPComponentVisual>(entity);
+
+      map[comp_pos->y * MAP_HEIGHT + comp_pos->x] = comp_vis->sprite;
+    }
+
+    std::cout << MAP_WIDTH << ":" << MAP_HEIGHT << std::endl;
+
+    int counter = 0;
+    for (int y = 0; y < MAP_HEIGHT; y++) {
+      for (int x = 0; x < MAP_WIDTH; x++)
+        std::cout << map[y * MAP_HEIGHT + x];
+      std::cout << std::endl;
+    }
+
+    return ResponseCode::Success;
+  }
+
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
+    return {monitor_->RegisterComponent<SCPComponentVisual>(),
+            monitor_->RegisterComponent<SCPComponentPosition>()};
+  }
+
+  void RegisterDependentSystems() override{};
 };
 
 int main() {
@@ -281,6 +379,7 @@ int main() {
   SCPSystemMovement* sys_mov = monitor.RegisterSystem<SCPSystemMovement>();
   SCPSystemEuclid*   sys_eu  = monitor.RegisterSystem<SCPSystemEuclid>();
   SCPSystemHuman*    sys_hum = monitor.RegisterSystem<SCPSystemHuman>();
+  SCPSystemVisual*   sys_vis = monitor.RegisterSystem<SCPSystemVisual>();
 
   // // S.........
   // // .......2..
@@ -309,20 +408,19 @@ int main() {
       sys_eu->TeleportToClosest(entity_euclid);
 
       for (auto entity_human : sys_hum->entities_) {
+        // the euclid tries to damage the human
         sys_eu->DealDamage(entity_euclid, entity_human);
       }
     }
 
-    log("removing dead entities");
+    // log("removing dead entities");
     sys_hp->RemoveDeadEntities();
-    log("removed dead entities");
+    // log("removed dead entities");
 
-    for (const auto entity : sys_hum->entities_) {
-      log(entity << " is alive");
-    }
+    sys_vis->VisualiseToConsole();
   }
 
-  log("finished");
+  log("\nfinished");
 
   return 0;
 }

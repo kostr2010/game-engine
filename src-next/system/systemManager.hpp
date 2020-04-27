@@ -63,7 +63,7 @@ public:
   void RemoveEntity(EntityId entity) {
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
 
-    std::cout << "    > sys man RemoveEntity " << entity << "\n";
+    // std::cout << "    > sys man RemoveEntity " << entity << "\n";
 
     for (auto& pair : systems_) {
       auto system = pair.second;
@@ -72,10 +72,10 @@ public:
       if (it == system->entities_.end())
         continue;
 
-      std::cout << "to erase: " << *it << " from system " << pair.first << std::endl;
+      // std::cout << "to erase: " << *it << " from system " << pair.first << std::endl;
       auto iter = system->entities_.erase(it);
-      std::cout << "after erase: " << *iter << "( end = " << *system->entities_.end() << ") "
-                << std::endl;
+      // std::cout << "after erase: " << *iter << "( end = " << *system->entities_.end() << ") "
+      //           << std::endl;
 
       // LOG_LVL_SYSTEM_ROUTINE(pair.first, "entity " << entity << "removed from system " <<
       // pair.first);
