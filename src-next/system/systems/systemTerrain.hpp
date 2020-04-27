@@ -73,6 +73,8 @@ public:
     return {monitor_->RegisterComponent<ComponentTerrain>()};
   }
 
+  void RegisterDependentSystems() override{};
+
 private:
   EntityId GetTile(Vec2 pos) {
     for (const auto& entity : entities_) {
