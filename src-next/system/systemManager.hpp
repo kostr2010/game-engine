@@ -63,7 +63,7 @@ public:
   void RemoveEntity(EntityId entity) {
     // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
 
-    std::cout << entity << "***\n";
+    std::cout << "    > sys man RemoveEntity " << entity << "\n";
 
     for (auto& pair : systems_) {
       auto system = pair.second;

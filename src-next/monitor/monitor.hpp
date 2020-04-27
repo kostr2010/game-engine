@@ -103,13 +103,13 @@ public:
   }
 
   void RemoveEntity(EntityId entity) {
-    std::cout << "*\n";
+    std::cout << "  > start removing from entity manager\n";
     entity_manager_.RemoveEntity(entity);
-    std::cout << "*\n";
+    std::cout << "  > start removing from component manager\n";
     component_manager_.RemoveEntity(entity);
-    std::cout << "*\n";
+    std::cout << "  > start removing from system manager\n";
     system_manager_.RemoveEntity(entity);
-    std::cout << "*\n";
+    std::cout << "  > removed from all systems\n";
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("entity " << entity << "deleted from all managers");

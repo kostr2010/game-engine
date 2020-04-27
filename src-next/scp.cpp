@@ -183,19 +183,13 @@ public:
     auto entity = entities_.begin();
 
     while (entity != entities_.end()) {
-      log("entiyt " << *entity << "  " << *entities_.end());
       SCPComponentHealth* comp_health = monitor_->GetComponent<SCPComponentHealth>(*entity);
       bool                alive       = comp_health->hp > 0;
 
-      log(*entity << " is " << alive << " (" << comp_health->hp << " hp)");
-
-      log("before remove entity: " << *entity);
       if (!alive)
-        monitor_->RemoveEntity(*entity);
-
-      log("before ++ entity: " << *entity);
-      entity++;
-      log("after ++ entity: " << *entity);
+        monitor_->RemoveEntity(*(entity++));
+      else
+        ++entity;
     }
 
     return ResponseCode::Success;
@@ -245,13 +239,16 @@ public:
   }
 
   ResponseCode DealDamage(EntityId entity_origin, EntityId entity_target) {
-    std::cout << "entity " << entity_origin << " attempts to DealDamage " << entity_target
-              << std::endl;
 
     SCPComponentPosition* comp_pos_origin =
         monitor_->GetComponent<SCPComponentPosition>(entity_origin);
     SCPComponentPosition* comp_pos_target =
         monitor_->GetComponent<SCPComponentPosition>(entity_target);
+
+    std::cout << "entity " << entity_origin << "(" << comp_pos_origin->x << ", "
+              << comp_pos_origin->y << ")"
+              << " attempts to DealDamage to " << entity_target << "(" << comp_pos_target->x << ", "
+              << comp_pos_target->y << ")" << std::endl;
 
     int dist = GetDistance(comp_pos_origin, comp_pos_target);
 
@@ -305,7 +302,8 @@ int main() {
 
   int tick = 0;
   while (!sys_hum->entities_.empty() && tick < 10) {
-    log("tick " << tick++);
+    log("\n// ====================\n"
+        << "// TICK: " << tick++ << "\n");
 
     for (auto entity_euclid : sys_eu->entities_) {
       sys_eu->TeleportToClosest(entity_euclid);
@@ -320,7 +318,7 @@ int main() {
     log("removed dead entities");
 
     for (const auto entity : sys_hum->entities_) {
-      log(entity << " is alive" << std::endl);
+      log(entity << " is alive");
     }
   }
 
