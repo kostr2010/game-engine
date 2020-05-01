@@ -17,7 +17,7 @@ public:
   SystemManager(Monitor* monitor) {
     monitor_ = monitor;
 
-    LOG_LVL_SYSTEM_INIT();
+    LOG_LVL_SYSTEM_INIT("../log/system.log");
     LOG_LVL_SYSTEM_ROUTINE(SystemManager, "SystemManager initialised");
   }
 

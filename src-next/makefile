@@ -29,7 +29,7 @@ clean:
 all: clear main clean
 
 test: ${MAIN_TEST} ${DEPS}
-	${CC} -o test ${MAIN_TEST} ${CFLAGS}
+	${CC} -o test.out ${MAIN_TEST} ${CFLAGS}
 
 all_test: clear test clean
 

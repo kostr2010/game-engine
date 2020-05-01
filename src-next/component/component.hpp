@@ -91,7 +91,7 @@ private:
 class ComponentManager {
 public:
   ComponentManager() {
-    LOG_LVL_COMPONENT_INIT();
+    LOG_LVL_COMPONENT_INIT("../log/component.log");
   }
 
   ~ComponentManager() {
@@ -104,8 +104,13 @@ public:
   ComponentType RegisterComponent() {
     auto id = GetComponentId<Component_t>();
 
-    assertm(component_packs_.find(id) == component_packs_.end(),
-            "the component has already been registered");
+    if (component_types_.find(id) != component_types_.end()) {
+      LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
+                                "component " << id << " is already registered as"
+                                             << component_types_[id]);
+
+      return component_types_[id];
+    }
 
     ComponentType comp_id = next_++;
     component_types_.insert({id, comp_id});

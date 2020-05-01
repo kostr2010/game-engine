@@ -24,7 +24,7 @@
 class Monitor {
 public:
   Monitor() {
-    LOG_LVL_MONITOR_INIT();
+    LOG_LVL_MONITOR_INIT("../log/monitor.log");
 
     component_manager_ = ComponentManager{};
     // TODO add try/catch here
@@ -45,8 +45,8 @@ public:
 
   template <typename Component_t>
   ComponentType RegisterComponent() {
-    if (component_manager_.Contains<Component_t>())
-      return component_manager_.GetComponentType<Component_t>();
+    // if (component_manager_.Contains<Component_t>())
+    //   return component_manager_.GetComponentType<Component_t>();
 
     ComponentType component = component_manager_.RegisterComponent<Component_t>();
 
@@ -142,9 +142,9 @@ public:
 
     // assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
     System_t* system = system_manager_.RegisterSystem<System_t>();
-    system->RegisterDependentSystems();
+    system->RegisterDependencies();
 
-    SetSystemSignature<System_t>(system->GetRequiredComponentTypes());
+    SetSystemSignature<System_t>(system->GetSignatureComponentTypes());
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("new system " << typeid(System_t).name() << " registered");

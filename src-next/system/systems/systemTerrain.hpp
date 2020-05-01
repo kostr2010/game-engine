@@ -31,7 +31,7 @@ public:
     if (comp_movement->steps_cur < comp_terrain->step_cost) {
       LOG_LVL_SYSTEM_FAILURE(SystemTerrain,
                              "entity " << entity << " has " << comp_movement->steps_cur
-                                       << "steps avaliable, but " << comp_terrain->step_cost
+                                       << " steps avaliable, but " << comp_terrain->step_cost
                                        << " are needed to leave tile");
       return ResponseCode::Failure;
     }
@@ -69,13 +69,13 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() override {
+  std::vector<ComponentType> GetSignatureComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentTerrain>(),
-            monitor_->RegisterComponent<ComponentMovement>(),
             monitor_->RegisterComponent<ComponentPosition>()};
   }
 
-  void RegisterDependentSystems() override {
+  void RegisterDependencies() override {
+    monitor_->RegisterComponent<ComponentMovement>();
   }
 
 private:
@@ -85,7 +85,7 @@ private:
       if (comp_pos->pos == pos)
         return entity;
     }
-
+    std::cout << pos << std::endl;
     assertm(false, "pos for the tile is out of range");
   }
 };

@@ -36,8 +36,9 @@ public:
     monitor_ = monitor;
   }
 
-  virtual std::vector<ComponentType> GetRequiredComponentTypes() = 0;
-  virtual void                       RegisterDependentSystems()  = 0;
+  virtual void                       RegisterDependencies()       = 0;
+  virtual std::vector<ComponentType> GetSignatureComponentTypes() = 0;
+  // virtual void                       RegisterDependentSystems()   = 0;
 
 protected:
   Monitor* monitor_;

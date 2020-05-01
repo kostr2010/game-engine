@@ -1,1 +1,1 @@
-cd src-next && make all && ./main
+cd src-next && make all && ./main.out

@@ -1,1 +1,1 @@
-cd src-next && make all_test && ./test
+cd src-next && make all_test && ./test.out -b

@@ -24,5 +24,5 @@ Vec2 operator+(Vec2& left, Vec2& right) {
 }
 
 std::ostream& operator<<(std::ostream& os, Vec2 v) {
-  return os << "x: " << v.x << " y: " << v.y << std::endl;
+  return os << "x: " << v.x << " y: " << v.y;
 }

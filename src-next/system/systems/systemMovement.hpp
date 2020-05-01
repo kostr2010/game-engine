@@ -68,12 +68,12 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() override {
+  std::vector<ComponentType> GetSignatureComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentMovement>(),
             monitor_->RegisterComponent<ComponentPosition>()};
   }
 
-  void RegisterDependentSystems() override {
+  void RegisterDependencies() override {
     monitor_->RegisterSystem<SystemTerrain>();
   }
 };

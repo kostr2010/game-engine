@@ -4,3 +4,4 @@ libs/*
 *.gcda
 *.gcno
 *.gcov
+*.out

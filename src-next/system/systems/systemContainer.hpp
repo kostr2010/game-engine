@@ -58,10 +58,10 @@ public:
     return Pick(entity_to, entity_whom);
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() override {
+  std::vector<ComponentType> GetSignatureComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentContainer>()};
   }
 
-  void RegisterDependentSystems() override {
+  void RegisterDependencies() override {
   }
 };

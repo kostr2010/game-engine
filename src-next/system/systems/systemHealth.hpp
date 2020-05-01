@@ -42,10 +42,10 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() override {
+  std::vector<ComponentType> GetSignatureComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentHealth>()};
   }
 
-  void RegisterDependentSystems() override {
+  void RegisterDependencies() override {
   }
 };
