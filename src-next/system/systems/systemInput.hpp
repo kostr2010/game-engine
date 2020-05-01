@@ -5,7 +5,7 @@
 
 #include <map>
 
-enum class Keys {
+enum class KeyboardKey {
   A,
   S,
   W,
@@ -15,14 +15,21 @@ enum class Keys {
   RMB,
 };
 
-class SystemInput : public System {
+struct EventInputConsole {
+  KeyboardKey key;
+};
+
+class SystemInputConsole : public System {
 public:
-  SystemInput(Monitor* monitor) : System(monitor) {
+  SystemInputConsole(Monitor* monitor) : System(monitor) {
   }
 
-  ~SystemInput() = default;
+  ~SystemInputConsole() = default;
 
-  ResponseCode AddCallback(const char* key, void (*function)()) {
+  ResponseCode Input() {
+    }
+
+  ResponseCode AddCallback(const char* key, void (*function)(EventInputConsole event)) {
     if (callbacks_.find(key) == callbacks_.end())
       return ResponseCode::Failure;
 
@@ -40,7 +47,7 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetSignatureComponentTypes() override {
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
     // return {monitor_->RegisterComponent<ComponentMovement>()};
     return {};
   }
@@ -50,5 +57,5 @@ public:
   }
 
 private:
-  std::map<const char*, void (*)()> callbacks_;
+  std::map<const char*, void (*)(EventInputConsole event)> callbacks_;
 };

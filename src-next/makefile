@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -Wall -std=c++17 -g3
+CFLAGS = -Wall -std=c++17 -g -pthread
 
 MAIN_TEST = main.test.o
 MAIN = main.o

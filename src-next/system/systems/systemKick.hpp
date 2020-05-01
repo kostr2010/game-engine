@@ -31,7 +31,7 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetSignatureComponentTypes() override {
+  std::vector<ComponentType> GetRequiredComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentKick>()};
   }
 

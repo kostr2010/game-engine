@@ -144,7 +144,10 @@ public:
     System_t* system = system_manager_.RegisterSystem<System_t>();
     system->RegisterDependencies();
 
-    SetSystemSignature<System_t>(system->GetSignatureComponentTypes());
+    SetSystemSignature<System_t>(system->GetRequiredComponentTypes());
+
+    ResponseCode system_init_code = system->Init();
+    assertm(system_init_code == ResponseCode::Success, "System failed to init");
 
     // TODO add try/catch here
     LOG_LVL_MONITOR_ROUTINE("new system " << typeid(System_t).name() << " registered");

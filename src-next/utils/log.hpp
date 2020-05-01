@@ -4,6 +4,7 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 
 #ifndef LOG_LVL_SYSTEM_
 #define LOG_LVL_SYSTEM_
@@ -28,6 +29,11 @@ const char*  log_component_path;
 std::time_t result = std::time(nullptr);
 #endif
 
+#ifndef BUF
+#define BUF
+std::ostringstream buf;
+#endif
+
 // ====================
 // LVL_SYSTEM
 
@@ -39,17 +45,20 @@ std::time_t result = std::time(nullptr);
 #define LOG_LVL_SYSTEM_ROUTINE(system, msg)                                                        \
   log_system.open(log_system_path, std::ios::app | std::ios::in);                                  \
   /* result = std::time(nullptr); */                                                               \
-  log_system /* << std::asctime(std::localtime(&result))*/ << "[" << std::setw(16) << std::left    \
-                                                           << typeid(system).name() << "] " << msg \
-                                                           << std::endl;                           \
+  buf << "[" << typeid(system).name() << "]";                                                      \
+  log_system /* << std::asctime(std::localtime(&result))*/ << std::setw(31) << std::left           \
+                                                           << buf.str() << msg << std::endl;       \
+  buf.str(std::string());                                                                          \
   log_system.close()
 
 #define LOG_LVL_SYSTEM_FAILURE(system, msg)                                                        \
   log_system.open(log_system_path, std::ios::app | std::ios::in);                                  \
   /* result = std::time(nullptr); */                                                               \
+  buf << "[" << typeid(system).name() << "]";                                                      \
   log_system /* << std::asctime(std::localtime(&result))*/                                         \
-      << "[" << std::setw(16) << std::left << typeid(system).name() << "] "                        \
-      << "{FAILURE} " << msg << std::endl;                                                         \
+      << std::setw(20) << std::left << buf.str() << std::setw(11) << " {FAILURE} " << msg          \
+      << std::endl;                                                                                \
+  buf.str(std::string());                                                                          \
   log_system.close()
 
 // ====================
@@ -64,7 +73,7 @@ std::time_t result = std::time(nullptr);
   log_monitor.open(log_monitor_path, std::ios::app | std::ios::in);                                \
   /*result = std::time(nullptr);*/                                                                 \
   log_monitor /*<< std::asctime(std::localtime(&result))*/                                         \
-      << "[Monitor] " << msg << std::endl;                                                         \
+      << std::setw(31) << std::left << "[Monitor] " << msg << std::endl;                           \
   log_monitor.close()
 
 // ====================
@@ -78,6 +87,8 @@ std::time_t result = std::time(nullptr);
 #define LOG_LVL_COMPONENT_ROUTINE(component, msg)                                                  \
   log_component.open(log_component_path, std::ios::app | std::ios::in);                            \
   /*result = std::time(nullptr);*/                                                                 \
-  log_component /*<< std::asctime(std::localtime(&result))*/ << "[" << typeid(component).name()    \
-                                                             << "] " << msg << std::endl;          \
+  buf << "[" << typeid(component).name() << "]";                                                   \
+  log_component /*<< std::asctime(std::localtime(&result))*/ << std::setw(31) << std::left         \
+                                                             << buf.str() << msg << std::endl;     \
+  buf.str(std::string());                                                                          \
   log_component.close()
