@@ -61,4 +61,7 @@ public:
   std::vector<ComponentType> GetRequiredComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentContainer>()};
   }
+
+  void RegisterDependentSystems() override {
+  }
 };

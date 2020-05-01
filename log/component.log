@@ -24,6 +24,3 @@
 [16ComponentManager] component 20SCPComponentMovement(speed 1) attached to entity 3
 [16ComponentManager] component 17SCPComponentHuman(is human) attached to entity 3
 [16ComponentManager] component 18SCPComponentVisual(sprite H) attached to entity 3
-[16ComponentManager] entity 1 removed from all components
-[16ComponentManager] entity 2 removed from all components
-[16ComponentManager] entity 3 removed from all components

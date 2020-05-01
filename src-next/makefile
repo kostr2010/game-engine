@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -Wall
+CFLAGS = -Wall -std=c++17 -g3
 
 MAIN_TEST = main.test.o
 MAIN = main.o
@@ -21,7 +21,7 @@ clear:
 	bash -c "clear"
 
 main: ${MAIN} ${DEPS}
-	${CC} -o main ${MAIN} ${CFLAGS}
+	${CC} -o main.out ${MAIN} ${CFLAGS}
 
 clean:
 	rm -f ${OBJS} ${MAIN} ${MAIN_TEST}

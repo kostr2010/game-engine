@@ -35,7 +35,6 @@ public:
     return {monitor_->RegisterComponent<ComponentKick>()};
   }
 
-private:
   void RegisterDependentSystems() override {
     monitor_->RegisterSystem<SystemHealth>();
   }

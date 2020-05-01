@@ -60,6 +60,3 @@
 [Monitor] entity's 3 signature updated. now it's signature is 00000000000000000000000000101111
 [Monitor] component 18SCPComponentVisual aka 5 attached to entity 3. now it's signature is 00000000000000000000000000101111
 [Monitor] human spawned as 3 at {9, 9}
-[Monitor] entity 1deleted from all managers
-[Monitor] entity 2deleted from all managers
-[Monitor] entity 3deleted from all managers

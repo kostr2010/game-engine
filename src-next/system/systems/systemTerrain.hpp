@@ -70,7 +70,12 @@ public:
   }
 
   std::vector<ComponentType> GetRequiredComponentTypes() override {
-    return {monitor_->RegisterComponent<ComponentTerrain>()};
+    return {monitor_->RegisterComponent<ComponentTerrain>(),
+            monitor_->RegisterComponent<ComponentMovement>(),
+            monitor_->RegisterComponent<ComponentPosition>()};
+  }
+
+  void RegisterDependentSystems() override {
   }
 
 private:
