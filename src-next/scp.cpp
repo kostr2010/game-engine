@@ -350,7 +350,7 @@ public:
       map[comp_pos->y * MAP_HEIGHT + comp_pos->x] = comp_vis->sprite;
     }
 
-    std::cout << MAP_WIDTH << ":" << MAP_HEIGHT << std::endl;
+    // std::cout << MAP_WIDTH << ":" << MAP_HEIGHT << std::endl;
 
     int counter = 0;
     for (int y = 0; y < MAP_HEIGHT; y++) {
@@ -381,6 +381,7 @@ int main() {
   SCPSystemHuman*    sys_hum = monitor.RegisterSystem<SCPSystemHuman>();
   SCPSystemVisual*   sys_vis = monitor.RegisterSystem<SCPSystemVisual>();
 
+  // initial map:
   // // S.........
   // // .......2..
   // // ..........
@@ -395,6 +396,7 @@ int main() {
 
   EntityId scp173 = Factory::SpawnSCP173(&monitor, 0, 0);
   log("scp173 id " << scp173);
+
   EntityId subj1 = Factory::SpawnHuman(&monitor, 5, 5);
   EntityId subj2 = Factory::SpawnHuman(&monitor, 7, 1);
   EntityId subj3 = Factory::SpawnHuman(&monitor, 9, 9);
@@ -413,9 +415,7 @@ int main() {
       }
     }
 
-    // log("removing dead entities");
     sys_hp->RemoveDeadEntities();
-    // log("removed dead entities");
 
     sys_vis->VisualiseToConsole();
   }
@@ -424,3 +424,22 @@ int main() {
 
   return 0;
 }
+
+/*
+
+// main components:
+- component
+- factory (AttachComponent)
+- system
+
+// using:
+- main function
+
+// systems implementation:
+- SystemHuman
+- SystemMovement
+- SystemHealth
+- SystemEuclid
+- SystemVisual
+
+*/

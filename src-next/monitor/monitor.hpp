@@ -192,38 +192,6 @@ public:
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
-  // EntityId GetTile(Vec2 pos) {
-  //   SystemTerrain* sys_terrain = GetSystem<SystemTerrain>();
-
-  //   for (const auto& entity : sys_terrain->entities_) {
-  //     ComponentPosition* comp_pos = GetComponent<ComponentPosition>(entity);
-  //     if (comp_pos->pos == pos)
-  //       return entity;
-  //   }
-
-  //   assertm(false, "pos for the tile is out of range");
-  // }
-
-  // Terrain CellGetTerrain(Vec2 pos) {
-  //   return map_->GetTerrain(pos);
-  // }
-
-  // bool CellContainsEntity(Vec2 pos, EntityId entity) {
-  //   return map_->ContainsEntity(pos, entity);
-  // }
-
-  // void CellRemoveEntity(Vec2 pos, EntityId entity) {
-  //   map_->RemoveEntity(pos, entity);
-  // }
-
-  // void CellAddEntity(Vec2 pos, EntityId entity) {
-  //   map_->AddEntity(pos, entity);
-  // }
-
-  // bool CellIsWalkable(Vec2 pos) {
-  //   return map_->IsWalkable(pos);
-  // }
-
 private:
   void UpdateSignature(EntityId entity, Signature& signature) {
     // std::cout << "*\n" << std::endl;
