@@ -27,7 +27,7 @@ public:
   ~SystemInputConsole() = default;
 
   ResponseCode Input() {
-    }
+  }
 
   ResponseCode AddCallback(const char* key, void (*function)(EventInputConsole event)) {
     if (callbacks_.find(key) == callbacks_.end())

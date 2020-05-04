@@ -1,9 +1,9 @@
 CC = g++
 
-CFLAGS = -Wall -std=c++17 -g -pthread
+CFLAGS = -Wall -std=c++17 -g -gstabs -pthread
 
 MAIN_TEST = main.test.o
-MAIN = main.o
+MAIN = main.cpp
 COMPONENT = component/component.o
 ENTITY    = entity/entity.o
 MONITOR   = monitor/monitor.o
@@ -22,11 +22,16 @@ clear:
 
 main: ${MAIN} ${DEPS}
 	${CC} -o main.out ${MAIN} ${CFLAGS}
-
+ 
 clean:
-	rm -f ${OBJS} ${MAIN} ${MAIN_TEST}
+	rm -f ${OBJS} main.o ${MAIN_TEST}
 
-all: clear main clean
+debug:
+	gdb main.out
+
+all: clear main clear
+
+all_debug: clear main debug clear
 
 test: ${MAIN_TEST} ${DEPS}
 	${CC} -o test.out ${MAIN_TEST} ${CFLAGS}

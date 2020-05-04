@@ -61,10 +61,6 @@ public:
   }
 
   void RemoveEntity(EntityId entity) {
-    // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removing entity " << entity);
-
-    // std::cout << "    > sys man RemoveEntity " << entity << "\n";
-
     for (auto& pair : systems_) {
       auto system = pair.second;
 
@@ -72,13 +68,7 @@ public:
       if (it == system->entities_.end())
         continue;
 
-      // std::cout << "to erase: " << *it << " from system " << pair.first << std::endl;
-      auto iter = system->entities_.erase(it);
-      // std::cout << "after erase: " << *iter << "( end = " << *system->entities_.end() << ") "
-      //           << std::endl;
-
-      // LOG_LVL_SYSTEM_ROUTINE(pair.first, "entity " << entity << "removed from system " <<
-      // pair.first);
+      system->entities_.erase(it);
     }
 
     LOG_LVL_SYSTEM_ROUTINE(SystemManager, "removed entity " << entity);
@@ -117,7 +107,15 @@ public:
   bool EntityBelongsToSystem(Signature signature_entity, Signature signature_system) {
     return (signature_entity & signature_system) == signature_system;
   };
-  // private: ?????????
+
+  void Update(long time_delta) {
+    for (auto& pair : systems_) {
+      System* system = pair.second;
+      system->Update(time_delta);
+    }
+  }
+
+private:
   Monitor*                       monitor_;
   std::map<const char*, System*> systems_{};
   std::map<const char*, Signature>

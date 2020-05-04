@@ -1,4 +1,4 @@
 [13SystemManager]              SystemManager initialised
-[13SystemManager]              new system 15SystemContainer registered
-[13SystemManager]              updated entity's 1 signature in every system
-[13SystemManager]              updated entity's 0 signature in every system
+[13SystemManager]              new system 14SystemMovement registered
+[13SystemManager]              new system 13SystemTerrain registered
+[13SystemManager]              new system 13SystemConsole registered

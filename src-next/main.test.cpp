@@ -8,6 +8,7 @@
 #include "./utils/response.hpp"
 
 // systems
+#include "./system/systems/systemConsole.hpp"
 #include "./system/systems/systemContainer.hpp"
 #include "./system/systems/systemHealth.hpp"
 #include "./system/systems/systemKick.hpp"

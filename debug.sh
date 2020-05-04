@@ -1,2 +1,1 @@
-ulimit -c unlimited 
-gdb src-next/scp
+cd src-next && make all_debug

@@ -1,4 +1,5 @@
-[16ComponentManager]           component 18ComponentContainer registered as 0
-[16ComponentManager]           component 18ComponentContainer is already registered as0
-[16ComponentManager]           component 18ComponentContainer(subentities: 2 ) attached to entity 1
-[16ComponentManager]           component 18ComponentContainer(subentities: ) attached to entity 0
+[16ComponentManager]           component 17ComponentMovement registered as 0
+[16ComponentManager]           component 16ComponentTerrain registered as 1
+[16ComponentManager]           component 17ComponentPosition registered as 2
+[16ComponentManager]           component 17ComponentMovement is already registered as0
+[16ComponentManager]           component 17ComponentPosition is already registered as2

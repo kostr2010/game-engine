@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cassert>
+#include <chrono>
+#include <thread>
 #include <vector>
 
 #include "../component/component.hpp"
@@ -195,6 +197,31 @@ public:
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
+  void StartLoop() {
+    std::chrono::steady_clock::time_point begin_prev = std::chrono::steady_clock::now();
+
+    while (true) {
+      auto begin = std::chrono::steady_clock::now();
+      auto time_delta =
+          std::chrono::duration_cast<std::chrono::milliseconds>(begin - begin_prev).count();
+
+      // calling updaters
+      system_manager_.Update(time_delta);
+
+      auto end = std::chrono::steady_clock::now();
+
+      const int64_t LOOP_DURATION = 100; // 60fps
+      auto          time_elapsed =
+          std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+      auto time_to_sleep = LOOP_DURATION - time_elapsed;
+
+      if (time_to_sleep > 0)
+        std::this_thread::sleep_for(std::chrono::milliseconds(time_to_sleep));
+
+      begin_prev = begin;
+    }
+  }
+
 private:
   void UpdateSignature(EntityId entity, Signature& signature) {
     // std::cout << "*\n" << std::endl;
@@ -208,7 +235,6 @@ private:
                                         << signature);
   }
 
-  // Map*             map_{};
   PropertyManager  property_manager_{};
   ComponentManager component_manager_{};
   EntityManager    entity_manager_{};

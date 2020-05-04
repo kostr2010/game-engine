@@ -36,12 +36,18 @@ public:
     monitor_ = monitor;
   }
 
+  virtual ~System() = default;
+
   virtual ResponseCode Init() {
     return ResponseCode::Success;
   };
 
   virtual void                       RegisterDependencies()      = 0;
   virtual std::vector<ComponentType> GetRequiredComponentTypes() = 0;
+
+  virtual ResponseCode Update(int64_t time_delta) {
+    return ResponseCode::Success;
+  }
 
 protected:
   Monitor* monitor_;

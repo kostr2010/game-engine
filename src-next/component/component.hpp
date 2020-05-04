@@ -29,8 +29,9 @@ typedef int ComponentType;
 
 class IComponentPack {
 public:
-  virtual void RemoveEntity(EntityId entity) = 0;
+  virtual ~IComponentPack() = default;
 
+  virtual void RemoveEntity(EntityId entity)   = 0;
   virtual bool Contains(EntityId entity) const = 0;
 
   // virtual json Serialize() = 0;
@@ -45,8 +46,8 @@ public:
 template <typename Component_t>
 class ComponentPack : public IComponentPack {
 public:
-  // ComponentPack()  = default;
-  // ~ComponentPack() = default;
+  ComponentPack()  = default;
+  ~ComponentPack() = default;
 
   void AddEntity(EntityId entity, Component_t component) {
     components_[entity] = component;

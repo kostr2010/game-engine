@@ -3,9 +3,12 @@
 #include "./utils/log.hpp"
 
 // systems
+#include "./system/systems/systemConsole.hpp"
 #include "./system/systems/systemContainer.hpp"
 #include "./system/systems/systemHealth.hpp"
 #include "./system/systems/systemKick.hpp"
+#include "./system/systems/systemMovement.hpp"
+#include "./system/systems/systemTerrain.hpp"
 
 // components
 #include "./component/components/health.hpp"
@@ -66,34 +69,48 @@ void printer() {
 }
 
 int main() {
-  std::thread t1(userInput);
-  std::thread t2(printer);
+  std::cout << "start" << std::endl;
+  // std::thread t1(userInput);
+  // std::thread t2(printer);
 
-  t1.join();
-  t2.join();
+  // t1.join();
+  // t2.join();
 
-  Monitor monitor{};
+  // Monitor monitor{};
 
-  ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
+  // ComponentType comp_contain_id = monitor.RegisterComponent<ComponentContainer>();
 
-  SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>();
+  // SystemContainer* sys_cont = monitor.RegisterSystem<SystemContainer>();
 
-  EntityId ch1   = monitor.AddEntity();
-  EntityId chest = monitor.AddEntity();
-  EntityId item  = monitor.AddEntity();
+  // EntityId ch1   = monitor.AddEntity();
+  // EntityId chest = monitor.AddEntity();
+  // EntityId item  = monitor.AddEntity();
 
-  ComponentContainer ch1_inventory   = {};
-  ComponentContainer chest_inventory = {{item}};
+  // ComponentContainer ch1_inventory   = {};
+  // ComponentContainer chest_inventory = {{item}};
 
-  monitor.AttachProperty(item, Pickable);
+  // monitor.AttachProperty(item, Pickable);
 
-  monitor.AttachComponent(chest_inventory, chest);
-  monitor.AttachComponent(ch1_inventory, ch1);
+  // monitor.AttachComponent(chest_inventory, chest);
+  // monitor.AttachComponent(ch1_inventory, ch1);
 
-  sys_cont->Transfer(chest, item, ch1);
+  // sys_cont->Transfer(chest, item, ch1);
 
-  ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
-  ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
+  // ComponentContainer* ch1_inventory_after   = monitor.GetComponent<ComponentContainer>(ch1);
+  // ComponentContainer* chest_inventory_after = monitor.GetComponent<ComponentContainer>(chest);
+
+  Monitor  monitor{};
+  Monitor* monitor_ptr = &monitor;
+
+  // ComponentType comp_id_pos      = monitor.RegisterComponent<ComponentPosition>();
+  // ComponentType comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
+  // ComponentType comp_id_terrain  = monitor.RegisterComponent<ComponentTerrain>();
+
+  SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>();
+  monitor.RegisterSystem<SystemTerrain>();
+  SystemConsole* sys_console = monitor.RegisterSystem<SystemConsole>();
+
+  monitor.StartLoop();
 
   return 0;
 }
