@@ -41,32 +41,32 @@
 // [+] get rid of booleans in components (! new bitmap and manager)
 // [+] deactivate instead of delete
 
-std::vector<std::string> messages;
-std::mutex               messages_mutex;
+// std::vector<std::string> messages;
+// std::mutex               messages_mutex;
 
-void userInput() {
-  while (true) {
-    std::string input;
-    std::getline(std::cin, input);
+// void userInput() {
+//   while (true) {
+//     std::string input;
+//     std::getline(std::cin, input);
 
-    std::lock_guard<std::mutex> guard(messages_mutex);
+//     std::lock_guard<std::mutex> guard(messages_mutex);
 
-    messages.push_back(input);
-  }
-}
+//     messages.push_back(input);
+//   }
+// }
 
-void printer() {
-  while (true) {
-    std::lock_guard<std::mutex> guard(messages_mutex);
-    // std::string message_last = messages.back();
-    if (messages.empty())
-      continue;
+// void printer() {
+//   while (true) {
+//     std::lock_guard<std::mutex> guard(messages_mutex);
+//     // std::string message_last = messages.back();
+//     if (messages.empty())
+//       continue;
 
-    std::cout << messages.back() << std::endl;
+//     std::cout << messages.back() << std::endl;
 
-    messages.pop_back();
-  }
-}
+//     messages.pop_back();
+//   }
+// }
 
 int main() {
   std::cout << "start" << std::endl;
@@ -106,9 +106,7 @@ int main() {
   // ComponentType comp_id_movement = monitor.RegisterComponent<ComponentMovement>();
   // ComponentType comp_id_terrain  = monitor.RegisterComponent<ComponentTerrain>();
 
-  SystemMovement* sys_movement = monitor.RegisterSystem<SystemMovement>();
-  monitor.RegisterSystem<SystemTerrain>();
-  SystemConsole* sys_console = monitor.RegisterSystem<SystemConsole>();
+  monitor.RegisterSystem<SystemConsole>();
 
   monitor.StartLoop();
 

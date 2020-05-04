@@ -45,9 +45,13 @@ public:
   //     }
   //   }
 
-  ResponseCode Update(long time_delta) {
+  ResponseCode Init() override {
     fcntl(0, F_SETFL, (fcntl(0, F_GETFL) | O_NONBLOCK));
 
+    return ResponseCode::Success;
+  }
+
+  ResponseCode Update(long time_delta) {
     char buf[50];
 
     auto begin = std::chrono::steady_clock::now();

@@ -1,11 +1,4 @@
 [Monitor]                      ComponentManager initialized
 [Monitor]                      EntityManager initialized
 [Monitor]                      SystemManager initialized
-[Monitor]                      component 17ComponentMovement registered with id 0
-[Monitor]                      component 16ComponentTerrain registered with id 1
-[Monitor]                      component 17ComponentPosition registered with id 2
-[Monitor]                      new system 13SystemTerrain registered
-[Monitor]                      component 17ComponentMovement registered with id 0
-[Monitor]                      component 17ComponentPosition registered with id 2
-[Monitor]                      new system 14SystemMovement registered
 [Monitor]                      new system 13SystemConsole registered

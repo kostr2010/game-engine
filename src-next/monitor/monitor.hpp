@@ -210,7 +210,9 @@ public:
 
       auto end = std::chrono::steady_clock::now();
 
-      const int64_t LOOP_DURATION = 100; // 60fps
+      // std::cout << "I'm a dwarf and I'm digging the hole" << std::endl;
+
+      const int64_t LOOP_DURATION = 16; // 60fps
       auto          time_elapsed =
           std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
       auto time_to_sleep = LOOP_DURATION - time_elapsed;
