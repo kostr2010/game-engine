@@ -4,6 +4,7 @@
 #include <bitset>
 #include <iostream>
 #include <set>
+#include <vector>
 
 const int MAX_ENTITIES   = 128;
 const int MAX_COMPONENTS = 32;

@@ -21,31 +21,6 @@
 
 #include "./factories/factories.hpp"
 
-// TEST_CASE("Serialization") {
-//   ComponentHealth h1{.hp_max = 13, .hp_cur = 25};
-
-//   json j = h1;
-
-//   ComponentHealth h2 = j.get<ComponentHealth>();
-
-//   REQUIRE(h2.hp_max == 13);
-//   REQUIRE(h2.hp_cur == 25);
-
-//   // std::ofstream file;
-//   // file.open("../saves/test.json", std::ios_base::trunc);
-// }
-
-// TEST_CASE("Serialize component pack") {
-//   ComponentPack<ComponentHealth> pack{};
-//   pack.AddEntity(1, {.hp_max = 10, .hp_cur = 8});
-//   pack.AddEntity(3, {.hp_max = 20, .hp_cur = 20});
-
-//   json j = pack.Serialize();
-
-//   ComponentPack<ComponentHealth> pack2{};
-//   pack2.Deserialize(j);
-// }
-
 TEST_CASE("Kick") {
   // std::cout << "*\n" << std::endl;
   Monitor monitor{};

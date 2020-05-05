@@ -42,6 +42,7 @@ public:
     return ResponseCode::Success;
   };
 
+  virtual std::string                GetMyOwnFuckingShittyId()   = 0;
   virtual void                       RegisterDependencies()      = 0;
   virtual std::vector<ComponentType> GetRequiredComponentTypes() = 0;
 
@@ -52,3 +53,5 @@ public:
 protected:
   Monitor* monitor_;
 };
+
+typedef System* (*SystemConstructor)(Monitor* monitor);

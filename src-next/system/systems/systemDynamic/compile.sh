@@ -1,0 +1,1 @@
+g++ -fPIC -shared systemHealth.cpp -o systemHealth.so

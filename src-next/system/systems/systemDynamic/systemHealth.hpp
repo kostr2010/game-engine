@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../../../component/components/health.hpp"
-// #include "../../monitor/monitor.hpp"
 #include "../../system.hpp"
+
+class Monitor;
 
 class SystemHealth : public System {
 public:
@@ -18,4 +19,6 @@ public:
   virtual std::vector<ComponentType> GetRequiredComponentTypes();
 
   virtual void RegisterDependencies();
+
+  virtual std::string GetMyOwnFuckingShittyId();
 };

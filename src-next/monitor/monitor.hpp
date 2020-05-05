@@ -119,49 +119,17 @@ public:
     LOG_LVL_MONITOR_ROUTINE("entity " << entity << "deleted from all managers");
   }
 
-  template <typename System_t>
-  void SetSystemSignature(Signature& signature) {
-    system_manager_.SetSignature<System_t>(signature);
+  System* RegisterSystem(System* (*ctor)(Monitor*)) {
+    System* system = system_manager_.RegisterSystem(ctor);
 
     // TODO add try/catch here
-    // LOG_LVL_MONITOR_ROUTINE("now ");
-  }
-
-  template <typename System_t>
-  void SetSystemSignature(std::vector<ComponentType> components) {
-    // merge all components to one signature
-    Signature signature{};
-    for (auto& component : components) {
-      signature.set(component, true);
-    }
-
-    // set the system's initial signature
-    SetSystemSignature<System_t>(signature);
-  }
-
-  template <typename System_t>
-  System_t* RegisterSystem() {
-    if (system_manager_.Contains<System_t>())
-      return system_manager_.GetSystem<System_t>();
-
-    // assertm(system_manager_.Contains<System_t>(), "this system has already been registered");
-    System_t* system = system_manager_.RegisterSystem<System_t>();
-    system->RegisterDependencies();
-
-    SetSystemSignature<System_t>(system->GetRequiredComponentTypes());
-
-    ResponseCode system_init_code = system->Init();
-    assertm(system_init_code == ResponseCode::Success, "System failed to init");
-
-    // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("new system " << typeid(System_t).name() << " registered");
+    LOG_LVL_MONITOR_ROUTINE("new system " << system->GetMyOwnFuckingShittyId() << " registered");
 
     return system;
   }
 
-  template <typename System_t>
-  System_t* GetSystem() {
-    return system_manager_.GetSystem<System_t>();
+  System* GetSystem(std::string sys_name) {
+    return system_manager_.GetSystem(sys_name);
   }
 
   template <typename Component_t>
@@ -227,22 +195,24 @@ public:
   }
 
   System* ImportSystem(std::string path) {
+    void* handle = ImportDLL(path);
+
+    SystemConstructor ctor = (SystemConstructor)dlsym(handle, "create_object");
+
+    System* system = (System*)ctor(this);
+    return system;
+  }
+
+private:
+  void* ImportDLL(std::string path) {
     const char* c_path = path.c_str();
 
     /* on Linux, use "./myclass.so" */
     void* handle = dlopen(c_path, RTLD_LAZY);
 
-    System* (*create)(Monitor * monitor);
-    void (*destroy)(System*);
-
-    create  = (System * (*)(Monitor * monitor)) dlsym(handle, "create_object");
-    destroy = (void (*)(System*))dlsym(handle, "destroy_object");
-
-    System* system = (System*)create();
-    return system;
+    return handle;
   }
 
-private:
   void UpdateSignature(EntityId entity, Signature& signature) {
     // std::cout << "*\n" << std::endl;
     entity_manager_.SetSignature(entity, signature);

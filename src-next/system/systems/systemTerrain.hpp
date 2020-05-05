@@ -78,6 +78,10 @@ public:
     monitor_->RegisterComponent<ComponentMovement>();
   }
 
+  std::string GetMyOwnFuckingShittyId() {
+    return "SystemTerrain";
+  }
+
 private:
   EntityId GetTile(Vec2 pos) {
     for (const auto& entity : entities_) {

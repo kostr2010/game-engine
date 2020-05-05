@@ -1,5 +1,3 @@
-#pragma once
-
 // #include "../../../component/components/health.hpp"
 // // #include "../../monitor/monitor.hpp"
 // #include "../../system.hpp"
@@ -53,4 +51,8 @@ std::vector<ComponentType> SystemHealth::GetRequiredComponentTypes() {
 }
 
 void SystemHealth::RegisterDependencies() {
+}
+
+std::string SystemHealth::GetMyOwnFuckingShittyId() {
+  return "SystemHealth";
 }

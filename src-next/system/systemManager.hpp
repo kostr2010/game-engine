@@ -5,6 +5,8 @@
 #include <typeinfo>
 
 #include "../entity/entity.hpp"
+#include "../utils/assembly.hpp"
+// #include "../monitor/monitor."
 
 // ====================
 // SystemManager
@@ -26,38 +28,49 @@ public:
       delete (pair.second);
   }
 
-  template <typename System_t>
-  System_t* RegisterSystem() {
-    const char* type_name = typeid(System_t).name();
+  void SetSystemSignature(std::string sys_name, std::vector<ComponentType> components) {
+    // merge all components to one signature
+    Signature signature{};
+    for (auto& component : components) {
+      signature.set(component, true);
+    }
 
-    System_t* system = new System_t{monitor_};
+    system_signatures_.insert({sys_name, signature});
+  }
 
-    systems_[type_name] = system;
+  System* RegisterSystem(SystemConstructor ctor) {
+    System* system = ctor(monitor_);
 
-    // TODO add try catch here
-    LOG_LVL_SYSTEM_ROUTINE(SystemManager,
-                           "new system " << typeid(System_t).name() << " registered");
+    std::string sys_name = system->GetMyOwnFuckingShittyId();
+
+    if (systems_.find(sys_name) != systems_.end()) {
+      LOG_LVL_SYSTEM_ROUTINE(SystemManager, "system " << sys_name << " already registered");
+
+      // TODO: get rid of dynamic allocation (do static id gathering)
+      delete system;
+
+      return systems_[sys_name];
+    }
+
+    systems_[sys_name] = system;
+
+    SetSystemSignature(sys_name, system->GetRequiredComponentTypes());
+    system->RegisterDependencies();
+
+    auto system_init_code = system->Init();
+
+    assertm(system_init_code == ResponseCode::Success, "System failed to init");
+
+    // TODO: add try catch here
+    LOG_LVL_SYSTEM_ROUTINE(SystemManager, "new system " << sys_name << " registered");
 
     return system;
   }
 
-  template <typename System_t>
-  System_t* GetSystem() {
-    const char* type_name = typeid(System_t).name();
+  System* GetSystem(std::string sys_name) {
+    assertm(systems_.find(sys_name) != systems_.end(), "[GetSystem] no system with such name");
 
-    // TODO: assert that the system exists
-
-    return (System_t*)systems_[type_name];
-  }
-
-  template <typename System_t>
-  void SetSignature(Signature signature) {
-    const char* typeName = typeid(System_t).name();
-
-    system_signatures_.insert({typeName, signature});
-
-    // TODO add try/catch here
-    // LOG_LVL_SYSTEM_ROUTINE(SystemManager, "SystemManager initialised");
+    return systems_[sys_name];
   }
 
   void RemoveEntity(EntityId entity) {
@@ -97,11 +110,10 @@ public:
                            "updated entity's " << entity << " signature in every system");
   }
 
-  template <typename System_t>
-  bool Contains() const {
-    const char* id = typeid(System_t).name();
+  bool Contains(System* system) const {
+    std::string sys_name = system->GetMyOwnFuckingShittyId();
 
-    return systems_.find(id) != systems_.end();
+    return systems_.find(sys_name) != systems_.end();
   }
 
   bool EntityBelongsToSystem(Signature signature_entity, Signature signature_system) {
@@ -116,10 +128,7 @@ public:
   }
 
 private:
-  Monitor*                       monitor_;
-  std::map<const char*, System*> systems_{};
-  std::map<const char*, Signature>
-      system_signatures_{}; // !!!! system_signature_ & entity_signature == system_signature in
-                            // order to check if entity has all components needed for this system,
-                            // else abort
+  Monitor*                         monitor_;
+  std::map<std::string, System*>   systems_{};
+  std::map<std::string, Signature> system_signatures_{};
 };

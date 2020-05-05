@@ -90,7 +90,7 @@ private:
       {"monitor", [this](std::vector<std::string> args) {
          // body
          Router map_commands{
-             {"reg_sys",
+             {"import",
               [&](std::vector<std::string> args) {
                 // body
                 auto system_name = args[0];
@@ -98,12 +98,13 @@ private:
                 Router map_systems{{"SystemTerrain",
                                     [&](std::vector<std::string> args) {
                                       // body
-                                      this->monitor_->RegisterSystem<SystemTerrain>();
+                                      // this->monitor_->RegisterSystem();
+                                      // this->monitor_->I
                                       std::cout << "Terrain registered" << std::endl;
                                     }},
                                    {"SystemKick", [&](std::vector<std::string> args) {
                                       // body
-                                      this->monitor_->RegisterSystem<SystemKick>();
+                                      // this->monitor_->RegisterSystem();
                                       std::cout << "Kick registered" << std::endl;
                                     }}};
 
@@ -119,11 +120,11 @@ private:
                 Router map_systems{{"SystemTerrain",
                                     [&](std::vector<std::string> args) {
                                       // body
-                                      this->monitor_->RegisterSystem<SystemTerrain>();
+                                      // this->monitor_->RegisterSystem<SystemTerrain>();
                                     }},
                                    {"SystemKick", [&](std::vector<std::string> args) {
                                       // body
-                                      this->monitor_->RegisterSystem<SystemKick>();
+                                      // this->monitor_->RegisterSystem<SystemKick>();
                                     }}};
                 auto   root     = args[0];
                 auto   args_new = std::vector<std::string>(args.begin() + 1, args.end());
