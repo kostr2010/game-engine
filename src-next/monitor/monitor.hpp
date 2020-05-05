@@ -19,6 +19,8 @@
 #include "../utils/log.hpp"
 #include "../utils/vec2.hpp"
 
+#include <dlfcn.h>
+
 // ====================
 // Monitor
 // global manager for all managers
@@ -222,6 +224,22 @@ public:
 
       begin_prev = begin;
     }
+  }
+
+  System* ImportSystem(std::string path) {
+    const char* c_path = path.c_str();
+
+    /* on Linux, use "./myclass.so" */
+    void* handle = dlopen(c_path, RTLD_LAZY);
+
+    System* (*create)(Monitor * monitor);
+    void (*destroy)(System*);
+
+    create  = (System * (*)(Monitor * monitor)) dlsym(handle, "create_object");
+    destroy = (void (*)(System*))dlsym(handle, "destroy_object");
+
+    System* system = (System*)create();
+    return system;
   }
 
 private:

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <cstring>
+#include <functional>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -13,6 +14,8 @@
 #include <unistd.h>
 
 #include "../system.hpp"
+#include "systemKick.hpp"
+#include "systemTerrain.hpp"
 
 /*
 input types:
@@ -27,23 +30,6 @@ public:
   }
 
   ~SystemConsole() = default;
-
-  //   ResponseCode Input() {
-  //     std::thread t1(startInputHandling);
-
-  //     return ResponseCode::Success;
-  //   }
-
-  //   void startInputHandling() {
-  //     while (true) {
-  //       std::string input;
-  //       std::getline(std::cin, input);
-
-  //       std::lock_guard<std::mutex> guard(messages_mutex);
-
-  //       messages.push_back(input);
-  //     }
-  //   }
 
   ResponseCode Init() override {
     fcntl(0, F_SETFL, (fcntl(0, F_GETFL) | O_NONBLOCK));
@@ -81,11 +67,13 @@ public:
     auto command = arr[0];
     auto args    = std::vector<std::string>(arr.begin() + 1, arr.end());
 
-    if (handlers.find(command) == handlers.end())
+    if (map_namespaces.find(command) == map_namespaces.end())
       return "no such command found";
 
-    auto handler = handlers[command];
-    return handler(args);
+    auto handler = map_namespaces[command];
+
+    handler(args);
+    return "done";
   }
 
   void RegisterDependencies() {
@@ -96,10 +84,63 @@ public:
   }
 
 private:
-  std::map<std::string, const char* (*)(std::vector<std::string>)> handlers{
-      {std::string("monitor"), [](std::vector<std::string>) { return "done"; }},
-      {std::string("system"), [](std::vector<std::string>) { return "done"; }},
-  };
+  typedef std::map<std::string, std::function<void(std::vector<std::string>)>> Router;
+
+  Router map_namespaces{
+      {"monitor", [this](std::vector<std::string> args) {
+         // body
+         Router map_commands{
+             {"reg_sys",
+              [&](std::vector<std::string> args) {
+                // body
+                auto system_name = args[0];
+
+                Router map_systems{{"SystemTerrain",
+                                    [&](std::vector<std::string> args) {
+                                      // body
+                                      this->monitor_->RegisterSystem<SystemTerrain>();
+                                      std::cout << "Terrain registered" << std::endl;
+                                    }},
+                                   {"SystemKick", [&](std::vector<std::string> args) {
+                                      // body
+                                      this->monitor_->RegisterSystem<SystemKick>();
+                                      std::cout << "Kick registered" << std::endl;
+                                    }}};
+
+                auto root     = args[0];
+                auto args_new = std::vector<std::string>(args.begin() + 1, args.end());
+
+                map_systems[root](args_new);
+              }},
+             {"reg_comp", [&](std::vector<std::string> args) {
+                // body
+                auto system_name = args[0];
+
+                Router map_systems{{"SystemTerrain",
+                                    [&](std::vector<std::string> args) {
+                                      // body
+                                      this->monitor_->RegisterSystem<SystemTerrain>();
+                                    }},
+                                   {"SystemKick", [&](std::vector<std::string> args) {
+                                      // body
+                                      this->monitor_->RegisterSystem<SystemKick>();
+                                    }}};
+                auto   root     = args[0];
+                auto   args_new = std::vector<std::string>(args.begin() + 1, args.end());
+
+                map_systems[root](args_new);
+              }}};
+
+         auto root     = args[0];
+         auto args_new = std::vector<std::string>(args.begin() + 1, args.end());
+
+         map_commands[root](args_new);
+       }}};
+
+  // monitor import SystemTerrain
+  // monitor reg_sys SystemTerrain
+
+  // std::map<std::string, const char* (*)(std::vector<std::string>)>
 
   std::vector<std::string> split(const std::string& str, const std::string& delim) {
     std::vector<std::string> tokens;
