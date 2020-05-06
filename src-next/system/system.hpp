@@ -42,9 +42,11 @@ public:
     return ResponseCode::Success;
   };
 
-  virtual std::string                GetMyOwnFuckingShittyId()   = 0;
-  virtual void                       RegisterDependencies()      = 0;
-  virtual std::vector<ComponentType> GetRequiredComponentTypes() = 0;
+  virtual std::string GetMyOwnFuckingShittyId() = 0;
+
+  virtual std::vector<std::string> GetDependentSystemNames() = 0; // keys from man just as with c++
+  virtual std::vector<ComponentTypeGlobal> GetDependentComponentTypes() = 0;
+  virtual std::vector<ComponentTypeGlobal> GetRequiredComponentTypes()  = 0;
 
   virtual ResponseCode Update(int64_t time_delta) {
     return ResponseCode::Success;

@@ -21,7 +21,7 @@ public:
     return ResponseCode::Success;
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() override {
+  std::vector<ComponentTypeGlobal> GetRequiredComponentTypes() override {
     return {monitor_->RegisterComponent<ComponentControllable>(),
             monitor_->RegisterComponent<ComponentPosition>(),
             monitor_->RegisterComponent<ComponentMovement>()};

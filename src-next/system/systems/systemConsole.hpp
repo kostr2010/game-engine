@@ -79,7 +79,7 @@ public:
   void RegisterDependencies() {
   }
 
-  std::vector<ComponentType> GetRequiredComponentTypes() {
+  std::vector<ComponentTypeGlobal> GetRequiredComponentTypes() {
     return {};
   }
 

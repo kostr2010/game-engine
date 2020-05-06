@@ -46,7 +46,7 @@ ResponseCode SystemHealth::ChangeMaximumHP(EntityId entity, int delta) {
   return ResponseCode::Success;
 }
 
-std::vector<ComponentType> SystemHealth::GetRequiredComponentTypes() {
+std::vector<ComponentTypeGlobal> SystemHealth::GetRequiredComponentTypes() {
   return {monitor_->RegisterComponent<ComponentHealth>()};
 }
 

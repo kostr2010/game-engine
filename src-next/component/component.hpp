@@ -13,10 +13,14 @@
 #include "../utils/assembly.hpp"
 #include "../utils/log.hpp"
 
+#include <stdlib.h>
+#include <string.h>
+
 // #include "../../libs/json/json.hpp"
 // using json = nlohmann::json;
 
-typedef int ComponentType;
+typedef std::string ComponentTypeGlobal;
+typedef int         ComponentTypeLocal;
 
 // struct IComponent {
 //   virtual json        Serialize()         = 0;
@@ -31,8 +35,10 @@ class IComponentPack {
 public:
   virtual ~IComponentPack() = default;
 
-  virtual void RemoveEntity(EntityId entity)   = 0;
-  virtual bool Contains(EntityId entity) const = 0;
+  virtual void  RemoveData(EntityId entity)               = 0;
+  virtual void  AddData(EntityId entity, void* component) = 0;
+  virtual void* GetComponent(EntityId entity)             = 0;
+  virtual bool  Contains(EntityId entity) const           = 0;
 
   // virtual json Serialize() = 0;
 
@@ -43,46 +49,88 @@ public:
 // ComponentPack
 // for us to be able to store entities that belong to each component
 
-template <typename Component_t>
 class ComponentPack : public IComponentPack {
 public:
-  ComponentPack()  = default;
-  ~ComponentPack() = default;
+  ComponentPack(int comp_id, size_t comp_size) {
+    comp_size_ = comp_size;
+    comp_id_   = comp_id;
 
-  void AddEntity(EntityId entity, Component_t component) {
-    components_[entity] = component;
+    components_ = calloc(MAX_COMPONENTS, comp_size);
   }
 
-  void RemoveEntity(EntityId entity) override {
-    auto entity_index = components_.find(entity);
+  ~ComponentPack() {
+    free(components_);
+  }
 
-    assertm(entity_index != components_.end(), "entity not found");
+  void AddData(EntityId entity, void* component) {
+    assert(map_entity_index.find(entity) == map_entity_index.end() &&
+           "Component added to same entity more than once.");
 
-    components_.erase(entity);
+    // Put new entry at end and update the maps
+    size_t newIndex            = components_count_++;
+    map_entity_index[entity]   = newIndex;
+    map_index_entity[newIndex] = entity;
+
+    CopyComponent(component, GetComponentByIndex(newIndex));
+  }
+
+  void RemoveData(EntityId entity) override {
+    assert(map_entity_index.find(entity) != map_entity_index.end() &&
+           "Removing non-existent component.");
+
+    // Copy element at end into deleted element's place to maintain density
+    size_t index_to_remove = map_entity_index[entity];
+    size_t index_last      = components_count_ - 1;
+    // components_[index_to_remove] = components_[index_last];
+    // memcpy(GetComponentByIndex(index_to_remove)
+
+    CopyComponent(index_last, index_to_remove);
+
+    // Update map to point to moved spot
+    EntityId last_element_entity          = map_index_entity[index_last];
+    map_entity_index[last_element_entity] = index_to_remove;
+    map_index_entity[index_to_remove]     = last_element_entity;
+
+    map_entity_index.erase(entity);
+    map_index_entity.erase(index_last);
+
+    --components_count_;
   };
 
-  Component_t* GetComponent(EntityId entity) {
-    return &(components_[entity]);
+  void* GetComponent(EntityId entity) override {
+    assert(map_entity_index.find(entity) != map_entity_index.end() &&
+           "Retrieving non-existent component.");
+
+    return GetComponentByIndex(map_entity_index[entity]);
   };
 
   bool Contains(EntityId entity) const override {
-    return components_.find(entity) != components_.end();
+    return map_entity_index.find(entity) != map_entity_index.end();
   }
 
-  // json Serialize() override {
-  //   json j(components_);
-  //   return j;
-  // }
-
-  // void Deserialize(json j) override {
-  //   components_ = j.get<std::map<EntityId, Component_t>>();
-  // };
-
 private:
-  // std::array<Component_t, MAX_ENTITIES> abilities_;
-  // entity to index
-  // index to entity
-  std::map<EntityId, Component_t> components_; // TODO: replace with Packed Array
+  void* GetComponentByIndex(size_t index) {
+    return components_ + index * comp_size_;
+  }
+
+  void CopyComponent(void* src, void* dst) {
+    memcpy(dst, src, comp_size_);
+  }
+
+  void CopyComponent(size_t index_src, size_t index_dst) {
+    CopyComponent(GetComponentByIndex(index_src), GetComponentByIndex(index_dst));
+  }
+
+  int    comp_id_;
+  size_t comp_size_        = 1;
+  int    components_count_ = 0;
+  void*  components_;
+
+  // Map from an entity ID to an array index.
+  std::unordered_map<EntityId, size_t> map_entity_index;
+
+  // Map from an array index to an entity ID.
+  std::unordered_map<size_t, EntityId> map_index_entity;
 };
 
 // ====================
@@ -101,9 +149,8 @@ public:
     }
   }
 
-  template <typename Component_t>
-  ComponentType RegisterComponent() {
-    auto id = GetComponentId<Component_t>();
+  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_id, size_t comp_size) {
+    auto id = comp_id;
 
     if (component_types_.find(id) != component_types_.end()) {
       LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
@@ -113,73 +160,60 @@ public:
       return component_types_[id];
     }
 
-    ComponentType comp_id = next_++;
-    component_types_.insert({id, comp_id});
+    ComponentTypeLocal comp_id_local = next_++;
+    component_types_.insert({id, comp_id_local});
 
-    // mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
-    // std::unordered_map<const char*, std::shared_ptr<IComponentArray>> mComponentArrays{};
+    IComponentPack* pack = new ComponentPack{comp_id_local, comp_size};
 
-    // auto pack = std::make_shared<ComponentPack<Component_t>>();
-
-    IComponentPack* pack = new ComponentPack<Component_t>{};
-
-    // component_packs_.insert({id, std::static_pointer_cast<IComponentPack>(pack)});
     component_packs_.insert({id, pack});
 
-    // TODO add try / catch
+    // TODO: add try / catch
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
-                              "component " << typeid(Component_t).name() << " registered as "
-                                           << comp_id);
+                              "component " << comp_id << " registered as " << comp_id_local);
 
-    return comp_id;
+    return comp_id_local;
   }
 
-  template <typename Component_t>
-  ComponentType GetComponentType() { // wrapper for private function
-    auto id = GetComponentId<Component_t>();
+  ComponentTypeLocal GetComponentType(ComponentTypeGlobal comp_id) {
+    auto id = comp_id;
 
     // TODO: assert if the component exists
 
     return component_types_[id];
   }
 
-  template <typename Component_t>
-  void AttachComponent(EntityId entity, Component_t component) {
-    GetComponentPack<Component_t>()->AddEntity(entity, component);
+  void AttachComponent(EntityId entity, ComponentTypeGlobal comp_id, void* component) {
+    GetComponentPack(comp_id)->AddData(entity, component);
 
     // TODO add try / catch
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
-                              "component " << typeid(Component_t).name() << "(" << component << ")"
+                              "component " << comp_id << "(" << component << ")"
                                            << " attached to entity " << entity);
   }
 
   template <typename Component_t>
   void RemoveComponent(EntityId entity) {
-    GetComponentPack<Component_t>()->RemoveEntity(entity);
+    GetComponentPack(comp_id)->RemoveData(entity);
 
     // TODO add try / catch
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
-                              "component " << typeid(Component_t).name() << "removed from entity "
-                                           << entity);
+                              "component " << comp_id << "removed from entity " << entity);
   }
 
-  template <typename Component_t>
-  bool HasComponent(EntityId entity) {
-    IComponentPack* comp_pack = GetComponentPack<Component_t>();
+  bool HasComponent(EntityId entity, ComponentTypeGlobal comp_id) {
+    IComponentPack* comp_pack = GetComponentPack(comp_id);
 
     assertm(comp_pack != nullptr, "unregistered component");
 
     return comp_pack->Contains(entity);
   }
 
-  template <typename Component_t>
-  Component_t* GetComponent(EntityId entity) {
-    return GetComponentPack<Component_t>()->GetComponent(entity);
+  void* GetComponent(EntityId entity, ComponentTypeGlobal comp_id) {
+    return GetComponentPack(comp_id)->GetComponent(entity);
   }
 
-  template <typename Component_t>
-  bool Contains() {
-    return component_types_.find(GetComponentId<Component_t>()) != component_types_.end();
+  bool Contains(ComponentTypeGlobal comp_id) {
+    return component_types_.find(comp_id) != component_types_.end();
   }
 
   // tell each component_pack that an entity has been destroyed
@@ -192,7 +226,7 @@ public:
       const auto pack = pair.second;
 
       if (pack->Contains(entity))
-        pack->RemoveEntity(entity);
+        pack->RemoveData(entity);
     }
 
     // TODO add try / catch
@@ -207,21 +241,26 @@ public:
     }
   }
 
+  // std::vector<ComponentTypeLocal> ComponentTypeGlobalToLocal(std::vector<ComponentTypeGlobal>
+  // types_global) {
+  //   std::vector<ComponentTypeLocal> types_local;
+  //   for (const auto& elem : types_global)
+  //     types_local.push_back(component_types_[elem]);
+
+  //   return types_local;
+  // }
+
 private:
-  std::map<const char*, ComponentType>   component_types_{};
-  std::map<const char*, IComponentPack*> component_packs_{};
+  // TODO: via Packed Array (the same as with ComponentPack)
+  // TODO: use only ComponentTypeLocal
+  std::map<ComponentTypeGlobal, ComponentTypeLocal> component_types_{};
+  std::map<ComponentTypeGlobal, IComponentPack*>    component_packs_{};
 
-  ComponentType next_{};
+  ComponentTypeLocal next_{};
 
-  template <typename Component_t>
-  inline const char* GetComponentId() {
-    return typeid(Component_t).name();
-  }
-
-  template <typename Component_t>
-  ComponentPack<Component_t>* GetComponentPack() {
+  IComponentPack* GetComponentPack(ComponentTypeGlobal comp_id) {
     // TODO: check if the component is registeredd
 
-    return (ComponentPack<Component_t>*)(component_packs_[GetComponentId<Component_t>()]);
+    return component_packs_[comp_id];
   };
 };

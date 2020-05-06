@@ -47,16 +47,14 @@ public:
   // wrappers for managers, so user has to speak only to monitor instead of directly to each one of
   // the managers
 
-  template <typename Component_t>
-  ComponentType RegisterComponent() {
+  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_type) {
     // if (component_manager_.Contains<Component_t>())
     //   return component_manager_.GetComponentType<Component_t>();
 
-    ComponentType component = component_manager_.RegisterComponent<Component_t>();
+    ComponentTypeLocal component = component_manager_.RegisterComponent(comp_type);
 
     // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("component " << typeid(Component_t).name() << " registered with id "
-                                         << component);
+    LOG_LVL_MONITOR_ROUTINE("component " << comp_type << " registered with id " << component);
 
     return component;
   }
@@ -65,8 +63,8 @@ public:
   void AttachComponent(Component_t& component_new, EntityId entity) {
     component_manager_.AttachComponent(entity, component_new);
 
-    Signature     signature_prev = entity_manager_.GetSignature(entity);
-    ComponentType component      = component_manager_.GetComponentType<Component_t>();
+    Signature          signature_prev = entity_manager_.GetSignature(entity);
+    ComponentTypeLocal component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, true);
 
@@ -83,8 +81,8 @@ public:
   void RemoveComponent(EntityId entity) {
     component_manager_.RemoveComponent<Component_t>(entity);
 
-    Signature     signature_prev = entity_manager_.GetSignature(entity);
-    ComponentType component      = component_manager_.GetComponentType<Component_t>();
+    Signature          signature_prev = entity_manager_.GetSignature(entity);
+    ComponentTypeLocal component      = component_manager_.GetComponentType<Component_t>();
 
     Signature signature_new = signature_prev.set(component, false);
 

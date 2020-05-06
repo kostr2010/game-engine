@@ -16,7 +16,7 @@ public:
 
   virtual ResponseCode ChangeMaximumHP(EntityId entity, int delta);
 
-  virtual std::vector<ComponentType> GetRequiredComponentTypes();
+  virtual std::vector<ComponentTypeGlobal> GetRequiredComponentTypes();
 
   virtual void RegisterDependencies();
 
