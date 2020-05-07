@@ -11,7 +11,9 @@
 
 #include "../entity/entity.hpp"
 #include "../utils/assembly.hpp"
+#include "../utils/dll.hpp"
 #include "../utils/log.hpp"
+#include "./componentInfo.hpp"
 
 #include <stdlib.h>
 #include <string.h>
@@ -51,9 +53,11 @@ public:
 
 class ComponentPack : public IComponentPack {
 public:
-  ComponentPack(int comp_id, size_t comp_size) {
+  ComponentPack(ComponentTypeLocal comp_id, size_t comp_size) {
     comp_size_ = comp_size;
     comp_id_   = comp_id;
+
+    assertm(comp_size > 0, "Component Size must be greater than zero");
 
     components_ = calloc(MAX_COMPONENTS, comp_size);
   }
@@ -122,7 +126,7 @@ private:
   }
 
   int    comp_id_;
-  size_t comp_size_        = 1;
+  size_t comp_size_        = 0;
   int    components_count_ = 0;
   void*  components_;
 
@@ -149,37 +153,44 @@ public:
     }
   }
 
-  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_id, size_t comp_size) {
-    auto id = comp_id;
+  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_type) {
+    auto type = comp_type;
 
-    if (component_types_.find(id) != component_types_.end()) {
+    // lib<comp_type>.so
+    std::string path    = "lib" + comp_type;
+    void*       handler = ImportDLL(path.c_str());
+
+    auto          get_comp_info = (GetComponentInfo)dlsym(handler, "get_component_info");
+    ComponentInfo comp_info     = get_comp_info();
+
+    if (component_types_.find(type) != component_types_.end()) {
       LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
-                                "component " << id << " is already registered as"
-                                             << component_types_[id]);
+                                "component " << type << " is already registered as"
+                                             << component_types_[type]);
 
-      return component_types_[id];
+      return component_types_[type];
     }
 
-    ComponentTypeLocal comp_id_local = next_++;
-    component_types_.insert({id, comp_id_local});
+    ComponentTypeLocal comp_type_local = next_++;
+    component_types_.insert({type, comp_type_local});
 
-    IComponentPack* pack = new ComponentPack{comp_id_local, comp_size};
+    IComponentPack* pack = new ComponentPack{comp_type_local, comp_info.comp_size};
 
-    component_packs_.insert({id, pack});
+    component_packs_.insert({type, pack});
 
     // TODO: add try / catch
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
-                              "component " << comp_id << " registered as " << comp_id_local);
+                              "component " << comp_type << " registered as " << comp_type_local);
 
-    return comp_id_local;
+    return comp_type_local;
   }
 
-  ComponentTypeLocal GetComponentType(ComponentTypeGlobal comp_id) {
-    auto id = comp_id;
+  ComponentTypeLocal GetComponentType(ComponentTypeGlobal comp_type) {
+    auto type = comp_type;
 
     // TODO: assert if the component exists
 
-    return component_types_[id];
+    return component_types_[type];
   }
 
   void AttachComponent(EntityId entity, ComponentTypeGlobal comp_id, void* component) {
@@ -191,8 +202,8 @@ public:
                                            << " attached to entity " << entity);
   }
 
-  template <typename Component_t>
-  void RemoveComponent(EntityId entity) {
+  // template <typename Component_t>
+  void RemoveComponent(ComponentTypeGlobal comp_id, EntityId entity) {
     GetComponentPack(comp_id)->RemoveData(entity);
 
     // TODO add try / catch
@@ -233,22 +244,6 @@ public:
     LOG_LVL_COMPONENT_ROUTINE(ComponentManager,
                               "entity " << entity << " removed from all components");
   }
-
-  void Print() {
-    for (auto& pair : component_types_) {
-      auto& comp = pair.second;
-      std::cout << comp << std::endl;
-    }
-  }
-
-  // std::vector<ComponentTypeLocal> ComponentTypeGlobalToLocal(std::vector<ComponentTypeGlobal>
-  // types_global) {
-  //   std::vector<ComponentTypeLocal> types_local;
-  //   for (const auto& elem : types_global)
-  //     types_local.push_back(component_types_[elem]);
-
-  //   return types_local;
-  // }
 
 private:
   // TODO: via Packed Array (the same as with ComponentPack)

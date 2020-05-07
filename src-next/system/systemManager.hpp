@@ -6,6 +6,7 @@
 
 #include "../entity/entity.hpp"
 #include "../utils/assembly.hpp"
+#include "../utils/dll.hpp"
 // #include "../monitor/monitor."
 
 // ====================
@@ -142,7 +143,7 @@ class System;
 
 class SystemManager {
 public:
-  SystemManager(Monitor* monitor) {
+  SystemManager(IMonitor* monitor) {
     monitor_ = monitor;
 
     LOG_LVL_SYSTEM_INIT("../log/system.log");
@@ -189,7 +190,15 @@ public:
 
     SetSystemSignature(sys_name, types_local);
 
-    system->RegisterDependencies();
+    // registering dependencies
+    auto dependent_component_types = system->GetDependentComponentTypes();
+
+    for (const auto& type : dependent_component_types)
+      monitor_->RegisterComponent(type);
+
+    auto dependent_system_names = system->GetDependentSystemNames();
+    for (const auto& name : dependent_system_names)
+      monitor_->ImportSystem(name);
 
     auto system_init_code = system->Init();
     assertm(system_init_code == ResponseCode::Success, "System failed to init");
@@ -243,10 +252,8 @@ public:
                            "updated entity's " << entity << " signature in every system");
   }
 
-  bool Contains(System* system) const {
-    std::string sys_name = system->GetMyOwnFuckingShittyId();
-
-    return systems_.find(sys_name) != systems_.end();
+  bool Contains(SystemName name) const {
+    return systems_.find(name) != systems_.end();
   }
 
   bool EntityBelongsToSystem(Signature signature_entity, Signature signature_system) {
@@ -261,7 +268,7 @@ public:
   }
 
 private:
-  Monitor*                         monitor_;
+  IMonitor*                        monitor_;
   std::map<std::string, System*>   systems_{};
   std::map<std::string, Signature> system_signatures_{};
 };

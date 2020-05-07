@@ -5,7 +5,8 @@
 #include <set>
 
 #include "../entity/entity.hpp"
-#include "../monitor/monitor.hpp"
+// #include "../monitor/monitor.hpp"
+#include "../monitor/imonitor.hpp"
 #include "../utils/log.hpp"
 #include "../utils/response.hpp"
 
@@ -26,13 +27,13 @@
 // base class for each system - functionality that operate upon spacific set of entities based on
 // their components set
 
-class Monitor;
+typedef std::string SystemName;
 
 class System {
 public:
   std::set<EntityId> entities_{};
 
-  System(Monitor* monitor) {
+  System(IMonitor* monitor) {
     monitor_ = monitor;
   }
 
@@ -44,7 +45,7 @@ public:
 
   virtual std::string GetMyOwnFuckingShittyId() = 0;
 
-  virtual std::vector<std::string> GetDependentSystemNames() = 0; // keys from man just as with c++
+  virtual std::vector<SystemName> GetDependentSystemNames() = 0; // keys from man just as with c++
   virtual std::vector<ComponentTypeGlobal> GetDependentComponentTypes() = 0;
   virtual std::vector<ComponentTypeGlobal> GetRequiredComponentTypes()  = 0;
 
@@ -53,7 +54,7 @@ public:
   }
 
 protected:
-  Monitor* monitor_;
+  IMonitor* monitor_;
 };
 
-typedef System* (*SystemConstructor)(Monitor* monitor);
+typedef System* (*SystemConstructor)(IMonitor* monitor);

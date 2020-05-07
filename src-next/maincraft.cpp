@@ -7,5 +7,5 @@
 int main() {
   Monitor monitor{};
 
-  monitor.ImportSystem("./system/systems/systemDynamic/systemHealth.so");
+  monitor.GetSystemConstructor("./system/systems/systemDynamic/systemHealth.so");
 }

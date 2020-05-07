@@ -21,33 +21,21 @@
 
 #include <dlfcn.h>
 
+#include "./imonitor.hpp"
+
 // ====================
 // Monitor
 // global manager for all managers
 
-class Monitor {
+class Monitor : public IMonitor {
 public:
-  Monitor() {
-    LOG_LVL_MONITOR_INIT("../log/monitor.log");
-
-    component_manager_ = ComponentManager{};
-    // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("ComponentManager initialized");
-
-    entity_manager_ = EntityManager{};
-    // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("EntityManager initialized");
-
-    system_manager_ = SystemManager{this};
-    // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("SystemManager initialized");
-  }
+  Monitor();
   ~Monitor() = default;
 
   // wrappers for managers, so user has to speak only to monitor instead of directly to each one of
   // the managers
 
-  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_type) {
+  ComponentTypeLocal RegisterComponent(ComponentTypeGlobal comp_type) override {
     // if (component_manager_.Contains<Component_t>())
     //   return component_manager_.GetComponentType<Component_t>();
 
@@ -59,43 +47,40 @@ public:
     return component;
   }
 
-  template <typename Component_t>
-  void AttachComponent(Component_t& component_new, EntityId entity) {
-    component_manager_.AttachComponent(entity, component_new);
+  void AttachComponent(ComponentTypeGlobal comp_type, void* component, EntityId entity) override {
+    component_manager_.AttachComponent(entity, comp_type, component);
 
-    Signature          signature_prev = entity_manager_.GetSignature(entity);
-    ComponentTypeLocal component      = component_manager_.GetComponentType<Component_t>();
+    Signature          signature_prev  = entity_manager_.GetSignature(entity);
+    ComponentTypeLocal comp_type_local = component_manager_.GetComponentType(comp_type);
 
-    Signature signature_new = signature_prev.set(component, true);
-
-    UpdateSignature(entity, signature_new);
-
-    // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("component " << typeid(Component_t).name() << " aka " << component
-                                         << " attached to entity " << entity
-                                         << ". now it's signature is "
-                                         << entity_manager_.GetSignature(entity));
-  }
-
-  template <typename Component_t>
-  void RemoveComponent(EntityId entity) {
-    component_manager_.RemoveComponent<Component_t>(entity);
-
-    Signature          signature_prev = entity_manager_.GetSignature(entity);
-    ComponentTypeLocal component      = component_manager_.GetComponentType<Component_t>();
-
-    Signature signature_new = signature_prev.set(component, false);
+    Signature signature_new = signature_prev.set(comp_type_local, true);
 
     UpdateSignature(entity, signature_new);
 
     // TODO add try/catch here
-    LOG_LVL_MONITOR_ROUTINE("component " << typeid(Component_t).name() << " aka " << component
-                                         << " removed from entity " << entity
-                                         << ". now it's signature is "
-                                         << entity_manager_.GetSignature(entity));
+    LOG_LVL_MONITOR_ROUTINE("component "
+                            << comp_type << " aka " << component << " attached to entity " << entity
+                            << ". now it's signature is " << entity_manager_.GetSignature(entity));
+  };
+
+  // template <typename Component_t>
+  void RemoveComponent(ComponentTypeGlobal comp_type, void* component, EntityId entity) override {
+    component_manager_.RemoveComponent(comp_type, entity);
+
+    Signature          signature_prev  = entity_manager_.GetSignature(entity);
+    ComponentTypeLocal comp_type_local = component_manager_.GetComponentType(comp_type);
+
+    Signature signature_new = signature_prev.set(comp_type_local, false);
+
+    UpdateSignature(entity, signature_new);
+
+    // TODO add try/catch here
+    LOG_LVL_MONITOR_ROUTINE(
+        "component " << comp_type << " aka " << comp_type_local << " removed from entity " << entity
+                     << ". now it's signature is " << entity_manager_.GetSignature(entity));
   }
 
-  EntityId AddEntity() {
+  EntityId AddEntity() override {
     EntityId entity_new = entity_manager_.CreateEntity();
 
     // TODO add try/catch here
@@ -104,7 +89,7 @@ public:
     return entity_new;
   }
 
-  void RemoveEntity(EntityId entity) {
+  void RemoveEntity(EntityId entity) override {
     // std::cout << "  > start removing from entity manager\n";
     entity_manager_.RemoveEntity(entity);
     // std::cout << "  > start removing from component manager\n";
@@ -117,7 +102,7 @@ public:
     LOG_LVL_MONITOR_ROUTINE("entity " << entity << "deleted from all managers");
   }
 
-  System* RegisterSystem(System* (*ctor)(Monitor*)) {
+  System* RegisterSystem(SystemConstructor ctor) override {
     System* system = system_manager_.RegisterSystem(ctor);
 
     // TODO add try/catch here
@@ -126,46 +111,46 @@ public:
     return system;
   }
 
-  System* GetSystem(std::string sys_name) {
+  System* GetSystem(std::string sys_name) override {
     return system_manager_.GetSystem(sys_name);
   }
 
   template <typename Component_t>
-  bool HasComponent(EntityId entity) {
+  bool HasComponent(EntityId entity) override {
     return component_manager_.HasComponent<Component_t>(entity);
   }
 
   template <typename Component_t>
-  bool HasNoComponent(EntityId entity) {
+  bool HasNoComponent(EntityId entity) override {
     return !HasComponent<Component_t>(entity);
   }
 
   template <typename Component_t>
-  Component_t* GetComponent(EntityId entity) {
+  Component_t* GetComponent(EntityId entity) override {
     return component_manager_.GetComponent<Component_t>(entity);
   }
 
-  void AttachProperty(EntityId entity, PropertyType property) {
+  void AttachProperty(EntityId entity, PropertyType property) override {
     property_manager_.AttachProperty(entity, property);
   }
 
-  void RemoveProperty(EntityId entity, PropertyType property) {
+  void RemoveProperty(EntityId entity, PropertyType property) override {
     property_manager_.RemoveProperty(entity, property);
   }
 
-  bool HasProperty(EntityId entity, PropertyType property) {
+  bool HasProperty(EntityId entity, PropertyType property) override {
     return property_manager_.HasProperty(entity, property);
   }
 
-  bool HasNoProperty(EntityId entity, PropertyType property) {
+  bool HasNoProperty(EntityId entity, PropertyType property) override {
     return property_manager_.HasNoProperty(entity, property);
   }
 
-  bool CheckIfEntityExists(EntityId entity) {
+  bool CheckIfEntityExists(EntityId entity) override {
     return entity_manager_.CheckIfEntityExists(entity);
   }
 
-  void StartLoop() {
+  void StartLoop() override {
     std::chrono::steady_clock::time_point begin_prev = std::chrono::steady_clock::now();
 
     while (true) {
@@ -192,17 +177,19 @@ public:
     }
   }
 
-  System* ImportSystem(std::string path) {
-    void* handle = ImportDLL(path);
+  System* ImportSystem(SystemName name) override {
+    if (system_manager_.Contains(name))
+      return system_manager_.GetSystem(name);
+
+    void* handle = ImportDLL(name);
 
     SystemConstructor ctor = (SystemConstructor)dlsym(handle, "create_object");
 
-    System* system = (System*)ctor(this);
-    return system;
+    return ctor(this);
   }
 
 private:
-  void* ImportDLL(std::string path) {
+  void* ImportDLL(std::string path) override {
     const char* c_path = path.c_str();
 
     /* on Linux, use "./myclass.so" */
@@ -211,7 +198,7 @@ private:
     return handle;
   }
 
-  void UpdateSignature(EntityId entity, Signature& signature) {
+  void UpdateSignature(EntityId entity, Signature& signature) override {
     // std::cout << "*\n" << std::endl;
     entity_manager_.SetSignature(entity, signature);
     // std::cout << "*\n" << std::endl;
