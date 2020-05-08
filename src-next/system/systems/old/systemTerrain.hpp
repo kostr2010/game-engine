@@ -90,6 +90,6 @@ private:
         return entity;
     }
     std::cout << pos << std::endl;
-    assertm(false, "pos for the tile is out of range");
+    assertm(false, "[GetTile] pos for the tile is out of range");
   }
 };

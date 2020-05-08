@@ -1,5 +1,1 @@
-[13SystemManager]              SystemManager initialised
-[13SystemManager]              new system 13SystemConsole registered
-[13SystemManager]              new system 10SystemKick registered
-[13SystemManager]              new system 12SystemHealth registered
-[13SystemManager]              new system 13SystemTerrain registered
+[SystemManager]                SystemManager initialised

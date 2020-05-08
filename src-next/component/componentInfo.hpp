@@ -8,4 +8,4 @@ struct ComponentInfo {
   std::string comp_type; // TODO: do smth with that?
 };
 
-typedef ComponentInfo (*GetComponentInfo)()
+typedef ComponentInfo (*GetComponentInfo)();

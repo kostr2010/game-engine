@@ -4,11 +4,10 @@
 #include <iostream>
 #include <set>
 
+#include "../component/component.hpp"
 #include "../entity/entity.hpp"
-// #include "../monitor/monitor.hpp"
-#include "../monitor/imonitor.hpp"
-#include "../utils/log.hpp"
 #include "../utils/response.hpp"
+#include "./systemManager.hpp"
 
 // "A system is any functionality that iterates upon a list of entities with a certain signature of
 // components."
@@ -27,21 +26,17 @@
 // base class for each system - functionality that operate upon spacific set of entities based on
 // their components set
 
-typedef std::string SystemName;
+// class SystemManager;
 
 class System {
 public:
   std::set<EntityId> entities_{};
 
-  System(IMonitor* monitor) {
-    monitor_ = monitor;
-  }
+  System(SystemManager* sys_man);
 
   virtual ~System() = default;
 
-  virtual ResponseCode Init() {
-    return ResponseCode::Success;
-  };
+  virtual ResponseCode Init();
 
   virtual std::string GetMyOwnFuckingShittyId() = 0;
 
@@ -49,12 +44,8 @@ public:
   virtual std::vector<ComponentTypeGlobal> GetDependentComponentTypes() = 0;
   virtual std::vector<ComponentTypeGlobal> GetRequiredComponentTypes()  = 0;
 
-  virtual ResponseCode Update(int64_t time_delta) {
-    return ResponseCode::Success;
-  }
+  virtual ResponseCode Update(int64_t time_delta);
 
 protected:
-  IMonitor* monitor_;
+  SystemManager* system_manager_;
 };
-
-typedef System* (*SystemConstructor)(IMonitor* monitor);

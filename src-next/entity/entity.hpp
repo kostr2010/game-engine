@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <bitset>
 #include <iostream>
 #include <set>
@@ -22,39 +23,19 @@ typedef int EntityId;
 class EntityManager {
 public:
   // EntityManager()  = default;
-  ~EntityManager() = default;
+  ~EntityManager();
 
-  EntityManager() {
-    for (int i = MAX_ENTITIES; i >= 0; i--)
-      available_ids_.push_back(i);
-  }
+  EntityManager();
 
-  EntityId CreateEntity() {
-    auto id = available_ids_.back();
-    available_ids_.pop_back();
+  EntityId CreateEntity();
 
-    return id;
-  }
+  void RemoveEntity(EntityId entity);
 
-  void RemoveEntity(EntityId entity) {
-    // std::cout << "    > ent man RemoveEntity " << entity << "\n";
+  Signature GetSignature(EntityId entity);
 
-    available_ids_.push_back(entity);
-    abilities_signatures_[entity].reset();
-  }
+  Signature SetSignature(EntityId entity, Signature signature);
 
-  Signature GetSignature(EntityId entity) {
-    return abilities_signatures_[entity];
-  }
-
-  Signature SetSignature(EntityId entity, Signature signature) {
-    return abilities_signatures_[entity] = signature;
-  }
-
-  bool CheckIfEntityExists(EntityId entity_target) {
-    return std::find(available_ids_.begin(), available_ids_.end(), entity_target) ==
-           available_ids_.end();
-  }
+  bool CheckIfEntityExists(EntityId entity_target);
 
 private:
   std::array<Signature, MAX_ENTITIES>

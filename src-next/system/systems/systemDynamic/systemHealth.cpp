@@ -1,30 +1,26 @@
-// #include "../../../component/components/health.hpp"
-// // #include "../../monitor/monitor.hpp"
-// #include "../../system.hpp"
 #include "./systemHealth.hpp"
 
-// SystemHealth::SystemHealth() = delete;
-// SystemHealth::~SystemHealth() = default;
-
-extern "C" SystemHealth* create_object(Monitor* monitor) {
-  return new SystemHealth{monitor};
+extern "C" SystemHealth* create_object(SystemManager* sys_man) {
+  return new SystemHealth{sys_man};
 }
 
 extern "C" void destroy_object(SystemHealth* object) {
   delete object;
 }
 
-SystemHealth::SystemHealth(Monitor* monitor) : System(monitor) {
+SystemHealth::SystemHealth(SystemManager* sys_man) : System(sys_man) {
+  system_manager_ = sys_man;
 }
 
 ResponseCode SystemHealth::ChangeCurrentHp(EntityId entity, int delta) {
-  REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
+  // REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
-  ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
+  ComponentHealth* comp_health =
+      (ComponentHealth*)system_manager_->component_manager_.GetComponent("ComponentHealth", entity);
 
   comp_health->hp_cur += delta;
 
-  LOG_LVL_SYSTEM_ROUTINE(SystemHealth,
+  LOG_LVL_SYSTEM_ROUTINE("SystemHealth ",
                          "entity's " << entity << " hp changed from " << comp_health->hp_cur - delta
                                      << " to " << comp_health->hp_cur << std::endl);
 
@@ -32,13 +28,14 @@ ResponseCode SystemHealth::ChangeCurrentHp(EntityId entity, int delta) {
 }
 
 ResponseCode SystemHealth::ChangeMaximumHP(EntityId entity, int delta) {
-  REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
+  // REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
-  ComponentHealth* comp_health = monitor_->GetComponent<ComponentHealth>(entity);
+  ComponentHealth* comp_health =
+      (ComponentHealth*)system_manager_->component_manager_.GetComponent("ComponentHealth", entity);
 
   comp_health->hp_max += delta;
 
-  LOG_LVL_SYSTEM_ROUTINE(SystemHealth,
+  LOG_LVL_SYSTEM_ROUTINE("SystemHealth",
                          "entity's " << entity << " max hp was changed from "
                                      << comp_health->hp_max - delta << " to " << comp_health->hp_max
                                      << std::endl);
@@ -47,11 +44,16 @@ ResponseCode SystemHealth::ChangeMaximumHP(EntityId entity, int delta) {
 }
 
 std::vector<ComponentTypeGlobal> SystemHealth::GetRequiredComponentTypes() {
-  return {monitor_->RegisterComponent<ComponentHealth>()};
+  return {"ComponentHealth"};
 }
 
-void SystemHealth::RegisterDependencies() {
+std::vector<ComponentTypeGlobal> SystemHealth::GetDependentComponentTypes() {
+  return {};
 }
+
+std::vector<SystemName> SystemHealth::GetDependentSystemNames() {
+  return {};
+};
 
 std::string SystemHealth::GetMyOwnFuckingShittyId() {
   return "SystemHealth";

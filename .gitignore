@@ -5,3 +5,4 @@ libs/*
 *.gcno
 *.gcov
 *.out
+*.o

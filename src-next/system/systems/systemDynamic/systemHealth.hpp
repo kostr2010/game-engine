@@ -1,24 +1,24 @@
 #pragma once
 
 #include "../../../component/components/health.hpp"
+#include "../../../utils/log.hpp"
 #include "../../system.hpp"
-
-class Monitor;
 
 class SystemHealth : public System {
 public:
   SystemHealth() = delete;
-  // ~SystemHealth() = default;
 
-  SystemHealth(Monitor* monitor);
+  SystemHealth(SystemManager* sys_man);
 
-  virtual ResponseCode ChangeCurrentHp(EntityId entity, int delta);
+  ResponseCode ChangeCurrentHp(EntityId entity, int delta);
 
-  virtual ResponseCode ChangeMaximumHP(EntityId entity, int delta);
+  ResponseCode ChangeMaximumHP(EntityId entity, int delta);
 
-  virtual std::vector<ComponentTypeGlobal> GetRequiredComponentTypes();
+  std::vector<SystemName> GetDependentSystemNames() override;
 
-  virtual void RegisterDependencies();
+  std::vector<ComponentTypeGlobal> GetDependentComponentTypes() override;
 
-  virtual std::string GetMyOwnFuckingShittyId();
+  std::vector<ComponentTypeGlobal> GetRequiredComponentTypes() override;
+
+  std::string GetMyOwnFuckingShittyId() override;
 };

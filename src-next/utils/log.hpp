@@ -6,33 +6,32 @@
 #include <iomanip>
 #include <sstream>
 
-#ifndef LOG_LVL_SYSTEM_
-#define LOG_LVL_SYSTEM_
-std::fstream log_system;
-const char*  log_system_path;
-#endif
+// #ifndef LOG_LVL_SYSTEM_
+// #define LOG_LVL_SYSTEM_
+extern std::fstream log_system;
+extern const char*  log_system_path;
+// #endif
+// #ifndef LOG_LVL_COMPONENT_
+// #define LOG_LVL_COMPONENT_
+extern std::fstream log_component;
+extern const char*  log_component_path;
+// #endif
 
-#ifndef LOG_LVL_MONITOR_
-#define LOG_LVL_MONITOR_
-std::fstream log_monitor;
-const char*  log_monitor_path;
-#endif
+// #ifndef LOG_LVL_ENTITY_
+// #define LOG_LVL_ENTITY_
+extern std::fstream log_entity;
+extern const char*  log_entity_path;
+// #endif
 
-#ifndef LOG_LVL_COMPONENT_
-#define LOG_LVL_COMPONENT_
-std::fstream log_component;
-const char*  log_component_path;
-#endif
+// #ifndef TIMESTAMP
+// #define TIMESTAMP
+extern std::time_t result;
+// #endif
 
-#ifndef TIMESTAMP
-#define TIMESTAMP
-std::time_t result = std::time(nullptr);
-#endif
-
-#ifndef BUF
-#define BUF
-std::ostringstream buf;
-#endif
+// #ifndef BUF
+// #define BUF
+extern std::ostringstream buf;
+// #endif
 
 // ====================
 // LVL_SYSTEM
@@ -45,7 +44,7 @@ std::ostringstream buf;
 #define LOG_LVL_SYSTEM_ROUTINE(system, msg)                                                        \
   log_system.open(log_system_path, std::ios::app | std::ios::in);                                  \
   /* result = std::time(nullptr); */                                                               \
-  buf << "[" << typeid(system).name() << "]";                                                      \
+  buf << "[" << system << "]";                                                                     \
   log_system /* << std::asctime(std::localtime(&result))*/ << std::setw(31) << std::left           \
                                                            << buf.str() << msg << std::endl;       \
   buf.str(std::string());                                                                          \
@@ -54,27 +53,12 @@ std::ostringstream buf;
 #define LOG_LVL_SYSTEM_FAILURE(system, msg)                                                        \
   log_system.open(log_system_path, std::ios::app | std::ios::in);                                  \
   /* result = std::time(nullptr); */                                                               \
-  buf << "[" << typeid(system).name() << "]";                                                      \
+  buf << "[" << system << "]";                                                                     \
   log_system /* << std::asctime(std::localtime(&result))*/                                         \
       << std::setw(20) << std::left << buf.str() << std::setw(11) << " {FAILURE} " << msg          \
       << std::endl;                                                                                \
   buf.str(std::string());                                                                          \
   log_system.close()
-
-// ====================
-// LVL_MONITOR
-
-#define LOG_LVL_MONITOR_INIT(path)                                                                 \
-  log_monitor_path = path;                                                                         \
-  log_monitor.open(log_monitor_path, std::ios::trunc | std::ios::out);                             \
-  log_monitor.close()
-
-#define LOG_LVL_MONITOR_ROUTINE(msg)                                                               \
-  log_monitor.open(log_monitor_path, std::ios::app | std::ios::in);                                \
-  /*result = std::time(nullptr);*/                                                                 \
-  log_monitor /*<< std::asctime(std::localtime(&result))*/                                         \
-      << std::setw(31) << std::left << "[Monitor] " << msg << std::endl;                           \
-  log_monitor.close()
 
 // ====================
 // LVL_COMPONENT
@@ -84,11 +68,46 @@ std::ostringstream buf;
   log_component.open(log_component_path, std::ios::trunc | std::ios::out);                         \
   log_component.close()
 
-#define LOG_LVL_COMPONENT_ROUTINE(component, msg)                                                  \
+#define LOG_LVL_COMPONENT_ROUTINE(msg)                                                             \
   log_component.open(log_component_path, std::ios::app | std::ios::in);                            \
   /*result = std::time(nullptr);*/                                                                 \
-  buf << "[" << typeid(component).name() << "]";                                                   \
   log_component /*<< std::asctime(std::localtime(&result))*/ << std::setw(31) << std::left         \
-                                                             << buf.str() << msg << std::endl;     \
+                                                             << "[ComponentManager]" << msg        \
+                                                             << std::endl;                         \
   buf.str(std::string());                                                                          \
   log_component.close()
+
+#define LOG_LVL_COMPONENT_FAILURE(msg)                                                             \
+  log_component.open(log_component_path, std::ios::app | std::ios::in);                            \
+  /* result = std::time(nullptr); */                                                               \
+  log_component /* << std::asctime(std::localtime(&result))*/                                      \
+      << std::setw(20) << std::left << "[ComponentManager]" << std::setw(11) << " {FAILURE} "      \
+      << msg << std::endl;                                                                         \
+  buf.str(std::string());                                                                          \
+  log_component.close()
+
+// ====================
+// LVL_ENTITY
+
+#define LOG_LVL_ENTITY_INIT(path)                                                                  \
+  log_entity_path = path;                                                                          \
+  log_entity.open(log_entity_path, std::ios::trunc | std::ios::out);                               \
+  log_entity.close()
+
+#define LOG_LVL_ENTITY_ROUTINE(msg)                                                                \
+  log_entity.open(log_entity_path, std::ios::app | std::ios::in);                                  \
+  /*result = std::time(nullptr);*/                                                                 \
+  log_entity /*<< std::asctime(std::localtime(&result))*/ << std::setw(31) << std::left            \
+                                                          << "[EntityManager]" << msg              \
+                                                          << std::endl;                            \
+  buf.str(std::string());                                                                          \
+  log_entity.close()
+
+#define LOG_LVL_ENTITY_FAILURE(msg)                                                                \
+  log_entity.open(log_entity_path, std::ios::app | std::ios::in);                                  \
+  /* result = std::time(nullptr); */                                                               \
+  log_entity /* << std::asctime(std::localtime(&result))*/                                         \
+      << std::setw(20) << std::left << "[EntityManager]" << std::setw(11) << " {FAILURE} " << msg  \
+      << std::endl;                                                                                \
+  buf.str(std::string());                                                                          \
+  log_entity.close()

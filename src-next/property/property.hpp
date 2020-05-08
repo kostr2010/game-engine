@@ -17,12 +17,6 @@ public:
   PropertyManager()  = default;
   ~PropertyManager() = default;
 
-  // Property RegisterProperty() {
-  //   assertm(property_next_ > MAX_PROPERTIES, "max properties reached");
-
-  //   return property_next_++;
-  // }
-
   bool HasProperty(EntityId entity, PropertyType property) {
     return properties_[entity][property];
   }
