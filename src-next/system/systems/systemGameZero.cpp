@@ -21,6 +21,13 @@ ResponseCode SystemGameZero::Init() {
   SystemHealth* sys_health = (SystemHealth*)system_manager_->GetSystem("systemHealth");
   sys_health->ChangeCurrentHp(dummy, -3);
 
+  ComponentKick comp_kick{3};
+  (system_manager_->component_manager_).AttachComponent("componentKick", &comp_kick, dummy);
+
+  SystemKick* sys_kick = (SystemKick*)system_manager_->GetSystem("systemKick");
+
+  sys_kick->Kick(dummy, dummy);
+
   return ResponseCode::Success;
 }
 

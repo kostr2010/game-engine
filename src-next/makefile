@@ -31,58 +31,70 @@ SYS_PATH = system/systems
 DLL_PATH = ../dll
 COMP_PATH = component/components
 
-SYSTEMS = ${SYS_PATH}/systemHealth.o ${SYS_PATH}/systemGameZero.o
+SYS_HEALTH_OBJ   = ${SYS_PATH}/systemHealth.o
+SYS_HEALTH_SO    = ${DLL_PATH}/libsystemHealth.so
 
-SYS_HEALTH_DYN_SRC   = ${SYS_PATH}/systemHealth.cpp
-SYS_HEALTH_DYN_OBJ   = ${SYS_PATH}/systemHealth.o
-SYS_HEALTH_DYN_HDR   = ${SYS_PATH}/systemHealth.hpp
-SYS_HEALTH_DYN_SO    = ${DLL_PATH}/libsystemHealth.so
+SYS_KICK_OBJ   = ${SYS_PATH}/systemKick.o
+SYS_KICK_SO    = ${DLL_PATH}/libsystemKick.so
 
-SYS_GAME_ZERO_DYN_SRC   = ${SYS_PATH}/systemGameZero.cpp 
-SYS_GAME_ZERO_DYN_OBJ   = ${SYS_PATH}/systemGameZero.o 
-SYS_GAME_ZERO_DYN_HDR   = ${SYS_PATH}/systemGameZero.hpp 
-SYS_GAME_ZERO_DYN_SO    = ${DLL_PATH}/libsystemGameZero.so
+SYS_GAME_ZERO_OBJ   = ${SYS_PATH}/systemGameZero.o 
+SYS_GAME_ZERO_SO    = ${DLL_PATH}/libsystemGameZero.so
 
-COMP_HEALTH_DYN_SRC  = ${COMP_PATH}/componentHealth.cpp
-COMP_HEALTH_DYN_OBJ  = ${COMP_PATH}/componentHealth.o
-COMP_HEALTH_DYN_HDR = ${COMP_PATH}/componentHealth.hpp
-COMP_HEALTH_DYN_SO  = ${DLL_PATH}/libcomponentHealth.so
+COMP_HEALTH_OBJ  = ${COMP_PATH}/componentHealth.o
+COMP_HEALTH_SO  = ${DLL_PATH}/libcomponentHealth.so
+
+COMP_KICK_OBJ  = ${COMP_PATH}/componentKick.o
+COMP_KICK_SO  = ${DLL_PATH}/libcomponentKick.so
+
+SYSTEMS = ${SYS_HEALTH_OBJ} ${SYS_KICK_OBJ} ${SYS_GAME_ZERO_OBJ}
+COMPONENTS = ${COMP_KICK_OBJ} ${COMP_HEALTH_OBJ}
 
 SRCS = ${COMPONENT_S}   ${ENTITY_S}   ${SYSTEM_S}   ${SYSMAN_S}   ${LOG_S}   ${DLL_S}
 OBJS = ${COMPONENT}     ${ENTITY}     ${SYSTEM}     ${SYSMAN}     ${LOG}     ${DLL} 
 HDRS = ${COMPONENT_HDR} ${ENTITY_HDR} ${SYSTEM_HDR} ${SYSMAN_HDR} ${LOG_HDR} ${DLL_HDR} ${UTILS_HDR} 
 
-compile_her: ${OBJS} ${HDRS}
-	# compiling systems to .o
-	$(SYSTEMS): %.o: %.cpp
-		${CC} ${CFLAGS} -c -fPIC %< -o $@
-	# g++ -c -fPIC ${SYS_HEALTH_DYN_SRC} -o ${SYS_HEALTH_DYN_OBJ} ${CFLAGS}
-	# g++ -c -fPIC ${SYS_GAME_ZERO_DYN_SRC} -o ${SYS_GAME_ZERO_DYN_OBJ} ${CFLAGS}
+${SYSTEMS}: %.o: %.cpp
+		${CC} ${CFLAGS} -c -fPIC $< -o $@
+
+${OBJS}: %.o: %.cpp
+		${CC} ${CFLAGS} -c -fPIC $< -o $@
+
+${COMPONENTS}: %.o: %.cpp
+		${CC} ${CFLAGS} -c -fPIC $< -o $@
+
+# compiling systems to .o		
+# g++ -c -fPIC ${SYS_HEALTH_SRC} -o ${SYS_HEALTH_OBJ} ${CFLAGS}
+# g++ -c -fPIC ${SYS_GAME_ZERO_SRC} -o ${SYS_GAME_ZERO_OBJ} ${CFLAGS}	
+
+compile_her: ${OBJS} ${SYSTEMS} ${COMPONENTS} ${COMPONENTS_SO}
+	# # compiling components to .o 
+	# g++ -c -fPIC ${COMP_HEALTH_SRC} -o ${COMP_HEALTH_OBJ} ${CFLAGS}	
+	
+	# # compiling components to .so
+	# g++ -shared ${COMP_HEALTH_OBJ} -o ${COMP_HEALTH_SO} ${CFLAGS}
+	
+	# # compiling engine
+	# g++ -c -fPIC ${COMPONENT_S} -o ${COMPONENT} ${CFLAGS}
+	# g++ -c -fPIC ${ENTITY_S} -o ${ENTITY} ${CFLAGS}
+	# g++ -c -fPIC ${SYSTEM_S} -o ${SYSTEM} ${CFLAGS}
+	# g++ -c -fPIC ${SYSMAN_S} -o ${SYSMAN} ${CFLAGS}
+	# g++ -c -fPIC ${LOG_S} -o ${LOG} ${CFLAGS}
+	# g++ -c -fPIC ${DLL_S} -o ${DLL} ${CFLAGS}	
+
+	#compiling components to .so
+	${CC} -shared ${COMP_HEALTH_OBJ} -o ${COMP_HEALTH_SO} ${CFLAGS}
+	${CC} -shared ${COMP_KICK_OBJ} -o ${COMP_KICK_SO} ${CFLAGS}
 
 	# compiling systems to .so
-	g++ -shared ${OBJS} ${SYS_HEALTH_DYN_OBJ} -o ${SYS_HEALTH_DYN_SO} ${CFLAGS}
-	g++ -shared ${OBJS} ${SYS_HEALTH_DYN_SO} ${SYS_GAME_ZERO_DYN_OBJ} -o ${SYS_GAME_ZERO_DYN_SO} ${CFLAGS}
-
-	# compiling components to .o
-	g++ -c -fPIC ${COMP_HEALTH_DYN_SRC} -o ${COMP_HEALTH_DYN_OBJ} ${CFLAGS}	
-	
-	# compiling components to .so
-	g++ -shared ${COMP_HEALTH_DYN_OBJ} -o ${COMP_HEALTH_DYN_SO} ${CFLAGS}
-	
-	# compiling engine
-	g++ -c -fPIC ${COMPONENT_S} -o ${COMPONENT} ${CFLAGS}
-	g++ -c -fPIC ${ENTITY_S} -o ${ENTITY} ${CFLAGS}
-	g++ -c -fPIC ${SYSTEM_S} -o ${SYSTEM} ${CFLAGS}
-	g++ -c -fPIC ${SYSMAN_S} -o ${SYSMAN} ${CFLAGS}
-	g++ -c -fPIC ${LOG_S} -o ${LOG} ${CFLAGS}
-	g++ -c -fPIC ${DLL_S} -o ${DLL} ${CFLAGS}	
-
+	${CC} -shared ${OBJS} ${SYS_HEALTH_OBJ} -o ${SYS_HEALTH_SO} ${CFLAGS}
+	${CC} -shared ${OBJS} ${SYS_HEALTH_SO} ${SYS_KICK_OBJ} -o ${SYS_KICK_SO} ${CFLAGS}
+	${CC} -shared ${OBJS} ${SYS_HEALTH_SO} ${SYS_KICK_SO} ${SYS_GAME_ZERO_OBJ} -o ${SYS_GAME_ZERO_SO} ${CFLAGS}
 
 	# compiling main file
-	g++ main.cpp ${OBJS} -ldl -o main.out ${CFLAGS}
+	${CC} main.cpp ${OBJS} -ldl -o main.out ${CFLAGS}
 
-compile_dll: ${SYS_HEALTH_DYN_SRC} ${SYS_HEALTH_DYN_HDR}
-	g++ -fPIC -shared ${SYS_HEALTH_DYN_SRC} -o ${SYS_HEALTH_DYN_SO}
+compile_dll: ${SYS_HEALTH_SRC} ${SYS_HEALTH_HDR}
+	${CC} -fPIC -shared ${SYS_HEALTH_SRC} -o ${SYS_HEALTH_SO}
 
 clear:
 	bash -c "clear"

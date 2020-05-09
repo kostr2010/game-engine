@@ -1,3 +1,5 @@
 [ComponentManager]             ComponentManager initialized
-[ComponentManager]             component ComponentHealth registered as 0
-[ComponentManager]             component ComponentHealth(0x7ffd26946a18) attached to entity 0
+[ComponentManager]             component componentHealth registered as 0
+[ComponentManager]             component componentKick registered as 1
+[ComponentManager]             component componentHealth(0x7ffd33580ba8) attached to entity 0
+[ComponentManager]             component componentKick(0x7ffd33580b90) attached to entity 0

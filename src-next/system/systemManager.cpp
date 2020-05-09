@@ -72,7 +72,7 @@ System* SystemManager::RegisterSystem(SystemConstructor ctor) {
   LOG_LVL_SYSTEM_ROUTINE(sys_name, "started initialization...");
   auto system_init_code = system->Init();
   assertm(system_init_code == ResponseCode::Success, "[RegisterSystem] System failed to init");
-  LOG_LVL_SYSTEM_ROUTINE(sys_name, "initializeded");
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "initialized");
 
   // TODO: add try catch here
   LOG_LVL_SYSTEM_ROUTINE("SystemManager", "new system " << sys_name << " registered");
