@@ -31,5 +31,7 @@ int main() {
   SystemManager sys_man{};
   sys_man.ImportSystem("systemGameZero");
 
+  std::cout << "end" << std::endl;
+
   return 0;
 }
