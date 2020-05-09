@@ -8,7 +8,8 @@ SystemManager::SystemManager() {
   entity_manager_ = EntityManager{};
   // TODO add try/catch here
 
-  LOG_LVL_SYSTEM_INIT("../log/system.log");
+  // LOG_LVL_SYSTEM_INIT("../log/system.log");
+  LOG_LVL_SYSTEM_INIT();
   LOG_LVL_SYSTEM_ROUTINE("SystemManager", "SystemManager initialised");
 }
 
@@ -45,15 +46,18 @@ System* SystemManager::RegisterSystem(SystemConstructor ctor) {
 
   systems_[sys_name] = system;
 
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "importing required components...");
   // registering required components
   auto required_component_types = system->GetRequiredComponentTypes();
 
   std::vector<ComponentTypeLocal> types_local;
   for (const auto& type : required_component_types)
     types_local.push_back(component_manager_.RegisterComponent(type));
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "imported");
 
   SetSystemSignature(sys_name, types_local);
 
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "importing dependent components and systems...");
   // registering dependencies
   auto dependent_component_types = system->GetDependentComponentTypes();
 
@@ -63,9 +67,12 @@ System* SystemManager::RegisterSystem(SystemConstructor ctor) {
   auto dependent_system_names = system->GetDependentSystemNames();
   for (const auto& name : dependent_system_names)
     ImportSystem(name);
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "imported");
 
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "started initialization...");
   auto system_init_code = system->Init();
   assertm(system_init_code == ResponseCode::Success, "[RegisterSystem] System failed to init");
+  LOG_LVL_SYSTEM_ROUTINE(sys_name, "initializeded");
 
   // TODO: add try catch here
   LOG_LVL_SYSTEM_ROUTINE("SystemManager", "new system " << sys_name << " registered");

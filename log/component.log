@@ -1,2 +1,3 @@
 [ComponentManager]             ComponentManager initialized
 [ComponentManager]             component ComponentHealth registered as 0
+[ComponentManager]             component ComponentHealth(0x7ffd26946a18) attached to entity 0

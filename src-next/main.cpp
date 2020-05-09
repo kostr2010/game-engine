@@ -29,13 +29,7 @@ int main() {
   std::cout << "start" << std::endl;
 
   SystemManager sys_man{};
-  sys_man.ImportSystem("SystemHealth");
-
-  EntityId dummy = sys_man.entity_manager_.CreateEntity();
-
-  // ComponentHealth comp_health{10, 10};
-
-  // sys_man.component_manager_.AttachComponent(dummy, "ComponentHealth", &comp_health);
+  sys_man.ImportSystem("systemGameZero");
 
   return 0;
 }

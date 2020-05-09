@@ -71,7 +71,8 @@ void ComponentPack::CopyComponent(size_t index_src, size_t index_dst) {
 }
 
 ComponentManager::ComponentManager() {
-  LOG_LVL_COMPONENT_INIT("../log/component.log");
+  // LOG_LVL_COMPONENT_INIT("../log/component.log");
+  LOG_LVL_COMPONENT_INIT();
   LOG_LVL_COMPONENT_ROUTINE("ComponentManager initialized");
 }
 
@@ -84,19 +85,18 @@ ComponentManager::~ComponentManager() {
 ComponentTypeLocal ComponentManager::RegisterComponent(ComponentTypeGlobal comp_type) {
   // auto type = comp_type;
 
+  if (component_types_.find(comp_type) != component_types_.end()) {
+    LOG_LVL_COMPONENT_ROUTINE("component " << comp_type << " is already registered as "
+                                           << component_types_[comp_type]);
+    return component_types_[comp_type];
+  }
+
   // lib<comp_type>.so
   std::string path    = comp_type;
   void*       handler = ImportDLL(path.c_str());
 
   auto          get_comp_info = (GetComponentInfo)dlsym(handler, "get_component_info");
   ComponentInfo comp_info     = get_comp_info();
-
-  if (component_types_.find(comp_type) != component_types_.end()) {
-    LOG_LVL_COMPONENT_ROUTINE("component " << comp_type << " is already registered as"
-                                           << component_types_[comp_type]);
-
-    return component_types_[comp_type];
-  }
 
   ComponentTypeLocal comp_type_local = next_++;
   component_types_.insert({comp_type, comp_type_local});
@@ -117,8 +117,8 @@ ComponentTypeLocal ComponentManager::GetComponentType(ComponentTypeGlobal comp_t
   return component_types_[comp_type];
 }
 
-void ComponentManager::AttachComponent(EntityId entity, ComponentTypeGlobal comp_type,
-                                       void* component) {
+void ComponentManager::AttachComponent(ComponentTypeGlobal comp_type, void* component,
+                                       EntityId entity) {
   GetComponentPack(comp_type)->AddData(entity, component);
 
   // TODO add try / catch

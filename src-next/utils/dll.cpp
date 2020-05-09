@@ -4,7 +4,7 @@
 void* ImportDLL(std::string path) {
   path = "../dll/lib" + path + ".so";
   // ./system/systems/systemDynamic/lib
-  std::cout << "> {PATH} = <" << path.c_str() << ">\n";
+  std::cout << "> {PATH} = " << path.c_str() << "\n";
 
   const char* c_path = path.c_str();
 
@@ -13,6 +13,9 @@ void* ImportDLL(std::string path) {
 
   // std::cout << "> {DLERROR}" << dlerror() << std::endl;
   std::cout << "> {HANDLER} " << handle << std::endl;
+  if (handle == 0) {
+    std::cout << "> {ERROR}" << dlerror() << "\n";
+  }
 
   return handle;
 }

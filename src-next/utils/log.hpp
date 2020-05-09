@@ -36,8 +36,7 @@ extern std::ostringstream buf;
 // ====================
 // LVL_SYSTEM
 
-#define LOG_LVL_SYSTEM_INIT(path)                                                                  \
-  log_system_path = path;                                                                          \
+#define LOG_LVL_SYSTEM_INIT()                                                                      \
   log_system.open(log_system_path, std::ios::trunc | std::ios::out);                               \
   log_system.close()
 
@@ -63,8 +62,7 @@ extern std::ostringstream buf;
 // ====================
 // LVL_COMPONENT
 
-#define LOG_LVL_COMPONENT_INIT(path)                                                               \
-  log_component_path = path;                                                                       \
+#define LOG_LVL_COMPONENT_INIT()                                                                   \
   log_component.open(log_component_path, std::ios::trunc | std::ios::out);                         \
   log_component.close()
 
@@ -89,8 +87,7 @@ extern std::ostringstream buf;
 // ====================
 // LVL_ENTITY
 
-#define LOG_LVL_ENTITY_INIT(path)                                                                  \
-  log_entity_path = path;                                                                          \
+#define LOG_LVL_ENTITY_INIT()                                                                      \
   log_entity.open(log_entity_path, std::ios::trunc | std::ios::out);                               \
   log_entity.close()
 

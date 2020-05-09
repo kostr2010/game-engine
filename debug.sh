@@ -1,1 +1,1 @@
-cd src-next && make all_debug
+cd src-next && gdb main.out

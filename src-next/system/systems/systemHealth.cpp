@@ -9,20 +9,19 @@ extern "C" void destroy_object(SystemHealth* object) {
 }
 
 SystemHealth::SystemHealth(SystemManager* sys_man) : System(sys_man) {
-  system_manager_ = sys_man;
 }
 
 ResponseCode SystemHealth::ChangeCurrentHp(EntityId entity, int delta) {
   // REQUIRE_COMPONENT(SystemHealth, ComponentHealth, entity);
 
   ComponentHealth* comp_health =
-      (ComponentHealth*)system_manager_->component_manager_.GetComponent("ComponentHealth", entity);
+      (ComponentHealth*)system_manager_->component_manager_.GetComponent("componentHealth", entity);
 
   comp_health->hp_cur += delta;
 
-  LOG_LVL_SYSTEM_ROUTINE("SystemHealth ",
+  LOG_LVL_SYSTEM_ROUTINE("systemHealth ",
                          "entity's " << entity << " hp changed from " << comp_health->hp_cur - delta
-                                     << " to " << comp_health->hp_cur << std::endl);
+                                     << " to " << comp_health->hp_cur);
 
   return ResponseCode::Success;
 }
@@ -35,16 +34,16 @@ ResponseCode SystemHealth::ChangeMaximumHP(EntityId entity, int delta) {
 
   comp_health->hp_max += delta;
 
-  LOG_LVL_SYSTEM_ROUTINE("SystemHealth",
+  LOG_LVL_SYSTEM_ROUTINE("systemHealth",
                          "entity's " << entity << " max hp was changed from "
-                                     << comp_health->hp_max - delta << " to " << comp_health->hp_max
-                                     << std::endl);
+                                     << comp_health->hp_max - delta << " to "
+                                     << comp_health->hp_max);
 
   return ResponseCode::Success;
 }
 
 std::vector<ComponentTypeGlobal> SystemHealth::GetRequiredComponentTypes() {
-  return {"ComponentHealth"};
+  return {"componentHealth"};
 }
 
 std::vector<ComponentTypeGlobal> SystemHealth::GetDependentComponentTypes() {
@@ -56,5 +55,5 @@ std::vector<SystemName> SystemHealth::GetDependentSystemNames() {
 };
 
 std::string SystemHealth::GetMyOwnFuckingShittyId() {
-  return "SystemHealth";
+  return "systemHealth";
 }

@@ -6,3 +6,4 @@ libs/*
 *.gcov
 *.out
 *.o
+*.so

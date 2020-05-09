@@ -95,7 +95,7 @@ public:
 
   ComponentTypeLocal GetComponentType(ComponentTypeGlobal comp_type);
 
-  void AttachComponent(EntityId entity, ComponentTypeGlobal comp_type, void* component);
+  void AttachComponent(ComponentTypeGlobal comp_type, void* component, EntityId entity);
 
   // template <typename Component_t>
   void RemoveComponent(ComponentTypeGlobal comp_type, EntityId entity);

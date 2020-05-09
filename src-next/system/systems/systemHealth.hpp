@@ -1,20 +1,8 @@
-#ifndef __SYS_DIN__
-#define __SYS_DIN__
+#pragma once
 
-// class MyClass {
-// public:
-//   MyClass();
-
-//   /* use virtual otherwise linker will try to perform static linkage */
-//   virtual void DoSomething();
-
-// private:
-//   int x;
-// };
-
-#include "../../../component/components/health.hpp"
-#include "../../../utils/log.hpp"
-#include "../../system.hpp"
+#include "../../component/components/componentHealth.hpp"
+#include "../../utils/log.hpp"
+#include "../system.hpp"
 
 class SystemHealth : public System {
 public:
@@ -34,5 +22,3 @@ public:
 
   std::string GetMyOwnFuckingShittyId() override;
 };
-
-#endif

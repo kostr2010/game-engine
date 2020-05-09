@@ -7,7 +7,8 @@ EntityManager::EntityManager() {
   for (int i = MAX_ENTITIES; i >= 0; i--)
     available_ids_.push_back(i);
 
-  LOG_LVL_ENTITY_INIT("../log/entity.log");
+  // LOG_LVL_ENTITY_INIT("../log/entity.log");
+  LOG_LVL_ENTITY_INIT();
   LOG_LVL_ENTITY_ROUTINE("EntityManager initialized");
 }
 

@@ -1,3 +1,6 @@
 cd src-next
 clear
-make compile_dll
+make compile_her
+echo
+echo
+./main.out
