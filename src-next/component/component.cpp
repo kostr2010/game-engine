@@ -85,7 +85,7 @@ ComponentTypeLocal ComponentManager::RegisterComponent(ComponentTypeGlobal comp_
   // auto type = comp_type;
 
   // lib<comp_type>.so
-  std::string path    = "lib" + comp_type;
+  std::string path    = comp_type;
   void*       handler = ImportDLL(path.c_str());
 
   auto          get_comp_info = (GetComponentInfo)dlsym(handler, "get_component_info");

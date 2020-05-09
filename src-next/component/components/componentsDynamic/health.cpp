@@ -1,5 +1,5 @@
 #include "./health.hpp"
-#include "../componentInfo.hpp"
+#include "../../componentInfo.hpp"
 
 extern "C" ComponentInfo get_component_info() {
   return ComponentInfo{.comp_size = sizeof(ComponentHealth),

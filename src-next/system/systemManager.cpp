@@ -91,9 +91,11 @@ System* SystemManager::ImportSystem(std::string sys_name) {
 
   SystemConstructor ctor = (SystemConstructor)dlsym(handle, "create_object");
 
+  System* system = RegisterSystem(ctor);
+
   std::cout << "create_object achieved " << ctor << std::endl;
 
-  return ctor(this);
+  return system;
 }
 
 void SystemManager::RemoveEntity(EntityId entity) {

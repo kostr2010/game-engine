@@ -2,14 +2,17 @@
 #include <iostream>
 
 void* ImportDLL(std::string path) {
-  path = "lib" + path + ".so";
-
+  path = "../dll/lib" + path + ".so";
+  // ./system/systems/systemDynamic/lib
   std::cout << "> {PATH} = <" << path.c_str() << ">\n";
 
   const char* c_path = path.c_str();
 
   /* on Linux, use "./myclass.so" */
-  void* handle = dlopen("./libsystemHealth.so", RTLD_NOW);
+  void* handle = dlopen(c_path, RTLD_NOW);
+
+  // std::cout << "> {DLERROR}" << dlerror() << std::endl;
+  std::cout << "> {HANDLER} " << handle << std::endl;
 
   return handle;
 }
